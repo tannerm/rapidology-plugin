@@ -1,7 +1,7 @@
 /*************************************************************************/
 /*************************************************************************/
 
-    Copyright 2015 LeadPages®
+    Copyright 2015 Elegant Themes, Inc.
 
     All plugin files are licensed under the GNU Public License 2.0 unless
     specified as otherwise within the file itself. Some files may be

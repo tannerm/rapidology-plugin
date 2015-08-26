@@ -1,0 +1,10 @@
+/*************************************************************************/
+/*************************************************************************/
+
+   Contributors / Authors text file per GNU
+   http://www.gnu.org/prep/maintain/maintain.html#Recording-Contributors
+
+/*************************************************************************/
+/*************************************************************************/
+
+LeadPages fixed widget constructor call to be WordPress 4.3 complaint.
