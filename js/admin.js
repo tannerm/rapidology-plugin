@@ -1012,6 +1012,9 @@
 				client_field = $( $container ).find( '#client_id_' + $service ),
 				password_field = $( $container ).find( '#password_' + $service ),
 				account_name = $( $container ).find( '#name_' + $service ),
+                public_api_key = $( $container ).find( '#public_api_key' + $service ),
+                private_api_key = $( $container ).find( '#private_api_key' + $service ),
+                account_id = $( $container ).find( '#account_id' + $service ),
 				account_name_val = '' == $account_name ? $( $container ).find( '#name_' + $service ).val() : $account_name;
 
 			$( $container ).find( 'input' ).css( { 'border' : 'none' } );
@@ -1049,7 +1052,10 @@
 						rapidology_username : username_field.val(),
 						rapidology_client_id : client_field.val(),
 						rapidology_password : password_field.val(),
-						rapidology_account_exists : $account_exists
+						rapidology_account_exists : $account_exists,
+                        rapidology_public_api_key : public_api_key.val(),
+                        rapidology_private_api_key : private_api_key.val(),
+                        rapidology_account_id : account_id.val()
 					},
 					beforeSend: function( data ) {
 						$( $container ).find( 'span.spinner' ).addClass( 'rad_dashboard_spinner_visible' );

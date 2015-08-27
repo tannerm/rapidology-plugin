@@ -84,6 +84,7 @@ $rad_dashboard_options_all = array(
 				'feedblitz'        => __( 'Feedblitz', 'rapidology' ),
 				'ontraport'        => __( 'Ontraport', 'rapidology' ),
 				'infusionsoft'     => __( 'Infusionsoft', 'rapidology' ),
+                'emma'     => __( 'Emma', 'rapidology' ),
 				'custom_html'      => __( 'Custom HTML Form', 'rapidology' ) ),
 			'default'         => 'empty',
 			'conditional'     => 'mailchimp_account#aweber_account#constant_contact_account#custom_html#display_name#name_fields',

@@ -13,12 +13,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+
+
+
+
+
 define( 'RAD_RAPIDOLOGY_PLUGIN_DIR', trailingslashit( dirname(__FILE__) ) );
 define( 'RAD_RAPIDOLOGY_PLUGIN_URI', plugins_url('', __FILE__) );
 
 if ( ! class_exists( 'RAD_Dashboard' ) ) {
 	require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'dashboard/dashboard.php' );
 }
+
+
+
 
 class RAD_Rapidology extends RAD_Dashboard {
 	var $plugin_version = '1.0';
@@ -54,9 +62,9 @@ class RAD_Rapidology extends RAD_Dashboard {
 		add_filter( 'rad_rapidology_export_exclude', array( $this, 'filter_export_settings' ) );
 		add_filter( 'rad_rapidology_save_button_class', array( $this, 'save_btn_class' ) );
 
-        
-            
-        
+
+
+
 
 		// generate home tab in dashboard
 		add_action( 'rad_rapidology_after_header_options', array( $this, 'generate_home_tab' ) );
@@ -187,6 +195,9 @@ class RAD_Rapidology extends RAD_Dashboard {
 	static function get_this() {
 		return self::$_this;
 	}
+
+
+
 
 	function add_menu_link() {
 		$menu_page = add_menu_page( __( 'Rapidology', 'rapidology' ), __( 'Rapidology', 'rapidology' ), 'manage_options', 'rad_rapidology_options', array( $this, 'options_page' ) );
@@ -1584,6 +1595,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 								<option value="ontraport">%13$s</option>
 								<option value="feedblitz">%14$s</option>
 								<option value="infusionsoft">%15$s</option>
+								<option value="emma">%16$s</option>
 							</select>
 						</li>
 					</ul>
@@ -1604,7 +1616,9 @@ class RAD_Rapidology extends RAD_Dashboard {
 				esc_html__( 'save & exit', 'rapidology' ),
 				esc_html__( 'Ontraport', 'rapidology' ),
 				esc_html__( 'Feedblitz', 'rapidology' ),
-				esc_html__( 'Infusionsoft', 'rapidology' ) // #15
+				esc_html__( 'Infusionsoft', 'rapidology' ),
+                esc_html__( 'Emma', 'rapidology' )
+
 			);
 		}
 
@@ -2591,6 +2605,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function authorize_account() {
+
 		wp_verify_nonce( $_POST['get_lists_nonce'] , 'get_lists' );
 		$service = ! empty( $_POST['rapidology_upd_service'] ) ? sanitize_text_field( $_POST['rapidology_upd_service'] ) : '';
 		$name = ! empty( $_POST['rapidology_upd_name'] ) ? sanitize_text_field( $_POST['rapidology_upd_name'] ) : '';
@@ -2605,12 +2620,19 @@ class RAD_Rapidology extends RAD_Dashboard {
 			$app_id = ! empty( $accounts_data[$service][$name]['client_id'] ) ? $accounts_data[$service][$name]['client_id'] : '';
 			$username = ! empty( $accounts_data[$service][$name]['username'] ) ? $accounts_data[$service][$name]['username'] : '';
 			$password = ! empty( $accounts_data[$service][$name]['password'] ) ? $accounts_data[$service][$name]['password'] : '';
+            $account_id = ! empty( $accounts_data[$service][$name]['account_id'] ) ? $accounts_data[$service][$name]['account_id'] : '';
+            $public_key = ! empty( $accounts_data[$service][$name]['public_key'] ) ? $accounts_data[$service][$name]['public_key'] : '';
+            $private_key = ! empty( $accounts_data[$service][$name]['private_key'] ) ? $accounts_data[$service][$name]['private_key'] : '';
 		} else {
 			$api_key = ! empty( $_POST['rapidology_api_key'] ) ? sanitize_text_field( $_POST['rapidology_api_key'] ) : '';
 			$token = ! empty( $_POST['rapidology_constant_token'] ) ? sanitize_text_field( $_POST['rapidology_constant_token'] ) : '';
 			$app_id = ! empty( $_POST['rapidology_client_id'] ) ? sanitize_text_field( $_POST['rapidology_client_id'] ) : '';
 			$username = ! empty( $_POST['rapidology_username'] ) ? sanitize_text_field( $_POST['rapidology_username'] ) : '';
 			$password = ! empty( $_POST['rapidology_password'] ) ? sanitize_text_field( $_POST['rapidology_password'] ) : '';
+            $account_id = ! empty( $_POST['rapidology_username'] ) ? sanitize_text_field( $_POST['rapidology_username'] ) : '';
+            $public_key = ! empty( $_POST['rapidology_api_key'] ) ? sanitize_text_field( $_POST['rapidology_api_key'] ) : '';
+            $private_key = ! empty( $_POST['rapidology_client_id'] ) ? sanitize_text_field( $_POST['rapidology_client_id'] ) : '';
+
 		}
 
 		$error_message = '';
@@ -2663,6 +2685,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 			case 'infusionsoft' :
 				$error_message = $this->get_infusionsoft_lists( $app_id, $api_key, $name );
 			break;
+            case 'emma' :
+                $error_message = $this->get_emma_groups($public_key, $private_key, $account_id, $name);
+            break;
+
+
 		}
 
 		$result = 'success' == $error_message ?
@@ -3123,6 +3150,44 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 		return $error_message;
 	}
+
+
+
+
+    function get_emma_groups($public_key, $private_key, $account_id, $name){
+        if(!class_exists('Emma_Rapidology')){
+           require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/emma/Emma.php' );
+        }
+
+        $emma = new Emma_Rapidology($account_id, $public_key, $private_key, false); //true set for debug
+        try {
+            $error_message = 'success';
+            $response = $emma->myGroups();
+            $response = json_decode($response);
+
+            $all_lists = array();
+            foreach ($response as $obj){
+                $all_lists[$obj->member_group_id]['name'] = $obj->group_name;
+                $all_lists[$obj->member_group_id]['subscribers_count'] = sanitize_text_field($obj->active_count);
+                $all_lists[$obj->member_group_id]['growth_week'] = sanitize_text_field( $this->calculate_growth_rate( 'campaign_monitor_' . $obj->account_id ) );
+            }
+            $this->update_account( 'emma', sanitize_text_field( $name ), array(
+                'api_key'       => sanitize_text_field( $public_key ),
+                'client_id'       => sanitize_text_field( $private_key ),
+                'username'       => sanitize_text_field( $account_id),
+                'lists'         => $all_lists,
+                'is_authorized' => 'true',
+            ) );
+		return $error_message;
+        }catch(exception $e){
+            $error_message = $e;
+            return $error_message;
+        }
+
+
+
+    }
+
 
 
 	/**
@@ -4337,7 +4402,36 @@ STRING;
 				);
 
 			break;
-
+            case 'emma':
+                $form_fields .= sprintf( '
+					<div class="rad_dashboard_account_row">
+						<label for="%1$s">%4$s</label>
+						<input type="password" value="%7$s" id="%1$s">%7$s
+					</div>
+					<div class="rad_dashboard_account_row">
+						<label for="%2$s">%5$s</label>
+						<input type="password" value="%8$s" id="%2$s">%7$s
+					</div>
+					<div class="rad_dashboard_account_row">
+						<label for="%3$s">%6$s</label>
+						<input type="password" value="%9$s" id="%3$s">%7$s
+					</div>',
+                    esc_attr( 'api_key_' . $service ),
+                    esc_attr( 'client_id_' . $service ),
+                    esc_attr( 'username_' . $service ),
+                    __( 'Public API Key', 'rapidology' ),
+                    __( 'Private API key', 'rapidology' ),
+                    __( 'Account ID', 'rapidology' ),
+                    ( '' !== $field_values && isset( $field_values['api_key_'] ) ) ? esc_html( $field_values['api_key_'] ) : '',
+                    ( '' !== $field_values && isset( $field_values['client_id_'] ) ) ? esc_html( $field_values['client_id_'] ) : '',
+                    ( '' !== $field_values && isset( $field_values['username_'] ) ) ? esc_html( $field_values['username_'] ) : '',
+                    RAD_Rapidology::generate_hint( sprintf(
+                        '<a href="http://www.rapidology.com/docs" target="_blank">%1$s</a>',
+                        __( 'Click here for more information', 'rapidology' )
+                    ), false
+                    )
+                );
+                break;
 			case 'mailchimp' :
 			case 'constant_contact' :
 			case 'getresponse' :
