@@ -2787,6 +2787,14 @@ class RAD_Rapidology extends RAD_Dashboard {
 					$app_id = $options_array['accounts'][$service][$account_name]['client_id'];
 					$error_message = $this->subscribe_infusionsoft( $api_key, $app_id, $list_id, $email, $name, $last_name );
 					break;
+
+                case 'emma' :
+                    $public_key = $options_array['accounts'][$service][$account_name]['api_key'];
+                    $private_key = $options_array['accounts'][$service][$account_name]['client_id'];
+                    $account_id = $options_array['accounts'][$service][$account_name]['username'];
+                    $error_message = $this->emma_member_subscribe($public_key, $private_key, $account_id, $email, $list_id, $name);
+
+                break;
 			}
 		} else {
 			$error_message = __( 'Invalid email', 'rapidology' );
@@ -3188,7 +3196,28 @@ class RAD_Rapidology extends RAD_Dashboard {
 
     }
 
+    function emma_member_subscribe($public_key, $private_key, $account_id, $email, $list_id){
+        if(!class_exists('Emma_Rapidology')){
+            require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/emma/Emma.php' );
+        }
+        //TODO add some checking into see if they are already part of the group they are opting into skilled because it adds extra seemingly unneed processing
+        $emma = new Emma_Rapidology($account_id, $public_key, $private_key, false); //true set for debug
+        //arguments to pass to send to emma to sign up user
+        $args=array(
+            'email' => $email,
+            'group_ids' => array(
+                $list_id
+            )
+        );
+        try {
+            $emma->membersAddSingle($args);
+            return $error_message = "success";
+        }catch(exception $e){
+            $error_message = $e;
+            return $error_message;
+        }
 
+    }
 
 	/**
 	 * Retrieves the lists via Campaign Monitor API and updates the data in DB.
