@@ -4435,15 +4435,15 @@ STRING;
                 $form_fields .= sprintf( '
 					<div class="rad_dashboard_account_row">
 						<label for="%1$s">%4$s</label>
-						<input type="password" value="%7$s" id="%1$s">%7$s
+						<input type="password" value="%7$s" id="%1$s">%10$s
 					</div>
 					<div class="rad_dashboard_account_row">
 						<label for="%2$s">%5$s</label>
-						<input type="password" value="%8$s" id="%2$s">%7$s
+						<input type="password" value="%8$s" id="%2$s">%10$s
 					</div>
 					<div class="rad_dashboard_account_row">
 						<label for="%3$s">%6$s</label>
-						<input type="password" value="%9$s" id="%3$s">%7$s
+						<input type="password" value="%9$s" id="%3$s">%10$s
 					</div>',
                     esc_attr( 'api_key_' . $service ),
                     esc_attr( 'client_id_' . $service ),
