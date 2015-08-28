@@ -73,6 +73,7 @@ $rad_dashboard_options_all = array(
 			'value'           => array(
 				'empty'            => __( 'Select One...', 'rapidology' ),
 				'mailchimp'        => __( 'MailChimp', 'rapidology' ),
+                'hubspot'           => __( 'HubSpot', 'rapidology' ),
 				'aweber'           => __( 'AWeber', 'rapidology' ),
 				'constant_contact' => __( 'Constant Contact', 'rapidology' ),
 				'campaign_monitor' => __( 'Campaign Monitor', 'rapidology' ),

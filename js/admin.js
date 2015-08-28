@@ -1012,9 +1012,9 @@
 				client_field = $( $container ).find( '#client_id_' + $service ),
 				password_field = $( $container ).find( '#password_' + $service ),
 				account_name = $( $container ).find( '#name_' + $service ),
-                public_api_key = $( $container ).find( '#public_api_key' + $service ),
-                private_api_key = $( $container ).find( '#private_api_key' + $service ),
-                account_id = $( $container ).find( '#account_id' + $service ),
+                public_api_key = $( $container ).find( '#api_key_' + $service ),
+                private_api_key = $( $container ).find( '#client_id_' + $service ),
+                account_id = $( $container ).find( '#username_' + $service ),
 				account_name_val = '' == $account_name ? $( $container ).find( '#name_' + $service ).val() : $account_name;
 
 			$( $container ).find( 'input' ).css( { 'border' : 'none' } );
