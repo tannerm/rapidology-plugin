@@ -3240,7 +3240,7 @@ class RAD_Rapidology extends RAD_Dashboard {
         $lists = new HubSpot_Lists_Rapidology($api_key);
         try {
             $error_message = 'success';
-            $some_lists = $lists->get_lists(array('offset'=>0));
+            $some_lists = $lists->get_static_lists(array('offset'=>0));
             $list_array = array();
             foreach ($some_lists->lists as $list) {
 
