@@ -125,6 +125,34 @@
 			}
 		}
 
+
+
+        function exit_trigger($current_popup_auto){
+
+            var page_id = $current_popup_auto.find( '.rad_rapidology_submit_subscription' ).data( 'page_id' ),
+                optin_id = $current_popup_auto.find( '.rad_rapidology_submit_subscription' ).data( 'optin_id' ),
+                list_id = $current_popup_auto.find( '.rad_rapidology_submit_subscription' ).data( 'list_id' );
+
+            if ( ! $current_popup_auto.hasClass( 'rad_rapidology_animated' ) ) {
+                var $cookies_expire_auto = $current_popup_auto.data( 'cookie_duration' ) ? $current_popup_auto.data( 'cookie_duration' ) : false,
+                    $already_subscribed = checkCookieValue( 'rad_rapidology_subscribed_to_' + optin_id + list_id, 'true' );
+
+                $( window).mouseleave(function() {
+                    if (( ( false !== $cookies_expire_auto && !checkCookieValue('etRapidologyCookie_' + optin_id, 'true') ) || false == $cookies_expire_auto ) && !$already_subscribed) {
+                        if (false !== $cookies_expire_auto) {
+
+                            return make_popup_visible($current_popup_auto, 0, $cookies_expire_auto, 'etRapidologyCookie_' + optin_id + '=true');
+
+                        } else {
+
+                            return make_popup_visible($current_popup_auto, 0, '', '');
+                                }
+                    }
+                });
+            }
+        }
+
+
 		function scroll_trigger( current_popup_bottom, is_bottom_trigger ) {
 			var triggered = 0,
 				page_id = current_popup_bottom.find( '.rad_rapidology_submit_subscription' ).data( 'page_id' ),
@@ -160,6 +188,7 @@
 			}
 		}
 
+
 		 if( $( '.rad_rapidology_auto_popup' ).length ) {
 			$( '.rad_rapidology_auto_popup:not(.rad_rapidology_visible)' ).each( function() {
 				var this_el = $( this ),
@@ -168,6 +197,8 @@
 			});
 		 }
 
+
+
 		if( $( '.rad_rapidology_trigger_bottom' ).length ) {
 
 			$( '.rad_rapidology_trigger_bottom:not(.rad_rapidology_visible)' ).each( function(){
@@ -175,6 +206,14 @@
 			});
 
 		}
+
+        if( $( '.rad_rapidology_before_exit' ).length ) {
+
+            $( '.rad_rapidology_before_exit:not(.rad_rapidology_visible)' ).each( function(){
+                exit_trigger( $( this ), false );
+            });
+
+        }
 
 		if( $( '.rad_rapidology_scroll' ).length ) {
 

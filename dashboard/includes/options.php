@@ -668,6 +668,13 @@ $rad_dashboard_options_all = array(
 			'default'         => false,
 			'validation_type' => 'boolean',
 		),
+        'exit_trigger' => array(
+            'type'            => 'checkbox',
+            'title'           => __( 'Trigger Before Leaving Page', 'rapidology' ),
+            'name'            => 'exit_trigger',
+            'default'         => false,
+            'validation_type' => 'boolean',
+        ),
 		'trigger_scroll' => array(
 			'type'            => 'checkbox',
 			'title'           => __( 'Trigger After Scrolling', 'rapidology' ),
@@ -1155,6 +1162,7 @@ $rad_assigned_options = array(
 			$rad_dashboard_options_all[ 'load_in' ][ 'idle_timeout' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'post_bottom' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'comment_trigger' ],
+            $rad_dashboard_options_all[ 'load_in' ][ 'exit_trigger' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'trigger_scroll' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'scroll_pos' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'purchase_trigger' ],

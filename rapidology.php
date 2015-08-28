@@ -5452,6 +5452,9 @@ STRING;
                         isset( $details['trigger_auto'] ) && true == $details['trigger_auto']
                             ? ' rad_rapidology_auto_popup'
                             : '',
+                        isset( $details['exit_trigger'] ) && true == $details['exit_trigger']
+                            ? ' rad_rapidology_before_exit'
+                            : '',
                         isset( $details['comment_trigger'] ) && true == $details['comment_trigger']
                             ? ' rad_rapidology_after_comment'
                             : '',
