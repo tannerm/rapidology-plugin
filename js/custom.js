@@ -127,26 +127,26 @@
 
 
 
-        function exit_trigger($current_popup_auto){
+        function exit_trigger($current_popup_exit){
 
-            var page_id = $current_popup_auto.find( '.rad_rapidology_submit_subscription' ).data( 'page_id' ),
-                optin_id = $current_popup_auto.find( '.rad_rapidology_submit_subscription' ).data( 'optin_id' ),
-                list_id = $current_popup_auto.find( '.rad_rapidology_submit_subscription' ).data( 'list_id' );
+            var page_id = $current_popup_exit.find( '.rad_rapidology_submit_subscription' ).data( 'page_id' ),
+                optin_id = $current_popup_exit.find( '.rad_rapidology_submit_subscription' ).data( 'optin_id' ),
+                list_id = $current_popup_exit.find( '.rad_rapidology_submit_subscription' ).data( 'list_id' );
 
-            if ( ! $current_popup_auto.hasClass( 'rad_rapidology_animated' ) ) {
-                var $cookies_expire_auto = $current_popup_auto.data( 'cookie_duration' ) ? $current_popup_auto.data( 'cookie_duration' ) : false,
+            if ( ! $current_popup_exit.hasClass( 'rad_rapidology_animated' ) ) {
+                var $cookies_expire_auto = $current_popup_exit.data( 'cookie_duration' ) ? $current_popup_exit.data( 'cookie_duration' ) : false,
                     $already_subscribed = checkCookieValue( 'rad_rapidology_subscribed_to_' + optin_id + list_id, 'true' );
 
                 $( window).mouseleave(function() {
                     if (( ( false !== $cookies_expire_auto && !checkCookieValue('etRapidologyCookie_' + optin_id, 'true') ) || false == $cookies_expire_auto ) && !$already_subscribed) {
                         if (false !== $cookies_expire_auto) {
 
-                            return make_popup_visible($current_popup_auto, 0, $cookies_expire_auto, 'etRapidologyCookie_' + optin_id + '=true');
+                            return make_popup_visible($current_popup_exit, 0, $cookies_expire_auto, 'etRapidologyCookie_' + optin_id + '=true');
 
                         } else {
 
-                            return make_popup_visible($current_popup_auto, 0, '', '');
-                                }
+                            return make_popup_visible($current_popup_exit, 0, '', '');
+                        }
                     }
                 });
             }
