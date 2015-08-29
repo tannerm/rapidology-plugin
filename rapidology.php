@@ -5403,7 +5403,7 @@ STRING;
                     printf(
                         '<div class="rad_rapidology_flyin rad_rapidology_optin rad_rapidology_resize rad_rapidology_flyin_%6$s rad_rapidology_%5$s%17$s%1$s%2$s%18$s%19$s%20$s%22$s"%3$s%4$s%16$s%21$s>
 							<div class="rad_rapidology_form_container%7$s%8$s%9$s%10$s%12$s%13$s%14$s%15$s%23$s%24$s%25$s">
-								%26$s
+								%27$s
 								%11$s
 							</div>
 						</div>',
@@ -5515,10 +5515,10 @@ STRING;
                     }
 
                     printf(
-                        '<div class="rad_rapidology_popup rad_rapidology_optin rad_rapidology_resize rad_rapidology_%5$s%15$s%1$s%2$s%16$s%17$s%18$s%20$s"%3$s%4$s%14$s%19$s>
+                        '<div class="rad_rapidology_popup rad_rapidology_optin rad_rapidology_resize rad_rapidology_%5$s%15$s%21$s%1$s%2$s%16$s%17$s%18$s%20$s"%3$s%4$s%14$s%19$s>
 							<div class="rad_rapidology_form_container rad_rapidology_popup_container%6$s%7$s%8$s%9$s%11$s%12$s%13$s">
 								%10$s
-								%21$s
+								%22$s
 							</div>
 						</div>',
                         true == $details['post_bottom'] ? ' rad_rapidology_trigger_bottom' : '',
@@ -5565,6 +5565,10 @@ STRING;
                         ( isset( $details['hide_mobile_optin'] ) && true == $details['hide_mobile_optin'] )
                             ? ' rad_rapidology_hide_mobile_optin'
                             : '', //#20
+                        isset( $details['exit_trigger'] ) && true == $details['exit_trigger']
+                            ? ' rad_rapidology_before_exit'
+                            : '',#21
+
                         $this->get_power_button('popup')
                     );
                 }
