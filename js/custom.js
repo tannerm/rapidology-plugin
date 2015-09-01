@@ -137,7 +137,7 @@
                 var $cookies_expire_auto = $current_popup_exit.data( 'cookie_duration' ) ? $current_popup_exit.data( 'cookie_duration' ) : false,
                     $already_subscribed = checkCookieValue( 'rad_rapidology_subscribed_to_' + optin_id + list_id, 'true' );
 
-                $( window).mouseleave(function() {
+                $( document ).mouseleave(function() {
                     if (( ( false !== $cookies_expire_auto && !checkCookieValue('etRapidologyCookie_' + optin_id, 'true') ) || false == $cookies_expire_auto ) && !$already_subscribed) {
                         if (false !== $cookies_expire_auto) {
 
