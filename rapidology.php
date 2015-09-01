@@ -1,8 +1,8 @@
 <?php
 /*
- * Plugin Name: Rapidology
+ * Plugin Name: Rapidology By LeadPages
  * Plugin URI: http://www.rapidology.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
- * Version: 1.0
+ * Version: 0.8
  * Description: 100% Free List Building & Popup Plugin...With Over 100 Responsive Templates & 6 Different Display Types For Growing Your Email Newsletter
  * Author: Rapidology
  * Author URI: http://www.rapidology.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
@@ -24,8 +24,6 @@ define( 'RAD_RAPIDOLOGY_PLUGIN_URI', plugins_url('', __FILE__) );
 if ( ! class_exists( 'RAD_Dashboard' ) ) {
     require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'dashboard/dashboard.php' );
 }
-
-
 
 
 class RAD_Rapidology extends RAD_Dashboard {
@@ -3281,6 +3279,7 @@ class RAD_Rapidology extends RAD_Dashboard {
         //see if contact exists
         $contact_exists = false;
         $contact_id = '';
+        $error_message = '';
 
         $contactByEmail = $contacts->get_contact_by_email($email);
 
@@ -3303,7 +3302,7 @@ class RAD_Rapidology extends RAD_Dashboard {
         $added_contacts = $lists->add_contacts_to_list($contacts_to_add,$list_id);
         $response = json_decode($added_contacts);
         
-        if(empty($response->updated)){
+        if(!empty($response->updated)){
             $error_message = 'success';
         }else{
             $error_message = 'Email address already exists in list';
