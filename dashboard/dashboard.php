@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define('RAD_PLUGIN_IMAGE_DIR', plugins_url().'/rapidology-by-leadpages/images');
 define( 'RAD_DASHBOARD_DIR', trailingslashit( dirname(__FILE__) ) );
 define( 'RAD_DASHBOARD_PLUGIN_URI', plugins_url( '', __FILE__ ) );
+define('IS_WP_REPO', TRUE);
 
 class RAD_Dashboard {
 	var $class_version = '2.0.0';
@@ -628,7 +629,7 @@ class RAD_Dashboard {
 		// activate screen if not activated
 		$activated = get_option('rad_rapidology_activated');
 
-		if ($activated !== 'rapidology_activated') {
+		if ($activated !== 'rapidology_activated' && IS_WP_REPO === TRUE) {
 			echo '
 
 	<div class="rad_act_scr rad_act_scr_mode_get_code">
