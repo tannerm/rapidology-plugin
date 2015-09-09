@@ -708,9 +708,9 @@
 .rad_power_box_mode_flyin,
 .rad_power_box_mode_widget,
 .rad_power_box_mode_inline {
-	background-color: rgba(0,0,0,0.35);
+	/*background-color: rgba(0,0,0,0.8);*/
 	width: 242px !important;
-	height: 42px !important;
+	height: 22px !important;
 	display: inline-block !important;
 }
 .rad_power_box_mode_widget,
@@ -719,19 +719,17 @@
 	border-bottom-left-radius: 10px !important;
 }
 .rad_power_box_mode_flyin {
-	border-top-right-radius: 10px !important;
-	border-top-left-radius: 10px !important;
+	/*border-top-right-radius: 10px !important;
+	border-top-left-radius: 10px !important;*/
 }
 .rad_power_box_mode_inline {
 	float: right;
 }
-.rad_power_box_mode_popup {
 
-}
 .rad_power a {
 	font-family: "Open Sans", Helvetica, Arial, Lucida, sans-serif !important;
-    color: #ffffff !important;
-    font-size: 16px !important;
+    /*color: #ffffff !important;*/
+    font-size: 8px !important;
     font-weight: bold !important;
     text-shadow: 0 0 5px rgba(0,0,0,0.1) !important;
     line-height: 40px !important;
@@ -750,23 +748,41 @@
 	font-weight: normal;
 	font-style: normal;
 }
+
+
 .rad_power a .rad_power_text {
 	font-style: italic !important;
 	text-decoration: underline !important;
 	font-family: "Open Sans", Helvetica, Arial, Lucida, sans-serif !important;
-    color: #ffffff !important;
-    font-size: 16px !important;
+
+    font-size: 8px ;
     font-weight: 800 !important;
-    color: #ffffff !important;
+    /*color: #ffffff !important;*/
 	line-height: 40px !important;
 }
+
+.rad_power_box_mode_popup a, .rad_power_text_popup  {
+    color: #ffffff !important;
+    font-size:14px !important;
+}
+.rad_power_box_mode_flyin a, .rad_power_text_flyin  {
+    color:#fff;
+    font-size:10px !important;
+    vertical-align: top !important;
+}
+
 .rad_power a .rad_power_logo:after {
 	font-family: 'rapidology-cirlogo' !important;
 	content:"\e601" !important;
-	font-size: 30px !important;
+	font-size: 20px !important;
 	margin-right: 5px;
+    margin-left:5px;
 	line-height: 35px !important;
     vertical-align: middle !important;
+}
+
+.rad_power_box_mode_flyin a .rad_power_logo:after{
+    vertical-align: top !important;
 }
 
 .rad_power a:active,
@@ -782,8 +798,17 @@
     margin-right: 20px !important;
 }
 .rad_power_mode_flyin {
+    line-height: 10px;
     position: absolute;
-	margin-top: -40px !important;
+	margin-top: -30px !important;
+    background-color: rgba(0, 0, 0, 0.2);
+    width:100%;
+}
+
+.tab_power{
+    height: 30px !important;
+    display: inline-block;
+    vertical-align: top !important;
 }
 .rad_power_mode_widget {
 

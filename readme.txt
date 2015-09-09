@@ -1,11 +1,10 @@
-
 === Rapidology - by LeadPages ===
 Plugin Name:  Rapidology - by LeadPages
 Contributors: LeadPages
 Tags: wp popup, wordpress popup plugin, wordpress subscription plugin, responsive opt-in subscription plugin, free optinmonster alternative, list builder, sumome alternative, leadpages, bloom plugin, how to increase email list, email form, scroll box, newsletter, inbound marketing, mailing list, mail chimp, aweber, infusionsoft, campaign monitor, constant contact, mad mimi, iContact, GetResponse, MailPoet, feedblitz, sendinblue, ontraport, landing page, light box, email list building, subscribers, subscription
-Requires at least: 3.0.1
+Requires at least: 3.5
 Tested up to: 4.3
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,7 +97,18 @@ Rapidology’s import/export function allows you to easily export any opt-in for
 8.  Import and Export your opt in forms.
 
 == Changelog ==
-*	1.0 release
+**1.1** 09/09/2015
+*    Added Emma integration
+*    Added Hubspot intergration
+*    Added 10 new predefined templates
+*    Upgraded all images used in templates / removed all old images
+*    Fixed issue with Infusionsoft integration to optin contacts in automaticlly.
+*	 Added a check for screen size for scroll intent. If screen size is greater than or equal to document size(which means you can not scroll) the optin will popup automaticlly after 5 seconds.
+
+**1.0**
+*	release
+
+
 
 == Upgrade Notice ==
 

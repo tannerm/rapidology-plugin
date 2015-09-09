@@ -8,3 +8,18 @@
 /*************************************************************************/
 
 LeadPages fixed widget constructor call to be WordPress 4.3 complaint.
+
+
+/*************************************************************************/
+/*************************************************************************/
+
+   Additional OpenSource projects used in development
+   http://www.gnu.org/prep/maintain/maintain.html#Recording-Contributors
+	*	jquery uniform | MIT License - Javascript that makes forms look the same in all browsers.
+	*	TinyMCE | LGPL 2.1 - Javascript wysiwyg text editor
+	*	Mailchimp php wrapper | MIT - https://github.com/drewm/mailchimp-api/blob/master/LICENSE
+	*	Getresponse-php-wrapper | @copyright Copyright (c) 2010 Assembly Studios
+	*	haPiHP https://github.com/HubSpot/haPiHP/wiki/haPiHP](https://github.com/HubSpot/haPiHP/wiki/haPiHP
+	*	myemma/EmmaPHP wrapper https://github.com/myemma/EmmaPHP
+/*************************************************************************/
+/*************************************************************************/

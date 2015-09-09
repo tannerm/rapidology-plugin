@@ -73,6 +73,7 @@ $rad_dashboard_options_all = array(
 			'value'           => array(
 				'empty'            => __( 'Select One...', 'rapidology' ),
 				'mailchimp'        => __( 'MailChimp', 'rapidology' ),
+                'hubspot'           => __( 'HubSpot', 'rapidology' ),
 				'aweber'           => __( 'AWeber', 'rapidology' ),
 				'constant_contact' => __( 'Constant Contact', 'rapidology' ),
 				'campaign_monitor' => __( 'Campaign Monitor', 'rapidology' ),
@@ -84,6 +85,7 @@ $rad_dashboard_options_all = array(
 				'feedblitz'        => __( 'Feedblitz', 'rapidology' ),
 				'ontraport'        => __( 'Ontraport', 'rapidology' ),
 				'infusionsoft'     => __( 'Infusionsoft', 'rapidology' ),
+                'emma'     => __( 'Emma', 'rapidology' ),
 				'custom_html'      => __( 'Custom HTML Form', 'rapidology' ) ),
 			'default'         => 'empty',
 			'conditional'     => 'mailchimp_account#aweber_account#constant_contact_account#custom_html#display_name#name_fields',
@@ -666,6 +668,13 @@ $rad_dashboard_options_all = array(
 			'default'         => false,
 			'validation_type' => 'boolean',
 		),
+        'exit_trigger' => array(
+            'type'            => 'checkbox',
+            'title'           => __( 'Trigger Before Leaving Page', 'rapidology' ),
+            'name'            => 'exit_trigger',
+            'default'         => false,
+            'validation_type' => 'boolean',
+        ),
 		'trigger_scroll' => array(
 			'type'            => 'checkbox',
 			'title'           => __( 'Trigger After Scrolling', 'rapidology' ),
@@ -1153,6 +1162,7 @@ $rad_assigned_options = array(
 			$rad_dashboard_options_all[ 'load_in' ][ 'idle_timeout' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'post_bottom' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'comment_trigger' ],
+            $rad_dashboard_options_all[ 'load_in' ][ 'exit_trigger' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'trigger_scroll' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'scroll_pos' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'purchase_trigger' ],

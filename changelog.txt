@@ -1,3 +1,9 @@
-
-version 1.0.1 ( updated 07-01-2015 )
+version 1.0
 - Initial Release.
+== Changelog ==
+**1.1**
+*    Added Emma integration
+*    Added Hubspot intergration
+*    Added 10 new predefined templates
+*    Upgraded all images used in templates / removed all old images
+*    Fixed issue with Infusionsoft integration to optin contacts in automaticlly.
