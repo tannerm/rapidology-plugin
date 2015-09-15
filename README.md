@@ -1,4 +1,3 @@
-~Current Version:1.1~
 **100% Free List Building & Popup Plugin...With Over 100 Responsive Templates & 6 Different Display Types For Growing Your Email Newsletter**
 
 **Description** 
