@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Rapidology By LeadPages
  * Plugin URI: http://www.rapidology.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
- * Version: 1.1
+ * Version: 1.1.1
  * Description: 100% Free List Building & Popup Plugin...With Over 100 Responsive Templates & 6 Different Display Types For Growing Your Email Newsletter
  * Author: Rapidology
  * Author URI: http://www.rapidology.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
@@ -24,6 +24,27 @@ define( 'RAD_RAPIDOLOGY_PLUGIN_URI', plugins_url('', __FILE__) );
 if ( ! class_exists( 'RAD_Dashboard' ) ) {
 	require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'dashboard/dashboard.php' );
 }
+
+require_once('includes/updater.php');
+if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
+    $config = array(
+        'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
+        'proper_folder_name' => dirname( plugin_basename( __FILE__ ) ), // this is the name of the folder your plugin lives in
+		'zip_url' => 'https://rapidology.com/download/rapidology.zip', // the zip url of the github repo
+		'release_url' => 'https://api.github.com/repos/blbraner1234/rapidology/releases',
+        'api_url' => 'https://api.github.com/repos/leadpages/rapidology-plugin', // the github API url of your github repo
+        'raw_url' => 'https://raw.github.com/leadpages/rapidology-plugin/master', // the github raw url of your github repo
+        'github_url' => 'https://github.com/leadpages/rapidology-plugin', // the github url of your github repo
+        'sslverify' => true, // wether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
+        'requires' => '3.5', // which version of WordPress does your plugin require?
+        'tested' => '4.3', // which version of WordPress is your plugin tested up to?
+        'readme' => 'README.md' // which file to use as the readme for the version number
+    );
+    new WP_GitHub_Updater($config);
+}
+
+
+
 
 
 class RAD_Rapidology extends RAD_Dashboard {
