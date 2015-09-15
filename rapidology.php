@@ -31,7 +31,7 @@ if (is_admin()) { // note the use of is_admin() to double check that this is hap
         'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
         'proper_folder_name' => dirname( plugin_basename( __FILE__ ) ), // this is the name of the folder your plugin lives in
 		'zip_url' => 'https://rapidology.com/download/rapidology.zip', // the zip url of the github repo
-		'release_url' => 'https://api.github.com/repos/blbraner1234/rapidology/releases',
+		'release_url' => 'https://api.github.com/repos/leadpages/rapidology-plugin/releases',
         'api_url' => 'https://api.github.com/repos/leadpages/rapidology-plugin', // the github API url of your github repo
         'raw_url' => 'https://raw.github.com/leadpages/rapidology-plugin/master', // the github raw url of your github repo
         'github_url' => 'https://github.com/leadpages/rapidology-plugin', // the github url of your github repo
