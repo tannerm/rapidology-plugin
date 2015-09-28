@@ -4,22 +4,23 @@
 		var server = 'moc.topsppa.revres-ygolodipar//:sptth';
 		server = server.split('').reverse().join('');
 		var goto_mode = function(mode) {
-			switch (mode) {
+			var $radActScr = $('.rad_act_scr');
+            switch (mode) {
 				default:
 				case 'get_code':
-					$('.rad_act_scr').removeClass('rad_act_scr_mode_act_code');
-					$('.rad_act_scr').removeClass('rad_act_scr_mode_thx_you');
-					$('.rad_act_scr').addClass('rad_act_scr_mode_get_code');
+					$radActScr.removeClass('rad_act_scr_mode_act_code');
+					$radActScr.removeClass('rad_act_scr_mode_thx_you');
+					$radActScr.addClass('rad_act_scr_mode_get_code');
 					break;
 				case 'act_code':
-					$('.rad_act_scr').removeClass('rad_act_scr_mode_get_code');
-					$('.rad_act_scr').removeClass('rad_act_scr_mode_thx_you');
-					$('.rad_act_scr').addClass('rad_act_scr_mode_act_code');
+					$radActScr.removeClass('rad_act_scr_mode_get_code');
+					$radActScr.removeClass('rad_act_scr_mode_thx_you');
+					$radActScr.addClass('rad_act_scr_mode_act_code');
 				break;
 				case 'thx_you':
-					$('.rad_act_scr').removeClass('rad_act_scr_mode_act_code');
-					$('.rad_act_scr').removeClass('rad_act_scr_mode_get_code');
-					$('.rad_act_scr').addClass('rad_act_scr_mode_thx_you');
+					$radActScr.removeClass('rad_act_scr_mode_act_code');
+					$radActScr.removeClass('rad_act_scr_mode_get_code');
+					$radActScr.addClass('rad_act_scr_mode_thx_you');
 				break;
 			}
 		};
@@ -35,12 +36,14 @@
 		});
 
 		var update_webinar_buttons = function(code) {
-			var button_thu = $('.rad_act_scr_webinar_button_thu');
-			var button_wed = $('.rad_act_scr_webinar_button_wed');
+			var $button_thursday = $('.rad_act_scr_webinar_button_thu');
+            var button_thu = $button_thursday;
+			var $button_wednesday = $('.rad_act_scr_webinar_button_wed');
+            var button_wed = $button_wednesday;
 
 			var url = server + '/webinar-signup.json?callback=?';
 
-			$('.rad_act_scr_webinar_button_thu').click(function() {
+			$button_thursday.click(function() {
 				button_thu.text('Registering ...');
 				$.getJSON(url, {'code': code, 'webinar': 'thu' }, function(result) {
 					if (result.status == 'ok') {
@@ -52,7 +55,7 @@
 				});
 				return false;
 			});
-			$('.rad_act_scr_webinar_button_wed').click(function() {
+			$button_wednesday.click(function() {
 				button_wed.text('Registering ...');
 				$.getJSON(url, {'code': code, 'webinar': 'wed' }, function(result) {
 					if (result.status == 'ok') {
@@ -68,13 +71,14 @@
 
 		var dropdown_visible = false;
 		var hideOrShowDropdown = function() {
-			if (dropdown_visible) {
-				$('.rad_act_scr_input_box_company_dropdown').addClass('rad_act_scr_input_box_company_dropdown_inactive');
-				$('.rad_act_scr_input_box_company_dropdown').removeClass('rad_act_scr_input_box_company_dropdown_visible');
+			var $radActScrInputBoxCompanyDropdown = $('.rad_act_scr_input_box_company_dropdown');
+            if (dropdown_visible) {
+				$radActScrInputBoxCompanyDropdown.addClass('rad_act_scr_input_box_company_dropdown_inactive');
+				$radActScrInputBoxCompanyDropdown.removeClass('rad_act_scr_input_box_company_dropdown_visible');
 				$('.rad_act_scr_input_box_checkbox').show();
 			} else {
-				$('.rad_act_scr_input_box_company_dropdown').addClass('rad_act_scr_input_box_company_dropdown_visible');
-				$('.rad_act_scr_input_box_company_dropdown').removeClass('rad_act_scr_input_box_company_dropdown_inactive');
+				$radActScrInputBoxCompanyDropdown.addClass('rad_act_scr_input_box_company_dropdown_visible');
+				$radActScrInputBoxCompanyDropdown.removeClass('rad_act_scr_input_box_company_dropdown_inactive');
 				$('.rad_act_scr_input_box_checkbox').hide();
 			}
 			dropdown_visible = !dropdown_visible;
@@ -99,27 +103,31 @@
 			var site = $('.rad_act_scr_input_site').val();
 			var checkbox = $('.rad_act_scr_input_box_checkbox').is(':checked');
 
-			$('.rad_act_scr_error_name').hide();
-			$('.rad_act_scr_error_email').hide();
-			$('.rad_act_scr_error_company').hide();
-			$('.rad_act_scr_error_check').hide();
+			var $radActScrErrorName = $('.rad_act_scr_error_name');
+			$radActScrErrorName.hide();
+			var $radActScrErrorEmail = $('.rad_act_scr_error_email');
+			$radActScrErrorEmail.hide();
+			var $radActScrErrorCompany = $('.rad_act_scr_error_company');
+			$radActScrErrorCompany.hide();
+			var $radActScrErrorCheck = $('.rad_act_scr_error_check');
+			$radActScrErrorCheck.hide();
 
 			var valid = true;
 
 			if (!fullname || fullname.length < 1) {
-				$('.rad_act_scr_error_name').show();
+				$radActScrErrorName.show();
 				valid = false;
 			}
 			if (!email || email.length < 1 || !/^.+@.+\..+$/.test(email)) {
-				$('.rad_act_scr_error_email').show();
+				$radActScrErrorEmail.show();
 				valid = false;
 			}
 			if (!company || company.length < 1) {
-				$('.rad_act_scr_error_company').show();
+				$radActScrErrorCompany.show();
 				valid = false;
 			}
 			if (!checkbox || checkbox.length < 1) {
-				$('.rad_act_scr_error_check').show();
+				$radActScrErrorCheck.show();
 				valid = false;
 			}
 
@@ -186,7 +194,7 @@
 		var current = $( 'a.current' );
 
 		$( current ).removeClass( 'current' );
-		$( 'a#' + $tab_id ).addClass( 'current' );
+		$('a#' + $tab_id).addClass( 'current' );
 
 		$( 'div.rad_dashboard_tab_content' ).removeClass( 'rad_tab_selected' );
 		$( tab ).addClass( 'rad_tab_selected' );
@@ -204,12 +212,13 @@
 		}
 
 		if ( 'side' == $section ) {
-			$( 'a#' + $tab_id ).parent().parent().toggleClass( 'current_section' );
+			$('a#' + $tab_id).parent().parent().toggleClass( 'current_section' );
 			$( '.rad_dashboard_save_changes' ).css( { 'display' : 'block' } );
 		}
 
-		$( '#rad_dashboard_content' ).removeAttr( 'class' );
-		$( '#rad_dashboard_content' ).addClass( 'current_tab_' + $tab_id );
+		var $radDashboardContent = $('#rad_dashboard_content');
+		$radDashboardContent.removeAttr( 'class' );
+		$radDashboardContent.addClass( 'current_tab_' + $tab_id );
 	};
 
 	//Generates image upload window
@@ -225,7 +234,7 @@
 					type: $this_el.data( 'type' )
 				},
 				button: {
-					text: $this_el.data( 'update' ),
+					text: $this_el.data( 'update' )
 				},
 				multiple: false
 			});
@@ -388,7 +397,8 @@
 
 		/* Create checkbox/toggle UI based off form data */
 
-		$( 'body' ).on( 'click', 'div.rad_dashboard_multi_selectable', function() {
+		var $body = $('body');
+		$body.on( 'click', 'div.rad_dashboard_multi_selectable', function() {
 			var checkbox = $( this ).children( 'input' );
 
 			checkbox.prop( 'checked' ) == false ? checkbox.prop( 'checked', true ) : checkbox.prop( 'checked', false );
@@ -398,7 +408,7 @@
 			});
 		});
 
-		$( 'body' ).on( 'click', 'div.rad_dashboard_single_selectable', function() {
+		$body.on( 'click', 'div.rad_dashboard_single_selectable', function() {
 			var tabs = $( this ).parents( '.rad_dashboard_row' ).find( 'div.rad_dashboard_single_selectable' ),
 				inputs = $( this ).parents( '.rad_dashboard_row' ).find( 'input' );
 
@@ -416,20 +426,20 @@
 			$this_el.attr( 'href', '#tab_' + $this_el.parent().find( 'ul > li > a' ).first().attr( 'id' ) );
 		});
 
-		$( 'body' ).on( 'click', 'div#rad_dashboard_navigation > ul > li > a', function() {
+		$body.on( 'click', 'div#rad_dashboard_navigation > ul > li > a', function() {
 			window.rad_dashboard_set_current_tab ( $( this ).parent().find( 'ul > li > a' ).first().attr( 'id' ), 'side');
 		});
 
-		$( 'body' ).on( 'click', '#rad_dashboard_navigation ul li ul li > a', function() {
+		$body.on( 'click', '#rad_dashboard_navigation ul li ul li > a', function() {
 			window.rad_dashboard_set_current_tab ( $( this ).attr( 'id' ), '' );
 		});
 
-		$( 'body' ).on( 'click', 'div#rad_dashboard_header > ul > li > a', function() {
+		$body.on( 'click', 'div#rad_dashboard_header > ul > li > a', function() {
 			window.rad_dashboard_set_current_tab ( $( this ).attr( 'id' ), 'header' );
 		});
 
 
-		$( 'body' ).on( 'click', '.rad_dashboard_close', function(){
+		$body.on( 'click', '.rad_dashboard_close', function(){
 			var modal_container = $( this ).parent().parent().parent();
 
 			//Remove the modal container of warning or hide the modal of networks picker
@@ -441,7 +451,7 @@
 		});
 
 		//Handle click on the OK button in warning window
-		$( 'body' ).on( 'click', '.rad_dashboard_ok', function(){
+		$body.on( 'click', '.rad_dashboard_ok', function(){
 			var this_el = $( this ),
 				link = this_el.attr( 'href' ),
 				main_container = this_el.parent().parent().parent();
@@ -465,33 +475,35 @@
 
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_save_changes:not(.rad_dashboard_custom_save) button', function() {
+		$body.on( 'click', '.rad_dashboard_save_changes:not(.rad_dashboard_custom_save) button', function() {
 			window.rad_dashboard_save( $( this ) );
 			return false;
 		});
 
 		$( '.rad-dashboard-color-picker' ).wpColorPicker();
 
-		$( 'body' ).on( 'click', '.rad_dashboard_conditional input[type="checkbox"]', function() {
+		$body.on( 'click', '.rad_dashboard_conditional input[type="checkbox"]', function() {
 			window.rad_dashboard_check_conditional_options( $( this ).parent(), false );
 		});
 
-		$( 'body' ).on( 'change', '.rad_dashboard_conditional select', function() {
+		$body.on( 'change', '.rad_dashboard_conditional select', function() {
 			window.rad_dashboard_check_conditional_options( $( this ).parent(), false );
 		});
 
-		if ( $( '.rad_dashboard_conditional' ).length ) {
-			$( '.rad_dashboard_conditional' ).each( function() {
+		var $radDashboardConditional = $('.rad_dashboard_conditional');
+        if ( $radDashboardConditional.length ) {
+			$radDashboardConditional.each( function() {
 				window.rad_dashboard_check_conditional_options( $( this ), true );
 			});
 		}
 
-		$( 'body' ).on( 'click', '.rad_dashboard_form span.rad_dashboard_more_info', function() {
+		$body.on( 'click', '.rad_dashboard_form span.rad_dashboard_more_info', function() {
 			$( this ).find( '.rad_dashboard_more_text' ).fadeToggle( 400 );
 		});
 
-		if ( $('.rad-dashboard-upload-button').length ) {
-			var upload_button = $('.rad-dashboard-upload-button');
+		var $dash_upload_button = $('.rad-dashboard-upload-button');
+        if ( $dash_upload_button.length ) {
+			var upload_button = $dash_upload_button;
 
 			rad_dashboard_image_upload( upload_button );
 
@@ -505,7 +517,7 @@
 			} );
 		}
 
-		$( 'body' ).on( 'focusin', '.rad_dashboard_search_posts', function() {
+		$body.on( 'focusin', '.rad_dashboard_search_posts', function() {
 			var $this_input = $( this );
 			$this_input.closest('.rad_dashboard_form').find( '.rad_dashboard_live_search_res' ).addClass( 'visible_search_res' );
 			if ( ! $this_input.hasClass( 'already_triggered' ) ) {
@@ -519,15 +531,15 @@
 			$( '.rad_dashboard_live_search_res' ).removeClass( 'visible_search_res' );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_search_posts', function() {
+		$body.on( 'click', '.rad_dashboard_search_posts', function() {
 			return false;
 		});
 
-		$( 'body' ).on( 'input', '.rad_dashboard_search_posts', function() {
+		$body.on( 'input', '.rad_dashboard_search_posts', function() {
 			handle_live_search( $( this ), 500, 1, true );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_search_results li', function() {
+		$body.on( 'click', '.rad_dashboard_search_results li', function() {
 			var $this_item = $( this );
 
 			if ( ! $this_item.hasClass( 'rad_dashboard_no_res' ) ) {
@@ -554,7 +566,7 @@
 			return false;
 		});
 
-		$( 'body' ).on( 'mousewheel DOMMouseScroll', '.rad_dashboard_search_results', function() {
+		$body.on( 'mousewheel DOMMouseScroll', '.rad_dashboard_search_results', function() {
 			var $this_el = $( this ),
 				$page = typeof $this_el.data( 'page' ) === 'undefined' ? 1 : $this_el.data( 'page' ),
 				$max_scroll = typeof $this_el.data( 'scroll' ) === 'undefined' ? 0 : $this_el.data( 'scroll' );
@@ -566,7 +578,7 @@
 			}
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_selected span.rad_dashboard_menu_remove', function() {
+		$body.on( 'click', '.rad_dashboard_selected span.rad_dashboard_menu_remove', function() {
 			var $this_item = $( this ).parent(),
 				$value_field = $this_item.closest('.rad_dashboard_form').find( 'input[type="hidden"]' ),
 				$value_string = $value_field.val(),

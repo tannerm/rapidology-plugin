@@ -9,15 +9,16 @@
 			window.rad_dashboard_set_current_tab( 'rad_dashboard_tab_content_header_home', 'header' );
 			$( '#rad_dashboard_wrapper' ).addClass( 'rad_dashboard_hidden_nav' );
 		} else {
-			var link_to_highlight = $( '#toplevel_page_rad_rapidology_options' ).find('a[href$="#tab_' + tab_link + '"]');
+			var $toplevelPageRadRapidologyOptions = $('#toplevel_page_rad_rapidology_options');
+            var link_to_highlight = $toplevelPageRadRapidologyOptions.find('a[href$="#tab_' + tab_link + '"]');
 			window.rad_dashboard_set_current_tab( tab_link, 'header' );
 
-			$( '#toplevel_page_rad_rapidology_options ul li' ).removeClass( 'current' );
+			$toplevelPageRadRapidologyOptions.find('ul li' ).removeClass( 'current' );
 
 			if ( link_to_highlight.length ) {
 				link_to_highlight.parent().addClass( 'current' );
 			} else {
-				$( '#toplevel_page_rad_rapidology_options .wp-first-item' ).addClass( 'current' );
+				$toplevelPageRadRapidologyOptions.find('.wp-first-item' ).addClass( 'current' );
 			}
 
 			if ( 'rad_dashboard_tab_content_header_stats' === tab_link ) {
@@ -29,7 +30,8 @@
 		 * 1) Open appropriate tab in dashboard
 		 * 2) Highlihgt an appropriate link in the WP menu
 		 */
-		$( 'body' ).on( 'click', '#toplevel_page_rad_rapidology_options li a', function() {
+		var $body = $( 'body' );
+		$body.on( 'click', '#toplevel_page_rad_rapidology_options li a', function() {
 			var this_link = $( this ),
 				open_link = this_link.attr( 'href' ).split( '#tab_' )[1];
 			if ( typeof open_link !== 'undefined' ) {
@@ -42,7 +44,7 @@
 				$( '#rad_dashboard_wrapper' ).addClass( 'rad_dashboard_hidden_nav' );
 			}
 
-			$( '#toplevel_page_rad_rapidology_options ul li' ).removeClass( 'current' );
+			$( '#toplevel_page_rad_rapidology_options').find('ul li' ).removeClass( 'current' );
 			this_link.parent().addClass( 'current' );
 
 			return false;
@@ -52,26 +54,27 @@
 			$( '#rad_dashboard_wrapper' ).addClass( 'rad_dashboard_hidden_nav' );
 		}
 
-		$( 'body' ).on( 'click', '#rad_dashboard_header ul li a', function() {
-			var tab_link = $( this) .attr( 'href' ).split( '#tab_' )[1],
-				link_to_highlight = $( '#toplevel_page_rad_rapidology_options' ).find('a[href$="#tab_' + tab_link + '"]');
+		$body.on( 'click', '#rad_dashboard_header ul li a', function() {
+			var $page_rapidology_options = $('#toplevel_page_rad_rapidology_options');
+            var tab_link = $( this) .attr( 'href' ).split( '#tab_' )[1],
+				link_to_highlight = $page_rapidology_options.find('a[href$="#tab_' + tab_link + '"]');
 
 			$( '#rad_dashboard_wrapper' ).addClass( 'rad_dashboard_hidden_nav' );
 
 			//Highlight appropriate menu link in WP menu
-			$( '#toplevel_page_rad_rapidology_options ul li' ).removeClass( 'current' );
+			$page_rapidology_options.find('ul li' ).removeClass( 'current' );
 			if ( link_to_highlight.length ) {
 				link_to_highlight.parent().addClass( 'current' );
 			} else {
-				$( '#toplevel_page_rad_rapidology_options .wp-first-item' ).addClass( 'current' );
+				$page_rapidology_options.find('.wp-first-item' ).addClass( 'current' );
 			}
 		});
 
-		$( 'body' ).on( 'click', '#rad_dashboard_tab_content_header_home', function() {
+		$body.on( 'click', '#rad_dashboard_tab_content_header_home', function() {
 			reset_home_tab();
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_save_changes button', function() {
+		$body.on( 'click', '.rad_dashboard_save_changes button', function() {
 			var $provider = $( '.rad_dashboard_select_provider select' ).val(),
 				$list = $( '.rad_dashboard_select_list select' ).val();
 
@@ -84,7 +87,7 @@
 			return false;
 		});
 
-		$( 'body' ).on( 'click', '.rad_rapidology_save_inactive', function() {
+		$body.on( 'click', '.rad_rapidology_save_inactive', function() {
 			$( '#rad_dashboard_optin_status' ).val( 'inactive' );
 			rapidology_dashboard_save( $( '.rad_dashboard_save_changes button' ) );
 			$( '.rad_dashboard_warning' ).remove();
@@ -92,14 +95,14 @@
 			return false;
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_next_design button', function() {
+		$body.on( 'click', '.rad_dashboard_next_design button', function() {
 			window.rad_dashboard_set_current_tab( 'rad_dashboard_tab_content_optin_design', 'side' );
 			$( 'html, body' ).animate( { scrollTop :  0 }, 400 );
 
 			return false;
 		});
 
-		$( 'body' ).on( 'click', '.rad_rapidology_open_premade', function() {
+		$body.on( 'click', '.rad_rapidology_open_premade', function() {
 			window.rad_dashboard_set_current_tab( 'rad_dashboard_tab_content_optin_premade', 'side' );
 			$( '#rad_dashboard_tab_content_optin_design' ).addClass( 'current' );
 
@@ -124,7 +127,7 @@
 			}
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_next_customize button', function() {
+		$body.on( 'click', '.rad_dashboard_next_customize button', function() {
 
 			$( '.rad_dashboard_next_design button' ).removeClass( 'rad_rapidology_open_premade' );
 			$( '.rad_dashboard_tab_content_side_design a' ).removeClass( 'rad_rapidology_open_premade' );
@@ -144,12 +147,13 @@
 					if ( $.isPlainObject( data ) ) {
 						$( data ).each( function( i, val ) {
 							$.each( val, function( optin_name, optin_value ) {
-								switch( optin_name ) {
+								var $optin_name = $('.' + optin_name);
+                                switch( optin_name ) {
 									case 'rad_dashboard_optin_title' :
 									case 'rad_dashboard_optin_message' :
 									case 'rad_dashboard_footer_text' :
 									case 'rad_dashboard_success_text' :
-										$( '.' + optin_name ).text( optin_value );
+										$optin_name.text( optin_value );
 										break;
 
 									case 'rad_dashboard_border_orientation' :
@@ -195,25 +199,25 @@
 									case 'rad_dashboard_last_name_text' :
 									case 'rad_dashboard_email_text' :
 									case 'rad_dashboard_button_text' :
-										$( '.' + optin_name ).val( optin_value );
+										$optin_name.val( optin_value );
 										break;
 
 									case 'rad_dashboard_upload_image' :
-										$( '.' + optin_name ).find( '.rad-dashboard-upload-field' ).val( optin_value );
-										rad_dashboard_generate_preview_image( $( '.' + optin_name ).find( '.rad-dashboard-upload-field' ).siblings( '.rad-dashboard-upload-button' ) );
+										$optin_name.find( '.rad-dashboard-upload-field' ).val( optin_value );
+										rad_dashboard_generate_preview_image( $optin_name.find( '.rad-dashboard-upload-field' ).siblings( '.rad-dashboard-upload-button' ) );
 										break;
 
 									case 'rad_dashboard_optin_bg' :
 									case 'rad_dashboard_form_bg_color' :
 									case 'rad_dashboard_form_button_color' :
 									case 'rad_dashboard_border_color' :
-										$( '.' + optin_name ).find( '.rad-dashboard-color-picker' ).wpColorPicker( 'color', optin_value );
+										$optin_name.find( '.rad-dashboard-color-picker' ).wpColorPicker( 'color', optin_value );
 										break;
 
 									case 'rad_dashboard_border_style' :
 									case 'rad_dashboard_optin_edge' :
-										var tabs = $( '.' + optin_name ).find( 'div.rad_dashboard_single_selectable' ),
-											inputs = $( '.' + optin_name ).find( 'input' );
+										var tabs = $optin_name.find( 'div.rad_dashboard_single_selectable' ),
+											inputs = $optin_name.find( 'input' );
 
 										tabs.removeClass( 'rad_dashboard_selected' );
 										inputs.prop( 'checked', false );
@@ -234,47 +238,47 @@
 			return false;
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_next_display button', function() {
+		$body.on( 'click', '.rad_dashboard_next_display button', function() {
 			window.rad_dashboard_set_current_tab( 'rad_dashboard_tab_content_optin_display', 'side' );
 			$( 'html, body' ).animate( { scrollTop :  0 }, 400 );
 
 			return false;
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_new_optin button', function() {
+		$body.on( 'click', '.rad_dashboard_new_optin button', function() {
 			$( '.rad_dashboard_optin_select' ).addClass( 'rad_dashboard_visible' );
 			$( this ).addClass( 'clicked_button' );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_optin_add', function() {
+		$body.on( 'click', '.rad_dashboard_optin_add', function() {
 			$( '.rad_dashboard_new_optin button' ).addClass( 'rad_rapidology_loading' );
 			reset_options( $( this ), '', true, false, '' );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_new_account_row button', function() {
+		$body.on( 'click', '.rad_dashboard_new_account_row button', function() {
 			window.rad_dashboard_set_current_tab( 'rad_dashboard_tab_content_header_edit_account', 'header' );
 			display_edit_account_tab( false, '', '' );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_icon_edit_account', function() {
+		$body.on( 'click', '.rad_dashboard_icon_edit_account', function() {
 			var this_el = $( this );
 
 			window.rad_dashboard_set_current_tab( 'rad_dashboard_tab_content_header_edit_account', 'header' );
 			display_edit_account_tab( true, this_el.data( 'service' ), this_el.data( 'account_name' ) );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_icon_edit', function() {
+		$body.on( 'click', '.rad_dashboard_icon_edit', function() {
 			var $this_el = $( this ),
 				optin_id = $this_el.parent().parent().data( 'optin_id' ),
 				parent_id = typeof $this_el.data( 'parent_id' ) !== 'undefined' ? $this_el.data( 'parent_id' ) : '',
-				is_child = '' != parent_id ? true : false;
+				is_child = '' != parent_id;
 
 			$this_el.find( '.spinner' ).addClass( 'rad_dashboard_spinner_visible' );
 
 			reset_options( $this_el, optin_id, false, is_child, parent_id );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_icon_delete:not(.clicked_button)', function() {
+		$body.on( 'click', '.rad_dashboard_icon_delete:not(.clicked_button)', function() {
 			var this_el = $( this );
 
 			$( '.rad_dashboard_icon_delete' ).removeClass( 'clicked_button' );
@@ -285,13 +289,13 @@
 			this_el.find( '.rad_dashboard_confirmation' ).fadeToggle();
 		});
 
-		$( 'body' ).on( 'click', '.rad_rapidology_clear_stats', function() {
+		$body.on( 'click', '.rad_rapidology_clear_stats', function() {
 			var this_el = $( this );
 
 			this_el.parent().find( '.rad_dashboard_confirmation' ).fadeToggle();
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_confirm_stats', function() {
+		$body.on( 'click', '.rad_dashboard_confirm_stats', function() {
 			$( this ).parent().hide();
 
 			$.ajax({
@@ -299,7 +303,7 @@
 				url: rapidology_settings.ajaxurl,
 				data: {
 					action : 'rapidology_clear_stats',
-					rapidology_stats_nonce : rapidology_settings.rapidology_stats,
+					rapidology_stats_nonce : rapidology_settings.rapidology_stats
 				},
 				beforeSend: function( data ){
 					$( '.rad_rapidology_clear_stats' ).addClass( 'rad_rapidology_loading' );
@@ -311,7 +315,7 @@
 			});
 		});
 
-		$( 'body' ).on( 'click', '.rad_rapidology_refresh_stats', function() {
+		$body.on( 'click', '.rad_rapidology_refresh_stats', function() {
 			var $this = $(this),
 				button_width = $this.width();
 
@@ -319,14 +323,14 @@
 			refresh_stats_tab( true );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_confirm_delete', function() {
+		$body.on( 'click', '.rad_dashboard_confirm_delete', function() {
 
 			var this_el = $( this ),
 				optin_id = this_el.data( 'optin_id' ),
 				need_refresh = false,
 				table_row = this_el.parent().parent().parent().parent(),
 				parent_id = typeof this_el.data( 'parent_id' ) !== 'undefined' ? this_el.data( 'parent_id' ) : '',
-				is_account = true == this_el.data( 'remove_account' ) ? true : false,
+				is_account = true == this_el.data('remove_account'),
 				service = table_row.data( 'service' );
 
 			//if we're about to remove the last item in table, then we need to refresh page after removal.
@@ -339,24 +343,24 @@
 			remove_optin( optin_id, need_refresh, is_account, service, parent_id );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_cancel_delete', function() {
+		$body.on( 'click', '.rad_dashboard_cancel_delete', function() {
 			$( this ).parent().hide();
 			$( this ).parent().parent().removeClass( 'clicked_button' );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_optin_select .rad_dashboard_close_button', function() {
+		$body.on( 'click', '.rad_dashboard_optin_select .rad_dashboard_close_button', function() {
 			var this_select = $( this ).parent();
 
 			this_select.removeClass( 'rad_dashboard_visible' ).addClass( 'rad_dashboard_hidden' );
 			this_select.parent().find( '.clicked_button').removeClass( 'clicked_button' );
 		});
 
-		$( 'body' ).on( 'click', '.clicked_button', function() {
+		$body.on( 'click', '.clicked_button', function() {
 			return false;
 		});
 
 
-		$( 'body' ).on( 'click', '.rad_dashboard_icon_duplicate:not(.clicked_button)', function() {
+		$body.on( 'click', '.rad_dashboard_icon_duplicate:not(.clicked_button)', function() {
 			var this_el = $( this ),
 				parent = this_el.parent().parent();
 
@@ -374,7 +378,7 @@
 			}, 100 );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_optins_item .rad_dashboard_optin_select .rad_dashboard_close_button', function() {
+		$body.on( 'click', '.rad_dashboard_optins_item .rad_dashboard_optin_select .rad_dashboard_close_button', function() {
 			setTimeout( function() {
 				$( '.rad_dashboard_optins_item .rad_dashboard_optin_select' ).remove();
 			}, 800 );
@@ -382,7 +386,7 @@
 			$( '.rad_dashboard_icon_duplicate' ).removeClass( 'clicked_button' );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_optin_duplicate', function() {
+		$body.on( 'click', '.rad_dashboard_optin_duplicate', function() {
 			var this_el = $( this ),
 				form_id = this_el.parent().data( 'optin_id' ),
 				form_type = this_el.data( 'type' );
@@ -393,7 +397,7 @@
 			duplicate_optin( form_id, form_type );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_toggle_status', function() {
+		$body.on( 'click', '.rad_dashboard_toggle_status', function() {
 			var this_el = $( this ),
 				optin_id = this_el.parent().parent().data( 'optin_id' ),
 				new_status = this_el.data( 'toggle_to' );
@@ -419,10 +423,9 @@
 			}
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_icon_shortcode, .rad_dashboard_next_shortcode button', function() {
+		$body.on( 'click', '.rad_dashboard_icon_shortcode, .rad_dashboard_next_shortcode button', function() {
 			var this_el = $( this ),
 				optin_id = typeof this_el.data( 'optin_id' ) !== 'undefined' ? this_el.data( 'optin_id' ) : this_el.parent().parent().data( 'optin_id' ),
-				message_text = '',
 				shortcode_text = '',
 				shortcode_type = this_el.data( 'type' );
 
@@ -432,7 +435,7 @@
 				shortcode_text = '[rad_rapidology_inline optin_id="' + optin_id + '"]';
 			}
 
-			message_text = rapidology_settings.shortcode_text + shortcode_text;
+			var message_text = rapidology_settings.shortcode_text + shortcode_text;
 
 			window.rad_dashboard_generate_warning( message_text, '#', '', '', '', '' );
 
@@ -440,13 +443,13 @@
 		});
 
 		//disable links on side nav to avoid confusion during page refresh
-		$( 'body' ).on( 'click', '.rad_dashboard_optin_nav', function(){
+		$body.on( 'click', '.rad_dashboard_optin_nav', function(){
 			return false;
 		} );
 
-		$( 'body' ).on( 'change', '.rad_dashboard_select_account select', function() {
+		$body.on( 'change', '.rad_dashboard_select_account select', function() {
 			var this_el = $( this );
-				service = this_el.data( 'service' ),
+			var service = this_el.data( 'service' ),
 				account_name = this_el.val();
 			if ( 'add_new' == account_name ) {
 				display_actual_accounts( service, true, '' );
@@ -458,7 +461,7 @@
 		});
 
 
-		$( 'body' ).on( 'change', '.rad_dashboard_select_provider select', function() {
+		$body.on( 'change', '.rad_dashboard_select_provider select', function() {
 			var selected_provider = $( '.rad_dashboard_select_provider select' ).val(),
 				selected_account = 'empty';
 
@@ -471,14 +474,14 @@
 
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_new_account .authorize_service', function(){
+		$body.on( 'click', '.rad_dashboard_new_account .authorize_service', function(){
 			$( '.account_settings_fields' ).addClass( 'rad_visible_settings' );
 			$( this ).text( 'Authorize' );
 			$( this ).addClass('clicked_button');
 			return false;
 		});
 
-		$( 'body' ).on( 'click', '.authorize_service.clicked_button, .authorize_service.new_account_tab, .rad_dashboard_icon_update_lists', function(){
+		$body.on( 'click', '.authorize_service.clicked_button, .authorize_service.new_account_tab, .rad_dashboard_icon_update_lists', function(){
 			var this_el = $( this ),
 				on_form = this_el.hasClass( 'new_account_tab' ) ? false : true,
 				account_name = typeof this_el.data( 'account_name' ) !== 'undefined' ? this_el.data( 'account_name' ) : '',
@@ -487,12 +490,12 @@
 			authorize_network( this_el.data( 'service' ), this_el.parent(), on_form, account_name, account_exists );
 		});
 
-		$( 'body' ).on( 'change', '.rad_dashboard_select_provider_new select', function() {
+		$body.on( 'change', '.rad_dashboard_select_provider_new select', function() {
 			var selected = $( this ).val();
 				display_new_account_form( selected );
 		});
 
-		$( 'body' ).on( 'click', '.save_account_tab', function(){
+		$body.on( 'click', '.save_account_tab', function(){
 			var fields_container = $( '.rad_dashboard_new_account_fields' ),
 				service = $( '.rad_dashboard_tab_content_header_edit_account .rad_dashboard_select_provider_new select' ).val();
 
@@ -511,7 +514,7 @@
 			return false;
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_icon_abtest:not(.active_child_optins)', function(){
+		$body.on( 'click', '.rad_dashboard_icon_abtest:not(.active_child_optins)', function(){
 			var table_row = $( this ).parent().parent();
 			$( 'ul.rad_dashboard_temp_row' ).remove();
 			$( '.rad_dashboard_icon_abtest' ).removeClass( 'clicked_button' );
@@ -520,14 +523,14 @@
 			table_row.append('<ul class="rad_dashboard_temp_row"><li class="rad_dashboard_add_variant rad_dashboard_optins_item"><a href="#" class="rad_dashboard_add_var_button">Add variant</a></li></ul>');
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_add_var_button', function(){
+		$body.on( 'click', '.rad_dashboard_add_var_button', function(){
 			var optin_id = $( this ).parent().parent().parent().data( 'optin_id' );
 
 			add_variant( optin_id );
 			return false;
 		});
 
-		$( 'body' ).on( 'click', '.child_buttons_right a', function(){
+		$body.on( 'click', '.child_buttons_right a', function(){
 			var button = $( this ),
 				parent_id = button.data( 'parent_id' ),
 				action = '';
@@ -551,7 +554,7 @@
 			resize ( $( this ) );
 		});
 
-		$( 'body' ).on( 'mouseenter', '.rad_rapidology_graph .rad_rapidology_graph_bar', function(){
+		$body.on( 'mouseenter', '.rad_rapidology_graph .rad_rapidology_graph_bar', function(){
 			var $this_el = $( this ),
 				value = $this_el.attr( 'value' );
 
@@ -561,7 +564,7 @@
 			$( this ).find( 'div.rad_rapidology_tooltip' ).remove();
 		});
 
-		$( 'body' ).on( 'click', '.rad_rapidology_graph_button', function(){
+		$body.on( 'click', '.rad_rapidology_graph_button', function(){
 			var this_el = $( this ),
 				period = this_el.data( 'period' ),
 				list_id = $( '.rad_rapidology_graph_select_list' ).val();
@@ -576,7 +579,7 @@
 			return false;
 		});
 
-		$( 'body' ).on( 'change', '.rad_rapidology_graph_select_list', function(){
+		$body.on( 'change', '.rad_rapidology_graph_select_list', function(){
 			var this_el = $( this ),
 				period = $( 'a.rad_rapidology_graph_button.rad_rapidology_active_button' ).data( 'period' ),
 				list_id = this_el.val();
@@ -584,7 +587,7 @@
 				switch_graph( period, list_id, false );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_sort_button:not(.active_sorting)', function(){
+		$body.on( 'click', '.rad_dashboard_sort_button:not(.active_sorting)', function(){
 			var this_el = $( this ),
 				orderby = this_el.data( 'order_by' ),
 				table = this_el.parent().data( 'table' );
@@ -604,11 +607,11 @@
 			this_el.addClass( 'active_sorting' );
 		});
 
-		$( 'body' ).on( 'click', 'a#rad_dashboard_tab_content_header_stats:not(.current)', function(){
+		$body.on( 'click', 'a#rad_dashboard_tab_content_header_stats:not(.current)', function(){
 			refresh_stats_tab( false );
 		});
 
-		$( 'body' ).on( 'click', '.end_test_table .rad_dashboard_content_row', function(){
+		$body.on( 'click', '.end_test_table .rad_dashboard_content_row', function(){
 			var this_el = $( this ),
 				winner_id = this_el.data( 'optin_id' ),
 				parent_id = this_el.parent().data( 'parent_id' ),
@@ -631,11 +634,11 @@
 			});
 		});
 
-		$( 'body' ).on( 'click', '.display_on_section .display_on_checkboxes_everything label', function() {
+		$body.on( 'click', '.display_on_section .display_on_checkboxes_everything label', function() {
 			check_display_options( $( this ).parent(), false );
 		});
 
-		$( 'body' ).on( 'click', '.rad_rapidology_premade_item', function() {
+		$body.on( 'click', '.rad_rapidology_premade_item', function() {
 			var this_item = $( this );
 				$( '.rad_rapidology_premade_item' ).removeClass( 'rad_rapidology_layout_selected' );
 				this_item.addClass( 'rad_rapidology_layout_selected' );
@@ -643,7 +646,7 @@
 			$( '.rad_dashboard_next_customize button' ).data( 'selected_layout', this_item.data( 'layout' ) );
 		});
 
-		$( 'body' ).on( 'click', '.rad_dashboard_preview button', function() {
+		$body.on( 'click', '.rad_dashboard_preview button', function() {
 			if ( ! $( this ).hasClass( 'rapidology_preview_opened' ) ) {
 				tinyMCE.triggerSave();
 				var options_fromform = $( '.rad_rapidology #rad_dashboard_options' ).serialize();
@@ -660,8 +663,9 @@
 					success: function( data ){
 						var $head = $( 'head' );
 						$( '#wpwrap' ).append( data.popup_code );
-						define_popup_position( $( '.rad_rapidology_preview_popup' ), true );
-						display_image( $('.rad_rapidology_preview_popup') );
+						var $radRapidologyPreviewPopup = $('.rad_rapidology_preview_popup');
+                        define_popup_position( $radRapidologyPreviewPopup, true );
+						display_image( $radRapidologyPreviewPopup );
 						$head.append( data.popup_css );
 
 						$( data.fonts ).each( function( i, font_name ) {
@@ -682,14 +686,14 @@
 			return false;
 		} );
 
-		$( 'body' ).on( 'click', '.rad_rapidology_preview_popup .rad_rapidology_close_button', function() {
+		$body.on( 'click', '.rad_rapidology_preview_popup .rad_rapidology_close_button', function() {
 			$( this ).parent().parent().remove();
 			$( '#rad_rapidology_preview_css' ).remove();
 			$( '.rad_dashboard_preview button' ).removeClass( 'rapidology_preview_opened' );
-			$( 'body' ).removeClass( 'rad_rapidology_popup_active' );
+			$body.removeClass( 'rad_rapidology_popup_active' );
 		});
 
-		$( 'body' ).on( 'click', '.rad_rapidology_preview_popup .rad_rapidology_submit_subscription', function() {
+		$body.on( 'click', '.rad_rapidology_preview_popup .rad_rapidology_submit_subscription', function() {
 			return false;
 		});
 
@@ -700,8 +704,6 @@
 		}
 
 		function resize( $current_ul ) {
-			var bar_array = '';
-
 			var bar_array = $( $current_ul ).find( 'li > div' ).map( function() {
 				return $( this ).attr( 'value' );
 			}).get();
@@ -804,8 +806,9 @@
 		 * Restore all jQuery events after dashboard regeneration
 		 */
 		function restore_events() {
-			if ( $( '.rad-dashboard-upload-button' ).length ) {
-				var upload_button = $( '.rad-dashboard-upload-button' );
+			var $rad_dashboard_upload_button = $('.rad-dashboard-upload-button');
+            if ( $rad_dashboard_upload_button.length ) {
+				var upload_button = $rad_dashboard_upload_button;
 
 				rad_dashboard_image_upload( upload_button );
 
@@ -821,8 +824,9 @@
 
 			$( '.rad-dashboard-color-picker' ).wpColorPicker();
 
-			if ( $( '.rad_dashboard_conditional' ).length ) {
-				$( '.rad_dashboard_conditional' ).each( function() {
+			var $radDashboardConditional = $('.rad_dashboard_conditional');
+            if ( $radDashboardConditional.length ) {
+				$radDashboardConditional.each( function() {
 					window.rad_dashboard_check_conditional_options( $( this ), true );
 				});
 			}
@@ -897,7 +901,7 @@
 				url: rapidology_settings.ajaxurl,
 				data: {
 					action : 'rapidology_home_tab_tables',
-					home_tab_nonce : rapidology_settings.home_tab,
+					home_tab_nonce : rapidology_settings.home_tab
 				},
 				success: function( data ){
 					$( '.rad_dashboard_home_tab_content' ).replaceWith( data );
@@ -914,7 +918,7 @@
 				url: rapidology_settings.ajaxurl,
 				data: {
 					action : 'rapidology_reset_accounts_table',
-					accounts_tab_nonce : rapidology_settings.accounts_tab,
+					accounts_tab_nonce : rapidology_settings.accounts_tab
 				},
 				success: function( data ){
 					$( '.rad_dashboard_accounts_content' ).replaceWith( data );
@@ -981,20 +985,23 @@
 				$type = $( '#rad_dashboard_optin_type' ).val();
 			}
 
-			$( '#rad_dashboard_wrapper' ).addClass( 'rad_dashboard_visible_nav' );
+			var $radDashboardWrapper = $('#rad_dashboard_wrapper');
+			$radDashboardWrapper.addClass( 'rad_dashboard_visible_nav' );
 			$( '#rad_dashboard_options' ).removeAttr( 'class' ).addClass( 'current_optin_type_' + $type );
-			$( '#rad_dashboard_navigation > ul' ).removeAttr( 'class' ).addClass( 'nav_current_optin_type_' + $type );
-			$( '#rad_dashboard_navigation' ).removeAttr( 'class' ).addClass( 'current_optin_type_' + $type );
-			$( '#rad_dashboard_wrapper' ).removeClass( 'rad_dashboard_edit_child' );
+			var $radDashboardNavigation = $('#rad_dashboard_navigation');
+			$radDashboardNavigation.find('> ul' ).removeAttr( 'class' ).addClass( 'nav_current_optin_type_' + $type );
+			$radDashboardNavigation.removeAttr( 'class' ).addClass( 'current_optin_type_' + $type );
+			$radDashboardWrapper.removeClass( 'rad_dashboard_edit_child' );
 
 			if ( 'locked' == $type || 'inline' == $type ) {
-				$( '.rad_dashboard_next_shortcode button' ).data( 'type', $type );
-				$( '.rad_dashboard_next_shortcode button' ).data( 'optin_id', $( '.rad_dashboard_save_changes button' ).data( 'subtitle' ) );
+				var $radDashboardNextShortcode = $('.rad_dashboard_next_shortcode button');
+				$radDashboardNextShortcode.data( 'type', $type );
+				$radDashboardNextShortcode.data( 'optin_id', $( '.rad_dashboard_save_changes button' ).data( 'subtitle' ) );
 			}
 
 			if ( true === $is_child ) {
 				$( '#rad_dashboard_child_of' ).val( $parent_id );
-				$( '#rad_dashboard_wrapper' ).addClass( 'rad_dashboard_edit_child' );
+				$radDashboardWrapper.addClass( 'rad_dashboard_edit_child' );
 			}
 
 			window.rad_dashboard_set_current_tab( 'rad_dashboard_tab_content_optin_setup', 'side' );
@@ -1015,6 +1022,15 @@
                 public_api_key = $( $container ).find( '#api_key_' + $service ),
                 private_api_key = $( $container ).find( '#client_id_' + $service ),
                 account_id = $( $container ).find( '#username_' + $service ),
+                //salesforce items
+                url = $( $container ).find( '#url_' + $service ),
+                version = $( $container ).find( '#version_' + $service ),
+                client_key = $( $container ).find( '#client_key_' + $service ),
+                client_secret = $( $container ).find( '#client_secret_' + $service ),
+                username_sf = $( $container ).find( '#username_sf_' + $service ),
+                password_sf = $( $container ).find( '#password_sf_' + $service ),
+                token = $( $container ).find( '#token_' + $service ),
+                //end salesforce items
 				account_name_val = '' == $account_name ? $( $container ).find( '#name_' + $service ).val() : $account_name;
 
 			$( $container ).find( 'input' ).css( { 'border' : 'none' } );
@@ -1055,12 +1071,27 @@
 						rapidology_account_exists : $account_exists,
                         rapidology_public_api_key : public_api_key.val(),
                         rapidology_private_api_key : private_api_key.val(),
-                        rapidology_account_id : account_id.val()
+                        rapidology_account_id : account_id.val(),
+                        //salesforce start
+                        rapidology_url : url.val(),
+                        rapidology_version : version.val(),
+                        rapidology_client_key : client_key.val(),
+                        rapidology_client_secret : client_secret.val(),
+                        rapidology_username_sf : username_sf.val(),
+                        rapidology_password_sf : password_sf.val(),
+                        rapidology_token : token.val(),
+                        //salesforce end
+
+
 					},
 					beforeSend: function( data ) {
 						$( $container ).find( 'span.spinner' ).addClass( 'rad_dashboard_spinner_visible' );
 					},
-
+                    error: function (xhr, ajaxOptions, thrownError){
+                        $(  '.spinner'	).removeClass( 'rad_dashboard_spinner_visible' );
+                        var error = 'There appears to be an issue with your credientals. Please check them and try again';
+                        window.rad_dashboard_generate_warning( error, '#', '', '', '', '' );
+                    },
 					success: function( data ){
 						$( $container ).find( 'span.spinner' ).removeClass( 'rad_dashboard_spinner_visible' );
 
@@ -1133,12 +1164,13 @@
 
 					$( 'li.rad_dashboard_select_list' ).hide();
 
-					if ( '' !== $set_to ) {
-						$( 'li.rad_dashboard_select_account select' ).val( $set_to );
+					var $dashboard_select_account_select = $('li.rad_dashboard_select_account select');
+                    if ( '' !== $set_to ) {
+						$dashboard_select_account_select.val( $set_to );
 					}
 
-					if ( $( 'li.rad_dashboard_select_account select' ).length && 'empty' !== $( 'li.rad_dashboard_select_account select' ).val() && 'add_new' !== $( 'li.rad_dashboard_select_account select' ).val() ){
-						display_actual_lists( $( 'li.rad_dashboard_select_account select' ).val(), $service );
+					if ( $dashboard_select_account_select.length && 'empty' !== $dashboard_select_account_select.val() && 'add_new' !== $dashboard_select_account_select.val() ){
+						display_actual_lists( $dashboard_select_account_select.val(), $service );
 					}
 				}
 			});
@@ -1306,8 +1338,8 @@
 				var this_popup = $this_popup.find( '.rad_rapidology_form_container' ),
 				popup_max_height = this_popup.hasClass( 'rad_rapidology_popup_container' ) ? $( window ).height() - 40 : $( window ).height() - 20,
 				real_popup_height = 0,
-				percentage = this_popup.parent().hasClass( 'rad_rapidology_flyin' ) ? 0.03 : 0.05,
-				percentage = this_popup.hasClass( 'rad_rapidology_with_border' ) ? percentage + 0.03 : percentage,
+				flyin_percentage = this_popup.parent().hasClass( 'rad_rapidology_flyin' ) ? 0.03 : 0.05,
+				percentage = this_popup.hasClass( 'rad_rapidology_with_border' ) ? flyin_percentage + 0.03 : flyin_percentage,
 				breakout_offset = this_popup.hasClass( 'breakout_edge' ) ? 0.95 : 1,
 				dashed_offset = this_popup.hasClass( 'rad_rapidology_border_dashed' ) ? 4 : 0,
 				form_height = this_popup.find( 'form' ).innerHeight(),
@@ -1331,7 +1363,7 @@
 				this_popup.find( '.rad_rapidology_form_container_wrapper' ).css( { 'max-height' : popup_max_height - 20 } );
 
 
-				if ( ( 768 > $( 'body' ).outerWidth() + 15 ) || this_popup.hasClass( 'rad_rapidology_form_bottom' ) ) {
+				if ( ( 768 > $body.outerWidth() + 15 ) || this_popup.hasClass( 'rad_rapidology_form_bottom' ) ) {
 					if ( this_popup.hasClass( 'rad_rapidology_form_right' ) || this_popup.hasClass( 'rad_rapidology_form_left' ) ) {
 						this_popup.find( '.rad_rapidology_form_header' ).css( { 'height' : 'auto' } );
 					}
@@ -1367,6 +1399,7 @@
 			}, 100 );
 		}
 
+
 		$( window ).scroll( function(){
 			if( $( this ).scrollTop() > 200 ) {
 				$( '.rad_dashboard_preview' ).addClass( 'rad_dashboard_fixed' );
@@ -1377,9 +1410,11 @@
 
 
 		$( window ).resize( function(){
-			if ( $( '.rad_rapidology_preview_popup' ).length ) {
-				define_popup_position( $( '.rad_rapidology_preview_popup' ), false );
+			var $radRapidologyPreviewPopup = $('.rad_rapidology_preview_popup');
+            if ( $radRapidologyPreviewPopup.length ) {
+				define_popup_position( $radRapidologyPreviewPopup, false );
 			}
 		});
 	});
 })(jQuery)
+;

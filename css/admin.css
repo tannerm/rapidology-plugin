@@ -1,7 +1,6 @@
 /*------------------------------------------------*/
 /*--------------------[COLORS]--------------------*/
 /*------------------------------------------------*/
-
 div#rad_dashboard_header { background-color: #14283a; }
 div#rad_dashboard_logo { background-color: #14283a; }
 .rad_rapidology #rad_dashboard_wrapper { background-color: #ffffff; }
@@ -80,6 +79,7 @@ button.save_account_tab, .rad_dashboard_save_changes button { background-color: 
 .rad_dashboard_service_logo_madmimi { background-image: url('../images/mad-mimi-logo.svg'); }
 .rad_dashboard_service_logo_mailchimp { background-image: url('../images/mailchimp-logo.svg'); }
 .rad_dashboard_service_logo_hubspot { background-image: url('../images/hubspot-logo.svg'); }
+.rad_dashboard_service_logo_hubspot-standard { background-image: url('../images/hubspot-logo.svg'); }
 .rad_dashboard_service_logo_emma { background-image: url('../images/emma-logo.svg'); }
 .rad_dashboard_service_logo_aweber { background-image: url('../images/aweber-logo.svg'); }
 .rad_dashboard_service_logo_mailpoet { background-image: url('../images/mailpoet-logo.svg'); }
@@ -91,6 +91,8 @@ button.save_account_tab, .rad_dashboard_save_changes button { background-color: 
 .rad_dashboard_service_logo_constant_contact { background-image: url('../images/constant-contact-logo.svg'); }
 .rad_dashboard_service_logo_ontraport { background-image: url('../images/ontraport-logo.svg'); }
 .rad_dashboard_service_logo_infusionsoft { background-image: url('../images/infusion-soft-logo.svg'); }
+.rad_dashboard_service_logo_salesforce { background-image: url('../images/salesforce-logo.svg'); }
+.rad_dashboard_service_logo_activecampaign { background-image: url('../images/activecampaign-logo.svg'); }
 
 .rad_rapidology .rad_dashboard_shape_tile:before { display: none; }
 
@@ -203,7 +205,7 @@ button.authorize_service { margin-top: 20px; }
 .account_settings_fields { max-height: 0; }
 
 .account_settings_fields { overflow: hidden; max-height: 0px; clear: both; -webkit-transition:height, 0.5s linear;	-moz-transition: height, 0.5s linear; -ms-transition: height, 0.5s linear; -o-transition: height, 0.5s linear; transition: height, 0.5s linear; }
-.account_settings_fields.rad_visible_settings, .rad_dashboard_edit_account_fields .account_settings_fields {	max-height: 200px !important; -webkit-transition:height, 0.5s linear; -moz-transition: height, 0.5s linear;	-ms-transition: height, 0.5s linear; -o-transition: height, 0.5s linear; transition: height, 0.5s linear; }
+.account_settings_fields.rad_visible_settings, .rad_dashboard_edit_account_fields .account_settings_fields {	max-height: 700px !important; -webkit-transition:height, 0.5s linear; -moz-transition: height, 0.5s linear;	-ms-transition: height, 0.5s linear; -o-transition: height, 0.5s linear; transition: height, 0.5s linear; }
 
 /* accounts tab */
 .rad_dashboard_tab_content_header_accounts .rad_dashboard_new_account_row h1 { float: left; }
@@ -303,12 +305,13 @@ li.rad_dashboard_optin_type { border: none; background-color: #636a7d; border-ra
 .nav_current_optin_type_widget a#rad_dashboard_tab_content_optin_display, .nav_current_optin_type_inline a#rad_dashboard_tab_content_optin_display, .nav_current_optin_type_locked a#rad_dashboard_tab_content_optin_display { display: none; }
 .current_optin_type_widget .rad_dashboard_row.rad_dashboard_next_display, .current_optin_type_inline .rad_dashboard_row.rad_dashboard_next_display, .current_optin_type_locked .rad_dashboard_row.rad_dashboard_next_display { display: none; }
 .current_tab_rad_dashboard_tab_content_optin_design .current_optin_type_locked .rad_dashboard_next_shortcode, .current_tab_rad_dashboard_tab_content_optin_design .current_optin_type_inline .rad_dashboard_next_shortcode { display: block; }
-
+.rad_rapidology_widget_only_option {display : none;}
 .display_on_checkboxes { display: none; }
 .current_optin_type_pop_up .display_on_checkboxes, .current_optin_type_flyin .display_on_checkboxes { display: block; }
 .rad_rapidology_widg.rad_only_option { display: none; }
 .current_optin_type_widget .rad_rapidology_hide_for_widget { display: none; }
 .current_optin_type_widget .rad_rapidology_widg.rad_only_option { display: block; }
+
 
 .display_on_section li { height: auto; min-height: 30px; }
 .display_on_section li p { margin-left: 10px; }
@@ -501,4 +504,13 @@ span.spinner.rad_rapidology_premade_spinner { float: left; margin-top: -20px; }
 }
 
 
+/*------------------------------------------------*/
+/*-------------------[Custom Styling]-----------------*/
+/*------------------------------------------------*/
+.rad_dashboard_25_bottom {
+    margin-bottom:25px !important;
+}
 
+.rad_dashboard_10_bottom {
+    margin-bottom:10px !important;
+}

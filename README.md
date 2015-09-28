@@ -87,6 +87,13 @@ Rapidology’s import/export function allows you to easily export any opt-in for
 8.  Import and Export your opt in forms.
 
 **Changelog**
+**1.2** 09/28/2015
+*	Added Salesforce Campaign intergration
+*	Added Hubspot Forms integration
+*	Added Active Campaign Forms integration
+*	Added onclick intent
+*	Added MailChimp double optin suppresion
+*	Added 10 new predefined layout
 **1.1** 09/09/2015
 *    Added Emma integration
 *    Added Hubspot intergration

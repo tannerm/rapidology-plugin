@@ -14,13 +14,14 @@
 			var t = this,
 				optins_locked = jQuery.parseJSON( rapidology.locked_optins ),
 				optins_inline = jQuery.parseJSON( rapidology.inline_optins ),
+                onclick_optins = jQuery.parseJSON( rapidology.onclick_optins ),
 				$rapidology_tooltip = rapidology.rapidology_tooltip,
 				$inline_text = rapidology.inline_text,
 				$locked_text = rapidology.locked_text,
 				count = 0,
 				$menu_items_locked = [],
-				$menu_items_inline = [];
-
+				$menu_items_inline = [],
+                $menu_items_onclick = [];
 			jQuery(optins_locked).each(function(i,val){
 				jQuery.each(val,function(optin_id,optin_title) {
 					$menu_items_locked.push( {'text' : optin_title,
@@ -50,6 +51,20 @@
 				});
 			});
 
+            jQuery(onclick_optins).each(function(i,val){
+                jQuery.each(val,function(optin_id,optin_title) {
+                    $menu_items_onclick.push( {
+                        'text' : optin_title,
+                        'onclick' : function() {
+                            if ( 'empty' !== optin_id ) {
+                                return_text = '[rapidology_on_click_intent optin_id='+ optin_id + '] [/rapidology_on_click_intent]';
+                                ed.insertContent(return_text);
+                            }
+                        }
+                    } );
+                });
+            });
+
 			ed.addButton('rapidology_button', {
 				text: '',
 				icon: 'rad_rapidology_shortcode_icon',
@@ -64,7 +79,11 @@
 						{
 							text: $inline_text,
 							menu: $menu_items_inline
-						}
+						},
+                        {
+                            text: 'Onclick Optins',
+                            menu: $menu_items_onclick
+                        }
 					]
 			});
 		},

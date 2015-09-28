@@ -192,6 +192,8 @@ li.rad_dashboard_live_fields { position: relative; margin-bottom: 0; }
 .rad_dashboard_menu_remove:after { position: absolute; left: -2px; top: -1px; width: 20px; color: #c2c6cf !important; font-size: 14px !important; }
 .rad_dashboard_selected span { position: relative; }
 
+.rad_dashboard_for_popup .rad_dashboard_checkbox.clearfix > p,  .rad_rapidology_load_in_animation > p {width:225px !important;}
+
 /*------------------------------------------------*/
 /*--------------------[ICONS]---------------------*/
 /*------------------------------------------------*/
@@ -899,7 +901,7 @@ p.rad_dashboard_section_subtitle { margin-top: -12px; margin-bottom: 14px; font-
 	z-index: 100;
     overflow: visible;
 }
-/* baloon arrow head up */
+/* balloon arrow head up */
 .rad_act_chevron_up {
 	margin: -18px 0 0 275px;
 	position: relative;

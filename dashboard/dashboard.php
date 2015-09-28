@@ -20,10 +20,10 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-define('RAD_PLUGIN_IMAGE_DIR', plugins_url().'/rapidology-by-leadpages/images');
+
 define( 'RAD_DASHBOARD_DIR', trailingslashit( dirname(__FILE__) ) );
 define( 'RAD_DASHBOARD_PLUGIN_URI', plugins_url( '', __FILE__ ) );
-
+define( 'RAD_PLUGIN_IMAGE_DIR', plugins_url('', dirname(__FILE__)  ).'/images');
 
 class RAD_Dashboard {
 	var $class_version = '2.0.0';

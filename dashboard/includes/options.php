@@ -43,6 +43,14 @@ $rad_all_sections = array(
  *
  */
 
+require_once('options_config.php');
+
+$more_info_hint_text = sprintf(
+	'<a href="%2$s" target="_blank">%1$s</a>',
+	__( 'Click here for more information', 'rapidology' ),
+	esc_url( 'http://www.rapidology.com' )
+);
+
 $rad_dashboard_options_all = array(
 	'optin_name' => array(
 		'section_start' => array(
@@ -70,25 +78,9 @@ $rad_dashboard_options_all = array(
 			'type'            => 'select',
 			'title'           => __( 'Select Email Provider', 'rapidology' ),
 			'name'            => 'email_provider',
-			'value'           => array(
-				'empty'            => __( 'Select One...', 'rapidology' ),
-				'mailchimp'        => __( 'MailChimp', 'rapidology' ),
-                'hubspot'           => __( 'HubSpot', 'rapidology' ),
-				'aweber'           => __( 'AWeber', 'rapidology' ),
-				'constant_contact' => __( 'Constant Contact', 'rapidology' ),
-				'campaign_monitor' => __( 'Campaign Monitor', 'rapidology' ),
-				'madmimi'          => __( 'Mad Mimi', 'rapidology' ),
-				'icontact'         => __( 'iContact', 'rapidology' ),
-				'getresponse'      => __( 'GetResponse', 'rapidology' ),
-				'sendinblue'       => __( 'Sendinblue', 'rapidology' ),
-				'mailpoet'         => __( 'MailPoet', 'rapidology' ),
-				'feedblitz'        => __( 'Feedblitz', 'rapidology' ),
-				'ontraport'        => __( 'Ontraport', 'rapidology' ),
-				'infusionsoft'     => __( 'Infusionsoft', 'rapidology' ),
-                'emma'     => __( 'Emma', 'rapidology' ),
-				'custom_html'      => __( 'Custom HTML Form', 'rapidology' ) ),
+			'value'           => $email_providers_new_optin,
 			'default'         => 'empty',
-			'conditional'     => 'mailchimp_account#aweber_account#constant_contact_account#custom_html#display_name#name_fields',
+			'conditional'     => 'mailchimp_account#aweber_account#constant_contact_account#custom_html#activecampaign#display_name#name_fields#disable_dbl_optin',
 			'validation_type' => 'simple_text',
 			'class'           => 'rad_dashboard_select_provider',
 		),
@@ -122,6 +114,15 @@ $rad_dashboard_options_all = array(
 			'default'         => '',
 			'display_if'      => 'custom_html',
 			'validation_type' => 'html',
+		),
+		'disable_dbl_optin' => array(
+			'type'            => 'checkbox',
+			'title'           => __( 'Disable Double Optin', 'rapidology' ),
+			'name'            => 'disable_dbl_optin',
+			'default'         => false,
+			'display_if'      => 'mailchimp',
+			'validation_type' => 'boolean',
+			'hint_text'       => __( 'Abusing this feature may cause your Mailchimp account to be suspended.', 'rapidology' ),
 		),
 	),
 
@@ -167,6 +168,7 @@ $rad_dashboard_options_all = array(
 		'section_start' => array(
 			'type'  => 'section_start',
 			'title' => __( 'Image Settings', 'rapidology' ),
+			'class' => 'rad_dashboard_10_bottom',
 		),
 		'image_orientation' => array(
 			'type'            => 'select',
@@ -288,7 +290,7 @@ $rad_dashboard_options_all = array(
 			'default'         => 'no_name',
 			'conditional'     => 'name_text#last_name#single_name_text',
 			'validation_type' => 'simple_text',
-			'display_if'      => 'constant_contact#sendinblue#feedblitz#mailpoet#campaign_monitor#madmimi#icontact#mailchimp#ontraport#infusionsoft',
+			'display_if'      => implode( '#', $show_name_fields ),
 		),
 		'name_text' => array(
 			'type'            => 'input_field',
@@ -605,7 +607,6 @@ $rad_dashboard_options_all = array(
 				'slideright'   => __( 'Slide Right', 'rapidology' ),
 				'slideup'      => __( 'Slide Up', 'rapidology' ),
 				'slidedown'    => __( 'Slide Down', 'rapidology' ),
-				'slideup'      => __( 'Slide Up', 'rapidology' ),
 				'lightspeedin' => __( 'Light Speed', 'rapidology' ),
 				'zoomin'       => __( 'Zoom In', 'rapidology' ),
 				'flipinx'      => __( 'Flip', 'rapidology' ),
@@ -723,6 +724,14 @@ $rad_dashboard_options_all = array(
 			'type'            => 'checkbox',
 			'title'           => __( 'Hide on Mobile', 'rapidology' ),
 			'name'            => 'hide_mobile_optin',
+			'default'         => false,
+			'validation_type' => 'boolean',
+		),
+		'click_trigger' => array(
+			'type'            => 'checkbox',
+			'title'           => __( 'Trigger When Element is Clicked', 'rapidology' ),
+			'name'            => 'click_trigger',
+			'hint_text'       => __( 'Adds new onclick shortcode option to Rapidology editor when editing a page / post', 'rapidology' ),
 			'default'         => false,
 			'validation_type' => 'boolean',
 		),
@@ -898,11 +907,7 @@ $rad_dashboard_options_all = array(
 			'default'              => '',
 			'class'                => 'api_option api_option_key',
 			'hide_contents'        => true,
-			'hint_text'            => sprintf(
-				'<a href="%2$s" target="_blank">%1$s</a>',
-				__( 'Click here for more information', 'rapidology' ),
-				esc_url( 'http://www.rapidology.com' )
-			),
+			'hint_text'            => $more_info_hint_text,
 			'hint_text_with_links' => 'on',
 			'validation_type'      => 'simple_text',
 		),
@@ -929,11 +934,7 @@ $rad_dashboard_options_all = array(
 			'default'              => '',
 			'class'                => 'api_option api_option_key',
 			'hide_contents'        => true,
-			'hint_text'            => sprintf(
-				'<a href="%2$s" target="_blank">%1$s</a>',
-				__( 'Click here for more information', 'rapidology' ),
-				esc_url( 'http://www.rapidology.com' )
-			),
+			'hint_text'            => $more_info_hint_text,
 			'hint_text_with_links' => 'on',
 			'validation_type'      => 'simple_text',
 		),
@@ -1086,6 +1087,7 @@ $rad_assigned_options = array(
 			$rad_dashboard_options_all[ 'form_integration' ][ 'select_account' ],
 			$rad_dashboard_options_all[ 'form_integration' ][ 'email_list' ],
 			$rad_dashboard_options_all[ 'form_integration' ][ 'custom_html' ],
+			$rad_dashboard_options_all[ 'form_integration' ][ 'disable_dbl_optin' ],
 		$rad_dashboard_options_all[ 'end_of_section' ],
 	),
 	'optin_premade_options' => array(
@@ -1163,6 +1165,7 @@ $rad_assigned_options = array(
 			$rad_dashboard_options_all[ 'load_in' ][ 'post_bottom' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'comment_trigger' ],
             $rad_dashboard_options_all[ 'load_in' ][ 'exit_trigger' ],
+			$rad_dashboard_options_all[ 'load_in' ][ 'click_trigger' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'trigger_scroll' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'scroll_pos' ],
 			$rad_dashboard_options_all[ 'load_in' ][ 'purchase_trigger' ],

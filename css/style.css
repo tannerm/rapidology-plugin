@@ -805,7 +805,7 @@
     width:100%;
 }
 
-.tab_power{
+.rad_power{
     height: 30px !important;
     display: inline-block;
     vertical-align: top !important;
@@ -814,4 +814,9 @@
 
 }
 .rad_power_mode_inline {
+    height:35px;
+}
+
+.rad_rapidology_click_trigger_element{
+    cursor: pointer;
 }

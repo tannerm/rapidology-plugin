@@ -74,7 +74,7 @@ class RapidologyWidget extends WP_Widget
 		$optins_formatted = '';
 		foreach ( $optins_set as $optin_id => $name ) {
 			$optins_formatted .= sprintf(
-				'<option value="%1$s" %2$s>%3$s</option>',
+				"<option value='%s' %s>%s</option>",
 				esc_attr( $optin_id ),
 				selected( $optin_id, $optin_id_saved, false ),
 				esc_html( $name )
@@ -84,7 +84,7 @@ class RapidologyWidget extends WP_Widget
 		printf(
 			'<p>
 				<label for="%1$s">%2$s: </label>
-				<select class="widefat" id="%1$s" name="%4$s" type="text">%5$s</select>
+				<select class="widefat" id="%1$s" name="%4$s">%5$s</select>
 			</p>',
 			esc_attr( $this->get_field_id( 'optin_id' ) ),
 			esc_html__( 'Select Optin', 'rapidology' ),
