@@ -61,7 +61,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 					get_class( $this ) )
 			);
 		}
-
+		global $pagenow;
 		self::$_this = $this;
 
 		$this->protocol = is_ssl() ? 'https' : 'http';
@@ -167,6 +167,10 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 		add_filter( 'body_class', array( $this, 'add_body_class' ) );
 		register_activation_hook( __FILE__, 'rapid_version_check' );
+
+		if($pagenow == 'plugins.php' || $_GET['page']=='rad_rapidology_options'){
+			add_action( 'admin_notices', 'rapid_version_check' );
+		}
 		register_activation_hook( __FILE__, array( $this, 'activate_plugin' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate_plugin' ) );
 		add_action( 'rapidology_lists_auto_refresh', array( $this, 'perform_auto_refresh' ) );

@@ -22,15 +22,26 @@ add_shortcode("rapidology_on_click_intent", "rapidology_on_click_intent");
 function rapid_version_check( $wp = '3.5', $php = '5.4' ) {
 	global $wp_version;
 	if ( version_compare( PHP_VERSION, $php, '<' ) )
-		$flag = 'PHP';
-	elseif
+		$php_check = 'PHP';
+	if
 	( version_compare( $wp_version, $wp, '<' ) )
-		$flag = 'WordPress';
-	else
-		return;
-	$version = 'PHP' == $flag ? $php : $wp;
-	deactivate_plugins( basename( __FILE__ ) );
-	wp_die('<p><strong>Rapidology - By Leadpages</strong> plugin requires '.$flag.'  version '.$version.' or greater.</p><p>PHP Version: 5.6 & WordPress: 4.3 recommended</p>','Plugin Activation Error',  array( 'response'=>200, 'back_link'=>TRUE ) );
+		$wp_check = 'WordPress';
+
+
+	if(isset($php_check)){
+	?>
+	<div class="error">
+        	<p><?php _e( 'Rapidology Notice: Your version of php is unsupported. You may notice some features may not work. Please upgrade to php 5.4 or higher.', 'rapidology' ); ?></p>
+		</div>
+	<?php
+	}
+	if(isset($wp_check)){
+		?>
+		<div class="error">
+			<p><?php _e( 'Rapidology Notice: Your version of Wordpress is unsupported. You may notice some features may not work. Please upgrade to WordPress 3.5 or higher.', 'rapidology' ); ?></p>
+		</div>
+		<?php
+	}
 }
 
 /**
