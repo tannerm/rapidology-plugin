@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Rapidology By LeadPages
  * Plugin URI: http://www.rapidology.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
- * Version: 1.2
+ * Version: 1.2.1
  * Description: 100% Free List Building & Popup Plugin...With Over 100 Responsive Templates & 6 Different Display Types For Growing Your Email Newsletter
  * Author: Rapidology
  * Author URI: http://www.rapidology.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
@@ -168,7 +168,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		add_filter( 'body_class', array( $this, 'add_body_class' ) );
 		register_activation_hook( __FILE__, 'rapid_version_check' );
 
-		if($pagenow == 'plugins.php' || $_GET['page']=='rad_rapidology_options'){
+		if($pagenow == 'plugins.php' || isset($_GET['page']) && $_GET['page']=='rad_rapidology_options'){
 			add_action( 'admin_notices', 'rapid_version_check' );
 		}
 		register_activation_hook( __FILE__, array( $this, 'activate_plugin' ) );

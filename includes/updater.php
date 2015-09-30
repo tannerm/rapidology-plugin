@@ -87,21 +87,30 @@ class WP_GitHub_Updater {
 		}
 
 		$this->set_defaults();
-		if (isset($_REQUEST['tab']) && $_REQUEST['tab'] == 'plugin-information' && isset($_REQUEST['plugin']) && $_REQUEST['plugin'] == 'rapidology' || $this->config['plugin_name'] != 'rapidology' && $_REQUEST['tab'] != 'plugin-information') {
 
 
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'api_check' ) );
-
 		// Hook into the plugin details screen
-		add_filter( 'plugins_api', array( $this, 'get_plugin_info' ), 10, 3 );
-		add_filter( 'upgrader_post_install', array( $this, 'upgrader_post_install' ), 10, 3 );
+		if(strpos($_SERVER['SCRIPT_NAME'], 'plugin-install.php')) {
+			if (isset($_GET['tab']) && strpos($_GET['tab'], 'rapidology') > 0) {
+				add_filter('plugins_api', array($this, 'get_plugin_info'), 10, 3);
+			}
+		}
 
+		if(isset($_GET['tab'])) {
+			if(isset($_GET['plugin']) && $_GET['plugin'] == 'rapidology') {
+				add_filter('plugins_api', array($this, 'get_plugin_info'), 10, 3);
+			}
+		}
+
+		add_filter( 'upgrader_post_install', array( $this, 'upgrader_post_install' ), 10, 3 );
 		// set timeout
 		add_filter( 'http_request_timeout', array( $this, 'http_request_timeout' ) );
 
 			// set sslverify for zip download
 			add_filter('http_request_args', array($this, 'http_request_sslverify'), 10, 2);
-		}
+
+
 	}
 
 	public function has_minimum_config() {
@@ -333,8 +342,21 @@ class WP_GitHub_Updater {
 	 * @return string $description the description
 	 */
 	public function get_description() {
-		$_description = $this->get_github_data();
-		return ( !empty( $_description->description ) ) ? $_description->description : false;
+		$_description = <<<BOD
+		Rapidology is the only 100% free WordPress plugin that lets you quickly create beautiful email opt-in forms, popups, and widgets—no design or coding skills required. We offer over 100 mobile responsive templates and six different display types for growing your email newsletter.
+		<br />
+		Download this free WordPress plugin and add these six types of email list-builders to your website:
+		<br />
+    	<li>Popup Opt-In Forms: Prompt your visitors to opt in without annoying them. You can set Rapidology’s popup opt-in forms to appear automatically after a specific amount of time, after visitors reach a particular point on your page, or even after visitors leave a comment or make a purchase.</li>
+    	<li>Slide-In Opt-In Forms: The slide-in form is the popup’s smooth, subtle cousin. It slides in at the bottom of your visitor’s screen, and can be set to appear after a specific time or at a specific point on the page.</li>
+    	<li>Widget Opt-In Forms: Use widget forms to create attractive opt-in forms for your sidebar, footer, or any other widget-friendly areas on your site.</li>
+    	<li>Protected Content Opt-In Forms: Offering valuable content in exchange for an email address is one of the most effective ways to grow your email list. Protected content forms allow you to offer content your visitors can “unlock” by opting in.</li>
+    	<li>Below Content Opt-In Forms: You can use “Below Content” forms to place an opt-in opportunity at the end of your blog posts or pages. Visitors who have read an entire post are highly engaged, so this is an effective way to turn that engagement into a conversion.</li>
+    	<li>Inline Opt-In Forms: Want to insert an opt-in form in the middle of a blog post, rather than the end? Inline forms make it easy. You can display these forms virtually anywhere you’d like on any post or page on your website.</li>
+		<li>You can find out how all of your opt-in forms are performing right inside your Rapidology dashboard. We provide elegant visualizations of your conversion rates, impressions, subscriber counts, and more, so you can track your performance at a glance.</li>
+		<li>You can also run split tests with Rapidology’s built-in split testing feature to discover what resonates with your audience and maximize your conversion rates.</li>
+BOD;
+		return $_description;
 	}
 
 	public function get_changelog(){
@@ -404,6 +426,7 @@ class WP_GitHub_Updater {
 
 		$response->slug = $this->config['slug'];
 		$response->plugin_name  = $this->config['plugin_name'];
+		$response->name  = $this->config['plugin_name'];
 		$response->version = $this->config['new_version'];
 		$response->author = $this->config['author'];
 		$response->homepage = $this->config['homepage'];

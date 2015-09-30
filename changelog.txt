@@ -1,3 +1,10 @@
+Version 1.2
+-	Added Salesforce Campaign intergration
+-	Added Hubspot Forms integration
+-	Added Active Campaign Forms integration
+-	Added onclick intent
+-	Added MailChimp double optin suppresion
+-	Added 10 new predefined layout
 Version 1.1
 -    Added Emma integration
 -    Added Hubspot integration

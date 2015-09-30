@@ -44,6 +44,7 @@ function rapid_version_check( $wp = '3.5', $php = '5.4' ) {
 	}
 }
 
+
 /**
  * @param $name
  * @param $last_name
