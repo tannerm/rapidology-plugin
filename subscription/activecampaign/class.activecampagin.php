@@ -266,33 +266,36 @@ class rapidology_active_campagin
 		 */
 		$divs =  $xpath->query("//div[@class='_field _type_input']");
 		foreach($divs as $div){
-			foreach($div->childNodes as $node){
-				foreach($node->attributes as $att){
-					if($att->name == 'class' && strpos($att->nodeValue, '_label') >=0 ){
-						preg_match("/[a-z0-9]/i", $node->nodeValue, $matches);
-						if($matches) {
-							$form_fields[$i]['label'] = trim($node->nodeValue);
+				foreach ($div->childNodes as $node) {
+					if(count($node->attributes) > 0) {
+						foreach ($node->attributes as $att) {
+							if ($att->name == 'class' && strpos($att->nodeValue, '_label') >= 0) {
+								preg_match("/[a-z0-9]/i", $node->nodeValue, $matches);
+								if ($matches) {
+									$form_fields[$i]['label'] = trim($node->nodeValue);
 
-						}
-					}
-					if($att->name == 'class' && strpos($att->nodeValue, '_option') >=0 ){
-						foreach($node->childNodes as $input){
-							if($input->tagName == 'input'){
-								foreach($input->attributes as $input_att){
-									if($input_att->name == 'type' && in_array($input_att->nodeValue, $this->supported_types)){
-										$form_fields[$i]['input_type'] = trim($input_att->nodeValue);
-										$approved_type = 'approved';
+								}
+							}
+							if ($att->name == 'class' && strpos($att->nodeValue, '_option') >= 0) {
+								foreach ($node->childNodes as $input) {
+									if ($input->tagName == 'input') {
+										foreach ($input->attributes as $input_att) {
+											if ($input_att->name == 'type' && in_array($input_att->nodeValue, $this->supported_types)) {
+												$form_fields[$i]['input_type'] = trim($input_att->nodeValue);
+												$approved_type = 'approved';
+											}
+											if ($input_att->name == 'name') {
+												$form_fields[$i]['input_name'] = trim($input_att->nodeValue);
+											}
+											$approved_type = false;
+										}
 									}
-									if($input_att->name == 'name') {
-										$form_fields[$i]['input_name'] = trim($input_att->nodeValue);
-									}
-									$approved_type = false;
 								}
 							}
 						}
 					}
 				}
-			}$i++;
+				$i++;
 		}
 
 		/**
@@ -301,14 +304,16 @@ class rapidology_active_campagin
 		$divs =  $xpath->query("//div[@class='_field _type_checkbox']");
 		foreach($divs as $div){
 			foreach($div->childNodes as $node){
-				foreach($node->attributes as $att){
-					if($att->name == 'class' && strpos($att->nodeValue, 'label') >=0 && $att->nodeValue != '_option'){
-						preg_match("/[a-z0-9]/i", $node->nodeValue, $matches);
-						if($matches) {
-							$form_fields[$i]['label'] = trim($node->nodeValue);
-							//know its a checkbox because of the type_checkbox selector
-							$form_fields[$i]['input_type'] = 'checkbox';
+				if(count($node->attributes) > 0) {
+					foreach ($node->attributes as $att) {
+						if ($att->name == 'class' && strpos($att->nodeValue, 'label') >= 0 && $att->nodeValue != '_option') {
+							preg_match("/[a-z0-9]/i", $node->nodeValue, $matches);
+							if ($matches) {
+								$form_fields[$i]['label'] = trim($node->nodeValue);
+								//know its a checkbox because of the type_checkbox selector
+								$form_fields[$i]['input_type'] = 'checkbox';
 
+							}
 						}
 					}
 				}
