@@ -499,4 +499,14 @@
 		});
 	});
 })(jQuery)
+
+//once the window is loaded make sure that the body tag has the required class for rapidology to work
+(function($){
+    $(window).load(function(){
+       if(!$('body').hasClass('rad_rapidology')){
+           $('body').addClass('rad_rapidology');
+       }
+    });
+}(jQuery))
+
 ;

@@ -111,7 +111,11 @@ Rapidology’s import/export function allows you to easily export any opt-in for
 *    Added 10 new predefined templates
 *    Upgraded all images used in templates / removed all old images
 *    Fixed issue with Infusionsoft integration to optin contacts in automaticlly.
+
+*	 Added a check for screen size for scroll intent. If screen size is greater than or equal to document size(which means you can not scroll) the optin will popup automaticlly after 5 seconds.
+
 *	Added a check for screen size for scroll intent. If screen size is greater than or equal to document size(which means you can not scroll) the optin will popup automaticlly after 5 seconds.
+
 
 **1.0**
 *	release
