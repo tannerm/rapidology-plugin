@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Rapidology Updater\n"
+"Project-Id-Version: Free List Machine Updater\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-03-18 19:40+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
-"Language-Team: Rapidology\n"
+"Language-Team: Free List Machine\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,636 +17,636 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
 
-#: ../rapidology.php:37
+#: ../free-list-builder.php:37
 #, php-format
 msgid "%s is a singleton class and you cannot create a second instance."
 msgstr ""
 
-#: ../rapidology.php:69
+#: ../free-list-builder.php:69
 msgid "Save & Exit"
 msgstr ""
 
-#: ../rapidology.php:185 ../includes/rapidology-widget.php:11
-msgid "Rapidology"
+#: ../free-list-builder.php:185 ../includes/flm-widget.php:11
+msgid "Free List Machine"
 msgstr ""
 
-#: ../rapidology.php:186
+#: ../free-list-builder.php:186
 msgid "Optin Forms"
 msgstr ""
 
-#: ../rapidology.php:187
+#: ../free-list-builder.php:187
 msgid "Email Accounts"
 msgstr ""
 
-#: ../rapidology.php:188
+#: ../free-list-builder.php:188
 msgid "Statistics"
 msgstr ""
 
-#: ../rapidology.php:189 ../dashboard/includes/options.php:22
+#: ../free-list-builder.php:189 ../dashboard/includes/options.php:22
 msgid "Import & Export"
 msgstr ""
 
-#: ../rapidology.php:222
+#: ../free-list-builder.php:222
 msgid "Settings"
 msgstr ""
 
-#: ../rapidology.php:255
+#: ../free-list-builder.php:255
 msgid "Next: Design Your Optin"
 msgstr ""
 
-#: ../rapidology.php:262
+#: ../free-list-builder.php:262
 msgid "Next: Display Settings"
 msgstr ""
 
-#: ../rapidology.php:269
+#: ../free-list-builder.php:269
 msgid "Next: Customize"
 msgstr ""
 
-#: ../rapidology.php:276
+#: ../free-list-builder.php:276
 msgid "Generate Shortcode"
 msgstr ""
 
-#: ../rapidology.php:371 ../rapidology.php:377
+#: ../free-list-builder.php:371 ../free-list-builder.php:377
 msgid "No optins available"
 msgstr ""
 
-#: ../rapidology.php:387
-msgid "insert rapidology Opt-In"
+#: ../free-list-builder.php:387
+msgid "insert flm Opt-In"
 msgstr ""
 
-#: ../rapidology.php:388
+#: ../free-list-builder.php:388
 msgid "Inline Opt-In"
 msgstr ""
 
-#: ../rapidology.php:389
+#: ../free-list-builder.php:389
 msgid "Locked Content Opt-In"
 msgstr ""
 
-#: ../rapidology.php:497
+#: ../free-list-builder.php:497
 msgid "new optin"
 msgstr ""
 
-#: ../rapidology.php:498
+#: ../free-list-builder.php:498
 msgid "Active Optins"
 msgstr ""
 
-#: ../rapidology.php:543 ../rapidology.php:2004
+#: ../free-list-builder.php:543 ../free-list-builder.php:2004
 msgid "select optin type to begin"
 msgstr ""
 
-#: ../rapidology.php:544
+#: ../free-list-builder.php:544
 msgid "pop up"
 msgstr ""
 
-#: ../rapidology.php:545
+#: ../free-list-builder.php:545
 msgid "fly in"
 msgstr ""
 
-#: ../rapidology.php:546
+#: ../free-list-builder.php:546
 msgid "below post"
 msgstr ""
 
-#: ../rapidology.php:547
+#: ../free-list-builder.php:547
 msgid "inline"
 msgstr ""
 
-#: ../rapidology.php:548
+#: ../free-list-builder.php:548
 msgid "locked content"
 msgstr ""
 
-#: ../rapidology.php:549
+#: ../free-list-builder.php:549
 msgid "widget"
 msgstr ""
 
-#: ../rapidology.php:562
+#: ../free-list-builder.php:562
 msgid "new account"
 msgstr ""
 
-#: ../rapidology.php:563
+#: ../free-list-builder.php:563
 msgid "My Accounts"
 msgstr ""
 
-#: ../rapidology.php:623 ../dashboard/includes/options.php:1034
+#: ../free-list-builder.php:623 ../dashboard/includes/options.php:1034
 msgid "Preview"
 msgstr ""
 
-#: ../rapidology.php:681
+#: ../free-list-builder.php:681
 msgid "Overview"
 msgstr ""
 
-#: ../rapidology.php:693
+#: ../free-list-builder.php:693
 msgid "New sign ups"
 msgstr ""
 
-#: ../rapidology.php:694
+#: ../free-list-builder.php:694
 msgid "Last 30 days"
 msgstr ""
 
-#: ../rapidology.php:695
+#: ../free-list-builder.php:695
 msgid "Last 12 month"
 msgstr ""
 
-#: ../rapidology.php:718
+#: ../free-list-builder.php:718
 msgid "All lists"
 msgstr ""
 
-#: ../rapidology.php:769 ../rapidology.php:808 ../rapidology.php:1811
+#: ../free-list-builder.php:769 ../free-list-builder.php:808 ../free-list-builder.php:1811
 msgid "Conversion Rate"
 msgstr ""
 
-#: ../rapidology.php:771 ../rapidology.php:1058 ../rapidology.php:1654
+#: ../free-list-builder.php:771 ../free-list-builder.php:1058 ../free-list-builder.php:1654
 msgid "Subscribers"
 msgstr ""
 
-#: ../rapidology.php:773
+#: ../free-list-builder.php:773
 msgid "Subscriber Growth"
 msgstr ""
 
-#: ../rapidology.php:774 ../rapidology.php:1100 ../rapidology.php:1115 ../rapidology.php:1719
+#: ../free-list-builder.php:774 ../free-list-builder.php:1100 ../free-list-builder.php:1115 ../free-list-builder.php:1719
 msgid "week"
 msgstr ""
 
-#: ../rapidology.php:805
+#: ../free-list-builder.php:805
 msgid "My Optins"
 msgstr ""
 
-#: ../rapidology.php:806 ../rapidology.php:1809
+#: ../free-list-builder.php:806 ../free-list-builder.php:1809
 msgid "Impressions"
 msgstr ""
 
-#: ../rapidology.php:807 ../rapidology.php:1810
+#: ../free-list-builder.php:807 ../free-list-builder.php:1810
 msgid "Conversions"
 msgstr ""
 
-#: ../rapidology.php:974 ../dashboard/includes/options.php:753
+#: ../free-list-builder.php:974 ../dashboard/includes/options.php:753
 msgid "Homepage"
 msgstr ""
 
-#: ../rapidology.php:1019
+#: ../free-list-builder.php:1019
 msgid "Highest converting pages"
 msgstr ""
 
-#: ../rapidology.php:1020 ../rapidology.php:2155
+#: ../free-list-builder.php:1020 ../free-list-builder.php:2155
 msgid "Conversion rate"
 msgstr ""
 
-#: ../rapidology.php:1056
+#: ../free-list-builder.php:1056
 msgid "My Lists"
 msgstr ""
 
-#: ../rapidology.php:1057
+#: ../free-list-builder.php:1057
 msgid "Provider"
 msgstr ""
 
-#: ../rapidology.php:1059
+#: ../free-list-builder.php:1059
 msgid "Growth Rate"
 msgstr ""
 
-#: ../rapidology.php:1098 ../rapidology.php:1717
+#: ../free-list-builder.php:1098 ../free-list-builder.php:1717
 msgid "n/a"
 msgstr ""
 
-#: ../rapidology.php:1354
+#: ../free-list-builder.php:1354
 msgid "New Signups"
 msgstr ""
 
-#: ../rapidology.php:1359
+#: ../free-list-builder.php:1359
 msgid "Per"
 msgstr ""
 
-#: ../rapidology.php:1360
+#: ../free-list-builder.php:1360
 msgid "Day"
 msgstr ""
 
-#: ../rapidology.php:1360
+#: ../free-list-builder.php:1360
 msgid "Month"
 msgstr ""
 
-#: ../rapidology.php:1452 ../rapidology.php:2013 ../dashboard/includes/options.php:906
+#: ../free-list-builder.php:1452 ../free-list-builder.php:2013 ../dashboard/includes/options.php:906
 #: ../dashboard/includes/options.php:937
 msgid "Authorize"
 msgstr ""
 
-#: ../rapidology.php:1479
+#: ../free-list-builder.php:1479
 msgid "New Account Setup"
 msgstr ""
 
-#: ../rapidology.php:1481
+#: ../free-list-builder.php:1481
 msgid "You can view and re-authorize this account’s settings below"
 msgstr ""
 
-#: ../rapidology.php:1482
+#: ../free-list-builder.php:1482
 msgid "Setup a new email marketing service account below"
 msgstr ""
 
-#: ../rapidology.php:1504 ../rapidology.php:2014 ../dashboard/dashboard.php:1129
+#: ../free-list-builder.php:1504 ../free-list-builder.php:2014 ../dashboard/dashboard.php:1129
 msgid "Re-Authorize"
 msgstr ""
 
-#: ../rapidology.php:1507 ../rapidology.php:1549
+#: ../free-list-builder.php:1507 ../free-list-builder.php:1549
 msgid "save & exit"
 msgstr ""
 
-#: ../rapidology.php:1538
+#: ../free-list-builder.php:1538
 msgid "New account settings"
 msgstr ""
 
-#: ../rapidology.php:1539 ../rapidology.php:4212 ../rapidology.php:4502
+#: ../free-list-builder.php:1539 ../free-list-builder.php:4212 ../free-list-builder.php:4502
 #: ../dashboard/includes/options.php:74 ../dashboard/includes/options.php:98
 #: ../dashboard/includes/options.php:109
 msgid "Select One..."
 msgstr ""
 
-#: ../rapidology.php:1540 ../dashboard/includes/options.php:75
+#: ../free-list-builder.php:1540 ../dashboard/includes/options.php:75
 #: ../dashboard/includes/options.php:885
 msgid "MailChimp"
 msgstr ""
 
-#: ../rapidology.php:1541 ../dashboard/includes/options.php:76
+#: ../free-list-builder.php:1541 ../dashboard/includes/options.php:76
 #: ../dashboard/includes/options.php:916
 msgid "AWeber"
 msgstr ""
 
-#: ../rapidology.php:1542 ../dashboard/includes/options.php:77
+#: ../free-list-builder.php:1542 ../dashboard/includes/options.php:77
 msgid "Constant Contact"
 msgstr ""
 
-#: ../rapidology.php:1543 ../dashboard/includes/options.php:78
+#: ../free-list-builder.php:1543 ../dashboard/includes/options.php:78
 msgid "Campaign Monitor"
 msgstr ""
 
-#: ../rapidology.php:1544 ../dashboard/includes/options.php:79
+#: ../free-list-builder.php:1544 ../dashboard/includes/options.php:79
 msgid "Mad Mimi"
 msgstr ""
 
-#: ../rapidology.php:1545 ../dashboard/includes/options.php:80
+#: ../free-list-builder.php:1545 ../dashboard/includes/options.php:80
 msgid "iContact"
 msgstr ""
 
-#: ../rapidology.php:1546 ../dashboard/includes/options.php:81
+#: ../free-list-builder.php:1546 ../dashboard/includes/options.php:81
 msgid "GetResponse"
 msgstr ""
 
-#: ../rapidology.php:1547 ../dashboard/includes/options.php:82
+#: ../free-list-builder.php:1547 ../dashboard/includes/options.php:82
 msgid "Sendinblue"
 msgstr ""
 
-#: ../rapidology.php:1548 ../dashboard/includes/options.php:83
+#: ../free-list-builder.php:1548 ../dashboard/includes/options.php:83
 msgid "MailPoet"
 msgstr ""
 
-#: ../rapidology.php:1550 ../dashboard/includes/options.php:85
+#: ../free-list-builder.php:1550 ../dashboard/includes/options.php:85
 msgid "Ontraport"
 msgstr ""
 
-#: ../rapidology.php:1551 ../dashboard/includes/options.php:84
+#: ../free-list-builder.php:1551 ../dashboard/includes/options.php:84
 msgid "Feedblitz"
 msgstr ""
 
-#: ../rapidology.php:1552 ../dashboard/includes/options.php:86
+#: ../free-list-builder.php:1552 ../dashboard/includes/options.php:86
 msgid "Infusionsoft"
 msgstr ""
 
-#: ../rapidology.php:1594
+#: ../free-list-builder.php:1594
 msgid "Account Lists"
 msgstr ""
 
-#: ../rapidology.php:1597
+#: ../free-list-builder.php:1597
 msgid "No lists available for this account"
 msgstr ""
 
-#: ../rapidology.php:1653
+#: ../free-list-builder.php:1653
 msgid "Account name"
 msgstr ""
 
-#: ../rapidology.php:1655
+#: ../free-list-builder.php:1655
 msgid "Growth rate"
 msgstr ""
 
-#: ../rapidology.php:1685
+#: ../free-list-builder.php:1685
 msgid "Update Lists"
 msgstr ""
 
-#: ../rapidology.php:1690
+#: ../free-list-builder.php:1690
 msgid "Remove account"
 msgstr ""
 
-#: ../rapidology.php:1693
+#: ../free-list-builder.php:1693
 msgid "Remove this account from list?"
 msgstr ""
 
-#: ../rapidology.php:1694 ../rapidology.php:1858 ../rapidology.php:1927
+#: ../free-list-builder.php:1694 ../free-list-builder.php:1858 ../free-list-builder.php:1927
 msgid "Yes"
 msgstr ""
 
-#: ../rapidology.php:1695 ../rapidology.php:1859 ../rapidology.php:1928
+#: ../free-list-builder.php:1695 ../free-list-builder.php:1859 ../free-list-builder.php:1928
 msgid "No"
 msgstr ""
 
-#: ../rapidology.php:1699
+#: ../free-list-builder.php:1699
 msgid "Authorized"
 msgstr ""
 
-#: ../rapidology.php:1700
+#: ../free-list-builder.php:1700
 msgid "Not Authorized"
 msgstr ""
 
-#: ../rapidology.php:1704
+#: ../free-list-builder.php:1704
 msgid "Edit account"
 msgstr ""
 
-#: ../rapidology.php:1730
+#: ../free-list-builder.php:1730
 msgid "No lists available"
 msgstr ""
 
-#: ../rapidology.php:1808
+#: ../free-list-builder.php:1808
 msgid "Optin Name"
 msgstr ""
 
-#: ../rapidology.php:1853 ../rapidology.php:1920
+#: ../free-list-builder.php:1853 ../free-list-builder.php:1920
 msgid "Delete Optin"
 msgstr ""
 
-#: ../rapidology.php:1857 ../rapidology.php:1926
+#: ../free-list-builder.php:1857 ../free-list-builder.php:1926
 msgid "Delete this optin?"
 msgstr ""
 
-#: ../rapidology.php:1863 ../rapidology.php:1921
+#: ../free-list-builder.php:1863 ../free-list-builder.php:1921
 msgid "Edit Optin"
 msgstr ""
 
-#: ../rapidology.php:1876
+#: ../free-list-builder.php:1876
 msgid "Add variant"
 msgstr ""
 
-#: ../rapidology.php:1877 ../rapidology.php:2016
+#: ../free-list-builder.php:1877 ../free-list-builder.php:2016
 msgid "Pause test"
 msgstr ""
 
-#: ../rapidology.php:1877 ../rapidology.php:2017
+#: ../free-list-builder.php:1877 ../free-list-builder.php:2017
 msgid "Start test"
 msgstr ""
 
-#: ../rapidology.php:1878
+#: ../free-list-builder.php:1878
 msgid "End & pick winner"
 msgstr ""
 
-#: ../rapidology.php:1914
+#: ../free-list-builder.php:1914
 msgid "Generate shortcode"
 msgstr ""
 
-#: ../rapidology.php:1918
+#: ../free-list-builder.php:1918
 msgid "Make Inactive"
 msgstr ""
 
-#: ../rapidology.php:1918
+#: ../free-list-builder.php:1918
 msgid "Make Active"
 msgstr ""
 
-#: ../rapidology.php:1919
+#: ../free-list-builder.php:1919
 msgid "Duplicate"
 msgstr ""
 
-#: ../rapidology.php:1935
+#: ../free-list-builder.php:1935
 msgid "A/B Testing"
 msgstr ""
 
-#: ../rapidology.php:1971
+#: ../free-list-builder.php:1971
 msgid "Inactive Optins"
 msgstr ""
 
-#: ../rapidology.php:2005
+#: ../free-list-builder.php:2005
 msgid "Shortcode for this optin:"
 msgstr ""
 
-#: ../rapidology.php:2015
+#: ../free-list-builder.php:2015
 msgid "Account name is not defined"
 msgstr ""
 
-#: ../rapidology.php:2020
+#: ../free-list-builder.php:2020
 msgid ""
 "You Have Not Added An Email List. Before your opt-in can be activated, you "
 "must first add an account and select an email list. You can save and exit, "
 "but the opt-in will remain inactive until an account is added."
 msgstr ""
 
-#: ../rapidology.php:2021
+#: ../free-list-builder.php:2021
 msgid "Add An Account"
 msgstr ""
 
-#: ../rapidology.php:2022
+#: ../free-list-builder.php:2022
 msgid "Save As Inactive"
 msgstr ""
 
-#: ../rapidology.php:2023
+#: ../free-list-builder.php:2023
 msgid ""
 "You Have Not Added An Email List. Before your opt-in can be activated, you "
 "must first add an account and select an email list."
 msgstr ""
 
-#: ../rapidology.php:2154 ../dashboard/includes/options.php:50
+#: ../free-list-builder.php:2154 ../dashboard/includes/options.php:50
 msgid "Optin name"
 msgstr ""
 
-#: ../rapidology.php:2189
+#: ../free-list-builder.php:2189
 msgid "Choose an optin"
 msgstr ""
 
-#: ../rapidology.php:2190
+#: ../free-list-builder.php:2190
 msgid "cancel"
 msgstr ""
 
-#: ../rapidology.php:2526 ../rapidology.php:2619
+#: ../free-list-builder.php:2526 ../free-list-builder.php:2619
 msgid "Authorization failed: "
 msgstr ""
 
-#: ../rapidology.php:2714
+#: ../free-list-builder.php:2714
 msgid "Invalid email"
 msgstr ""
 
-#: ../rapidology.php:2734 ../rapidology.php:2794 ../rapidology.php:2842 ../rapidology.php:3072
-#: ../rapidology.php:3454 ../rapidology.php:3535 ../rapidology.php:3594 ../rapidology.php:4138
+#: ../free-list-builder.php:2734 ../free-list-builder.php:2794 ../free-list-builder.php:2842 ../free-list-builder.php:3072
+#: ../free-list-builder.php:3454 ../free-list-builder.php:3535 ../free-list-builder.php:3594 ../free-list-builder.php:4138
 msgid "curl_init is not defined "
 msgstr ""
 
-#: ../rapidology.php:2815 ../rapidology.php:3019 ../rapidology.php:3029 ../rapidology.php:3144
-#: ../rapidology.php:3258 ../rapidology.php:3378 ../rapidology.php:3625
+#: ../free-list-builder.php:2815 ../free-list-builder.php:3019 ../free-list-builder.php:3029 ../free-list-builder.php:3144
+#: ../free-list-builder.php:3258 ../free-list-builder.php:3378 ../free-list-builder.php:3625
 msgid "Already subscribed"
 msgstr ""
 
-#: ../rapidology.php:2850 ../rapidology.php:2870 ../rapidology.php:3122
+#: ../free-list-builder.php:2850 ../free-list-builder.php:2870 ../free-list-builder.php:3122
 msgid "invalid API key"
 msgstr ""
 
-#: ../rapidology.php:2956 ../rapidology.php:3193 ../rapidology.php:3425 ../rapidology.php:3956
-#: ../rapidology.php:3993
+#: ../free-list-builder.php:2956 ../free-list-builder.php:3193 ../free-list-builder.php:3425 ../free-list-builder.php:3956
+#: ../free-list-builder.php:3993
 msgid "empty response"
 msgstr ""
 
-#: ../rapidology.php:2964 ../rapidology.php:3037
+#: ../free-list-builder.php:2964 ../free-list-builder.php:3037
 msgid "Invalid Token"
 msgstr ""
 
-#: ../rapidology.php:2968 ../rapidology.php:3041
+#: ../free-list-builder.php:2968 ../free-list-builder.php:3041
 msgid "Invalid API key"
 msgstr ""
 
-#: ../rapidology.php:3201 ../rapidology.php:3245 ../rapidology.php:3266
+#: ../free-list-builder.php:3201 ../free-list-builder.php:3245 ../free-list-builder.php:3266
 msgid "Invalid Username or API key"
 msgstr ""
 
-#: ../rapidology.php:3335
+#: ../free-list-builder.php:3335
 msgid "Account ID is not defined"
 msgstr ""
 
-#: ../rapidology.php:3433
+#: ../free-list-builder.php:3433
 msgid "Invalid App ID, Username or Password"
 msgstr ""
 
-#: ../rapidology.php:3484 ../rapidology.php:3582
+#: ../free-list-builder.php:3484 ../free-list-builder.php:3582
 msgid "Invalid API key or something went wrong during Authorization request"
 msgstr ""
 
-#: ../rapidology.php:3621 ../rapidology.php:3952 ../rapidology.php:3990
+#: ../free-list-builder.php:3621 ../free-list-builder.php:3952 ../free-list-builder.php:3990
 msgid "Unknown error"
 msgstr ""
 
-#: ../rapidology.php:3643 ../rapidology.php:3684
+#: ../free-list-builder.php:3643 ../free-list-builder.php:3684
 msgid "MailPoet plugin is not installed"
 msgstr ""
 
-#: ../rapidology.php:3746 ../rapidology.php:4126
+#: ../free-list-builder.php:3746 ../free-list-builder.php:4126
 msgid "Already Subscribed"
 msgstr ""
 
-#: ../rapidology.php:3806
+#: ../free-list-builder.php:3806
 msgid "Aweber: Wrong configuration data"
 msgstr ""
 
-#: ../rapidology.php:3842
+#: ../free-list-builder.php:3842
 msgid ""
 "Authorization code is invalid. Try regenerating it and paste in the new code."
 msgstr ""
 
-#: ../rapidology.php:3867
+#: ../free-list-builder.php:3867
 msgid "AWeberAPIException."
 msgstr ""
 
-#: ../rapidology.php:3868
+#: ../free-list-builder.php:3868
 msgid "Type"
 msgstr ""
 
-#: ../rapidology.php:3869
+#: ../free-list-builder.php:3869
 msgid "Message"
 msgstr ""
 
-#: ../rapidology.php:3870
+#: ../free-list-builder.php:3870
 msgid "Documentation"
 msgstr ""
 
-#: ../rapidology.php:4123
+#: ../free-list-builder.php:4123
 msgid "Error occured during subscription"
 msgstr ""
 
-#: ../rapidology.php:4211 ../dashboard/includes/options.php:95
+#: ../free-list-builder.php:4211 ../dashboard/includes/options.php:95
 msgid "Select Account"
 msgstr ""
 
-#: ../rapidology.php:4215 ../rapidology.php:4240 ../dashboard/includes/options.php:99
+#: ../free-list-builder.php:4215 ../free-list-builder.php:4240 ../dashboard/includes/options.php:99
 msgid "Add Account"
 msgstr ""
 
-#: ../rapidology.php:4273
+#: ../free-list-builder.php:4273
 msgid "Account Name"
 msgstr ""
 
-#: ../rapidology.php:4275
+#: ../free-list-builder.php:4275
 msgid "Enter the name for your account"
 msgstr ""
 
-#: ../rapidology.php:4293 ../rapidology.php:4388
+#: ../free-list-builder.php:4293 ../free-list-builder.php:4388
 msgid "Username"
 msgstr ""
 
-#: ../rapidology.php:4294 ../rapidology.php:4319 ../rapidology.php:4413
+#: ../free-list-builder.php:4294 ../free-list-builder.php:4319 ../free-list-builder.php:4413
 msgid "API key"
 msgstr ""
 
-#: ../rapidology.php:4299 ../rapidology.php:4323 ../rapidology.php:4339 ../rapidology.php:4395
-#: ../rapidology.php:4419 ../rapidology.php:4442 ../dashboard/includes/options.php:898
+#: ../free-list-builder.php:4299 ../free-list-builder.php:4323 ../free-list-builder.php:4339 ../free-list-builder.php:4395
+#: ../free-list-builder.php:4419 ../free-list-builder.php:4442 ../dashboard/includes/options.php:898
 #: ../dashboard/includes/options.php:929
 msgid "Click here for more information"
 msgstr ""
 
-#: ../rapidology.php:4335
+#: ../free-list-builder.php:4335
 msgid "Token"
 msgstr ""
 
-#: ../rapidology.php:4353
+#: ../free-list-builder.php:4353
 #, php-format
 msgid ""
 "Step 1: <a href=\"%1$s\" target=\"_blank\">Generate authorization code</"
 "a><br/>"
 msgstr ""
 
-#: ../rapidology.php:4360
+#: ../free-list-builder.php:4360
 msgid ""
 "Step 2: Paste in the authorization code and click \"Authorize\" button: "
 msgstr ""
 
-#: ../rapidology.php:4387
+#: ../free-list-builder.php:4387
 msgid "App ID"
 msgstr ""
 
-#: ../rapidology.php:4389
+#: ../free-list-builder.php:4389
 msgid "Password"
 msgstr ""
 
-#: ../rapidology.php:4414
+#: ../free-list-builder.php:4414
 msgid "APP ID"
 msgstr ""
 
-#: ../rapidology.php:4436
+#: ../free-list-builder.php:4436
 msgid "API Key"
 msgstr ""
 
-#: ../rapidology.php:4437
+#: ../free-list-builder.php:4437
 msgid "Application name"
 msgstr ""
 
-#: ../rapidology.php:4501 ../dashboard/includes/options.php:106
+#: ../free-list-builder.php:4501 ../dashboard/includes/options.php:106
 msgid "Select Email List"
 msgstr ""
 
-#: ../rapidology.php:4991 ../dashboard/includes/options.php:333
+#: ../free-list-builder.php:4991 ../dashboard/includes/options.php:333
 msgid "Email"
 msgstr ""
 
-#: ../rapidology.php:5003 ../dashboard/includes/options.php:297
+#: ../free-list-builder.php:5003 ../dashboard/includes/options.php:297
 msgid "First Name"
 msgstr ""
 
-#: ../rapidology.php:5009 ../dashboard/includes/options.php:309
+#: ../free-list-builder.php:5009 ../dashboard/includes/options.php:309
 msgid "Name"
 msgstr ""
 
-#: ../rapidology.php:5015 ../dashboard/includes/options.php:321
+#: ../free-list-builder.php:5015 ../dashboard/includes/options.php:321
 msgid "Last Name"
 msgstr ""
 
-#: ../rapidology.php:5024 ../dashboard/includes/options.php:344
+#: ../free-list-builder.php:5024 ../dashboard/includes/options.php:344
 msgid "SUBSCRIBE!"
 msgstr ""
 
-#: ../rapidology.php:5029 ../dashboard/includes/options.php:568
+#: ../free-list-builder.php:5029 ../dashboard/includes/options.php:568
 msgid "You have Successfully Subscribed!"
 msgstr ""
 
-#: ../rapidology.php:5599
+#: ../free-list-builder.php:5599
 msgid "Select optin"
 msgstr ""
 
-#: ../rapidology.php:5612
+#: ../free-list-builder.php:5612
 msgid "No Widget optins created yet"
 msgstr ""
 
@@ -1325,18 +1325,18 @@ msgid ""
 "These are just starting points that you can full customize on the next step."
 msgstr ""
 
-#: ../includes/rapidology-widget.php:10
-msgid "Rapidology widget, please configure all the settings in Rapidology control panel"
+#: ../includes/flm-widget.php:10
+msgid "Free List Machine widget, please configure all the settings in Free List Machine control panel"
 msgstr ""
 
-#: ../includes/rapidology-widget.php:19 ../includes/rapidology-widget.php:48
+#: ../includes/flm-widget.php:19 ../includes/flm-widget.php:48
 msgid "Subscribe"
 msgstr ""
 
-#: ../includes/rapidology-widget.php:60
+#: ../includes/flm-widget.php:60
 msgid "Title"
 msgstr ""
 
-#: ../includes/rapidology-widget.php:82
+#: ../includes/flm-widget.php:82
 msgid "Select Optin"
 msgstr ""

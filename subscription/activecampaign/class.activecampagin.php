@@ -9,7 +9,7 @@
  * @version 1.0
  */
 
-class rapidology_active_campagin
+class flm_active_campagin
 {
 	/**
 	 * @var string
@@ -150,7 +150,7 @@ class rapidology_active_campagin
 		return $response;
 	}
 
-	public function rapidology_get_ac_forms(){
+	public function flm_get_ac_forms(){
 		$this->api_action = 'form_getforms';
 		$results = json_decode($this->http_request());
 
@@ -182,18 +182,18 @@ class rapidology_active_campagin
 	 * @param $forms
 	 * @return mixed | multideminsional array
 	 * @description  this is the method you will call to parse the form ids, pull back all html, run through it via apidology_qualify_form
-	 * once that is doen it should return an array of form information used to store in the rapidology database with the id, name, subscription count, and all the field information needed to
+	 * once that is doen it should return an array of form information used to store in the flm database with the id, name, subscription count, and all the field information needed to
 	 * resend the form
 	 */
-	public function rapidology_get_ac_html($forms){
+	public function flm_get_ac_html($forms){
 		$i=0;
 
 		foreach($forms as $form) {
 			$this->form_id = $form['id'];
 			$this->api_action = 'form_html';
 			$results = $this->http_request();
-			//run each form through qualify form to make sure rapidology can use it
-			$qualified = $this->rapidology_qualify_form($results);
+			//run each form through qualify form to make sure flm can use it
+			$qualified = $this->flm_qualify_form($results);
 			if ($qualified) {
 				$valid_forms[$form['id']] = $form;
 				$valid_forms[$form['id']]['fields'] = $qualified;
@@ -206,7 +206,7 @@ class rapidology_active_campagin
 		return $valid_forms;
 	}
 
-	private function rapidology_qualify_form($response){
+	private function flm_qualify_form($response){
 		$form = new DOMDocument;
 		$form->loadHTML($response);
 		$xpath = new DOMXPath($form);
@@ -344,7 +344,7 @@ class rapidology_active_campagin
 		}
 	}
 
-	public function rapidology_submit_ac_form($form_id, $first_name, $last_name, $email, $lists_array, $url ){
+	public function flm_submit_ac_form($form_id, $first_name, $last_name, $email, $lists_array, $url ){
 
 		$this->api_action = 'contact_add';
 		$params = array(

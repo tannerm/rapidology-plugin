@@ -1,5 +1,5 @@
-=== Rapidology - by LeadPages ===
-Plugin Name:  Rapidology - by LeadPages
+=== Free List Machine - by LeadPages ===
+Plugin Name:  Free List Machine - by LeadPages
 Contributors: LeadPages
 Tags: wp popup, wordpress popup plugin, wordpress subscription plugin, responsive opt-in subscription plugin, free optinmonster alternative, list builder, sumome alternative, leadpages, bloom plugin, how to increase email list, email form, scroll box, newsletter, inbound marketing, mailing list, mail chimp, aweber, infusionsoft, campaign monitor, constant contact, mad mimi, iContact, GetResponse, MailPoet, feedblitz, sendinblue, ontraport, landing page, light box, email list building, subscribers, subscription
 Requires at least: 3.5
@@ -14,13 +14,13 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 [youtube https://www.youtube.com/watch?v=gygc2pHJm3w]
 
-[See more at Rapidology.com](http://www.rapidology.com/ "See more at Rapidology.com")
+[See more at Free List Machine.com](http://www.contestdomination.com/ "See more at Free List Machine.com")
 
-Rapidology is the only 100% free WordPress plugin that lets you quickly create beautiful email opt-in forms, popups, and widgets—no design or coding skills required.  We offer over 100 mobile responsive templates and six different display types for growing your email newsletter.
+Free List Machine is the only 100% free WordPress plugin that lets you quickly create beautiful email opt-in forms, popups, and widgets—no design or coding skills required.  We offer over 100 mobile responsive templates and six different display types for growing your email newsletter.
 
 Download this free WordPress plugin and add these six types of email list-builders to your website:
 
-*	Popup Opt-In Forms: Prompt your visitors to opt in without annoying them. You can set Rapidology’s popup opt-in forms to appear automatically after a specific amount of time, after visitors reach a particular point on your page, or even after visitors leave a comment or make a purchase.
+*	Popup Opt-In Forms: Prompt your visitors to opt in without annoying them. You can set Free List Machine’s popup opt-in forms to appear automatically after a specific amount of time, after visitors reach a particular point on your page, or even after visitors leave a comment or make a purchase.
 
 *	Slide-In Opt-In Forms: The slide-in form is the popup’s smooth, subtle cousin. It slides in at the bottom of your visitor’s screen, and can be set to appear after a specific time or at a specific point on the page.
 
@@ -32,9 +32,9 @@ Download this free WordPress plugin and add these six types of email list-builde
 
 *	Inline Opt-In Forms: Want to insert an opt-in form in the middle of a blog post, rather than the end? Inline forms make it easy. You can display these forms virtually anywhere you’d like on any post or page on your website.
 
-You can find out how all of your opt-in forms are performing right inside your Rapidology dashboard. We provide elegant visualizations of your conversion rates, impressions, subscriber counts, and more, so you can track your performance at a glance.
+You can find out how all of your opt-in forms are performing right inside your Free List Machine dashboard. We provide elegant visualizations of your conversion rates, impressions, subscriber counts, and more, so you can track your performance at a glance.
 
-You can also run split tests with Rapidology’s built-in split testing feature to discover what resonates with your audience and maximize your conversion rates.
+You can also run split tests with Free List Machine’s built-in split testing feature to discover what resonates with your audience and maximize your conversion rates.
 
 
 Features
@@ -50,17 +50,17 @@ Features
 *	Post, page, and category filtering so you can control exactly where and when your opt-in forms appear
 *	Easily customize colors, text, images, and more on every opt-in form.
 *	Insert custom CSS on any opt-in form.
-*	Import/export your custom plugin settings so you can transfer what you’ve created to any other Rapidology account.
+*	Import/export your custom plugin settings so you can transfer what you’ve created to any other Free List Machine account.
 
-\* *Rapidology is a fork of the Bloom Plugin by Elegant Themes released under GNU Public License version 2.0.  The Rapidology Source Code is freely available on [GitHub](https://github.com/LeadPages/rapidology-plugin/ "Rapidology GitHub")*
+\* *Free List Machine is a fork of the Bloom Plugin by Elegant Themes released under GNU Public License version 2.0.  The Free List Machine Source Code is freely available on [GitHub](https://github.com/LeadPages/flm-plugin/ "Free List Machine GitHub")*
 
 == Installation ==
 
-*	Upload folder wp-rapidology.zip to the `/wp-content/plugins/` directory
+*	Upload folder wp-flm.zip to the `/wp-content/plugins/` directory
 *	Activate the plugin through the `Plugins` menu in WordPress
-*	Click on the Rapidology button on your WordPress sidebar
-*	Activate your Rapidology account
-*	Enter your access code and begin using Rapidology
+*	Click on the Free List Machine button on your WordPress sidebar
+*	Activate your Free List Machine account
+*	Enter your access code and begin using Free List Machine
 
 
 == Frequently Asked Questions ==
@@ -69,13 +69,13 @@ Features
 
 You can use one of our 100+ beautifully designed templates right out of the box, or customize it to your heart’s content. Edit colors, text, images, animations, and even custom CSS.
 
-= Does Rapidology work with my email service provider? =
+= Does Free List Machine work with my email service provider? =
 
-Rapidology integrates with AWeber, Emma, Hubspot, MailChimp, Campaign Monitor, Constant Contact, Mad Mimi, Infusionsoft, iContact, GetResponse, mailpoet, feedblitz, SendInBlue, and Ontraport.
+Free List Machine integrates with AWeber, Emma, Hubspot, MailChimp, Campaign Monitor, Constant Contact, Mad Mimi, Infusionsoft, iContact, GetResponse, mailpoet, feedblitz, SendInBlue, and Ontraport.
 
 = How will these opt-in forms work on mobile? =
 
-Rapidology is 100% mobile responsive, so your opt-in forms will look great on screens of any size.
+Free List Machine is 100% mobile responsive, so your opt-in forms will look great on screens of any size.
 
 = How can I know how my opt-in forms are performing? =
 
@@ -83,7 +83,7 @@ Check your analytics dashboard to see at a glance how many times an opt-in form 
 
 = Can I share my forms with a different account? =
 
-Rapidology’s import/export function allows you to easily export any opt-in form you have created. This saved form can then be imported into any other WordPress account that has the Rapidology plugin installed.
+Free List Machine’s import/export function allows you to easily export any opt-in form you have created. This saved form can then be imported into any other WordPress account that has the Free List Machine plugin installed.
 
 == Screenshots ==
 

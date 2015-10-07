@@ -4,26 +4,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class RapidologyWidget extends WP_Widget
+class FLM_Widget extends WP_Widget
 {
 	function __construct() {
 		parent::__construct(
-			'Rapidology', // Base ID
-			__( 'Rapidology', 'rapidology' ), // Name
-			array( 'description' => __( 'Rapidology widget, please configure all the settings in Rapidology control panel', 'rapidology' ) ) // Args
+			'Free List Machine', // Base ID
+			__( 'Free List Machine', 'flm' ), // Name
+			array( 'description' => __( 'Free List Machine widget, please configure all the settings in Free List Machine control panel', 'flm' ) ) // Args
 		);
 	}
 
-	/*function RapidologyWidget(){
-		$widget_ops = array( 'description' => __( 'Rapidology widget, please configure all the settings in Rapidology control panel', 'rapidology' ) );
-		parent::WP_Widget( false, $name = __( 'Rapidology', 'rapidology' ), $widget_ops );
+	/*function FLM_Widget(){
+		$widget_ops = array( 'description' => __( 'Free List Machine widget, please configure all the settings in Free List Machine control panel', 'flm' ) );
+		parent::WP_Widget( false, $name = __( 'Free List Machine', 'flm' ), $widget_ops );
 	}*/
 
 	/* Displays the Widget in the front-end */
 	function widget( $args, $instance ){
 		extract($args);
 
-		$title = apply_filters( 'rad_rapidology_widget_title', empty( $instance['title'] )
+		$title = apply_filters( 'flm_widget_title', empty( $instance['title'] )
 			? ''
 			: esc_html( $instance['title'] )
 		);
@@ -36,7 +36,7 @@ class RapidologyWidget extends WP_Widget
 			echo $before_title . $title . $after_title;
 		}
 
-		echo RAD_Rapidology::display_widget( $optin_id );
+		echo Free_List_Machine::display_widget( $optin_id );
 
 		echo $after_widget;
 	}
@@ -53,7 +53,7 @@ class RapidologyWidget extends WP_Widget
 	/* Creates the form for the widget in the back-end. */
 	function form( $instance ){
 		//Defaults
-		$instance = wp_parse_args( (array) $instance, array( 'title' => __( 'Subscribe', 'rapidology' ), 'optin_id' => 'empty' ) );
+		$instance = wp_parse_args( (array) $instance, array( 'title' => __( 'Subscribe', 'flm' ), 'optin_id' => 'empty' ) );
 
 		$title = $instance['title'];
 		$optin_id_saved = $instance['optin_id'];
@@ -65,12 +65,12 @@ class RapidologyWidget extends WP_Widget
 				<input class="widefat" id="%1$s" name="%4$s" type="text" value="%3$s" />
 			</p>',
 			esc_attr( $this->get_field_id( 'title' ) ),
-			esc_html__( 'Title', 'rapidology' ),
+			esc_html__( 'Title', 'flm' ),
 			esc_attr( $title ),
 			esc_attr( $this->get_field_name( 'title' ) )
 		);
 
-		$optins_set = RAD_Rapidology::widget_optins_list();
+		$optins_set = Free_List_Machine::widget_optins_list();
 		$optins_formatted = '';
 		foreach ( $optins_set as $optin_id => $name ) {
 			$optins_formatted .= sprintf(
@@ -87,7 +87,7 @@ class RapidologyWidget extends WP_Widget
 				<select class="widefat" id="%1$s" name="%4$s">%5$s</select>
 			</p>',
 			esc_attr( $this->get_field_id( 'optin_id' ) ),
-			esc_html__( 'Select Optin', 'rapidology' ),
+			esc_html__( 'Select Optin', 'flm' ),
 			esc_attr( $title ),
 			esc_attr( $this->get_field_name( 'optin_id' ) ),
 			$optins_formatted

@@ -168,7 +168,7 @@
 				if (result.status == 'activated') {
 					update_webinar_buttons(result.code);
 					var data = {
-						'action': 'rad_dashboard_activate_screen',
+						'action': 'flm_dashboard_activate_screen',
 						'code': result.code
 					};
 					$.post(ajaxurl, data, function(response) {
@@ -189,14 +189,14 @@
 	//Define global functions to use them in other plugins
 
 	//Sets the current tab in navigation menu
-	window.rad_dashboard_set_current_tab = function set_current_tab( $tab_id, $section ) {
+	window.flm_dashboard_set_current_tab = function set_current_tab( $tab_id, $section ) {
 		var tab = $( 'div.' + $tab_id );
 		var current = $( 'a.current' );
 
 		$( current ).removeClass( 'current' );
 		$('a#' + $tab_id).addClass( 'current' );
 
-		$( 'div.rad_dashboard_tab_content' ).removeClass( 'rad_tab_selected' );
+		$( 'div.flm_dashboard_tab_content' ).removeClass( 'rad_tab_selected' );
 		$( tab ).addClass( 'rad_tab_selected' );
 
 		//If the tab is in opened section, then we don't need to toggle current_section class
@@ -208,21 +208,21 @@
 
 		//Hide save button from the header section since there is nothing to save
 		if ( 'header' == $section ) {
-			$( '.rad_dashboard_save_changes' ).css( { 'display' : 'none' } );
+			$( '.flm_dashboard_save_changes' ).css( { 'display' : 'none' } );
 		}
 
 		if ( 'side' == $section ) {
 			$('a#' + $tab_id).parent().parent().toggleClass( 'current_section' );
-			$( '.rad_dashboard_save_changes' ).css( { 'display' : 'block' } );
+			$( '.flm_dashboard_save_changes' ).css( { 'display' : 'block' } );
 		}
 
-		var $radDashboardContent = $('#rad_dashboard_content');
+		var $radDashboardContent = $('#flm_dashboard_content');
 		$radDashboardContent.removeAttr( 'class' );
 		$radDashboardContent.addClass( 'current_tab_' + $tab_id );
 	};
 
 	//Generates image upload window
-	window.rad_dashboard_image_upload = function image_upload( $upload_button ) {
+	window.flm_dashboard_image_upload = function image_upload( $upload_button ) {
 		$upload_button.click( function( event ) {
 			var $this_el = $(this);
 
@@ -245,7 +245,7 @@
 				$this_el.siblings( '.rad-dashboard-upload-field' ).val( attachment.url );
 				$this_el.siblings( '.rad-dashboard-upload-id' ).val( attachment.id );
 
-				rad_dashboard_generate_preview_image( $this_el );
+				flm_dashboard_generate_preview_image( $this_el );
 			});
 
 			et_file_frame.open();
@@ -253,7 +253,7 @@
 	};
 
 	//Generates preview for image upload option
-	window.rad_dashboard_generate_preview_image = function generate_preview_image( $upload_button ) {
+	window.flm_dashboard_generate_preview_image = function generate_preview_image( $upload_button ) {
 		var $upload_field = $upload_button.siblings( '.rad-dashboard-upload-field' ),
 			$preview = $( '.rad-dashboard-upload-preview' ),
 			image_url = '';
@@ -280,7 +280,7 @@
 	};
 
 	//Displays warning message. HTML of warning message is input parameter.
-	window.rad_dashboard_display_warning = function display_warning( $warn_window ) {
+	window.flm_dashboard_display_warning = function display_warning( $warn_window ) {
 		if ( '' == $warn_window ){
 			return;
 		}
@@ -289,13 +289,13 @@
 	};
 
 	//Generates warning pop up
-	window.rad_dashboard_generate_warning = function generate_warning( $message, $link, ok_text, custom_btn_text, custom_btn_link, custom_btn_class ){
+	window.flm_dashboard_generate_warning = function generate_warning( $message, $link, ok_text, custom_btn_text, custom_btn_link, custom_btn_class ){
 		var link = '' == $link ? '#' : $link;
 		$.ajax({
 			type: 'POST',
 			url: dashboardSettings.ajaxurl,
 			data: {
-				action : 'rad_dashboard_generate_warning',
+				action : 'flm_dashboard_generate_warning',
 				message : $message,
 				ok_link : link,
 				ok_text : ok_text,
@@ -305,13 +305,13 @@
 				generate_warning_nonce : dashboardSettings.generate_warning
 			},
 			success: function( data ){
-				window.rad_dashboard_display_warning( data );
+				window.flm_dashboard_display_warning( data );
 			}
 		});
 	};
 
 	//Checks conditional options and toggles them
-	window.rad_dashboard_check_conditional_options = function check_conditional_options( $current_trigger, $is_load ){
+	window.flm_dashboard_check_conditional_options = function check_conditional_options( $current_trigger, $is_load ){
 		var all_triggers = $current_trigger.data( "enables" ).split( '#' ),
 			option_value = '';
 
@@ -323,18 +323,18 @@
 
 		$.each( all_triggers, function( index, option_name ){
 			$option_enabled = false;
-			var current_option = $( '[name="rad_dashboard[' + option_name + ']"]' );
+			var current_option = $( '[name="flm_dashboard[' + option_name + ']"]' );
 				if ( current_option.hasClass( 'wp-color-picker' ) || 'radio' == current_option.attr( 'type' ) ) {
 					current_option = current_option.hasClass( 'wp-color-picker' ) ? current_option.parent().parent().parent() : current_option.parent().parent();
 				} else {
-					current_option = current_option.parent().length ? current_option.parent() : $( '[data-name="rad_dashboard[' + option_name + ']"]' );
+					current_option = current_option.parent().length ? current_option.parent() : $( '[data-name="flm_dashboard[' + option_name + ']"]' );
 				}
 
 			var	values_array = String( current_option.data( 'condition' ) ).split( '#' );
 
 			$.each( values_array, function( key, value ){
 				if ( value == option_value ) {
-					current_option.removeClass( 'rad_dashboard_hidden_option' ).addClass( 'rad_dashboard_visible_option' );
+					current_option.removeClass( 'flm_dashboard_hidden_option' ).addClass( 'flm_dashboard_visible_option' );
 
 					increment_triggers = undefined == current_option.data( 'triggers_count' ) ? 0 : parseInt( current_option.data( 'triggers_count' ) );
 					increment_triggers++;
@@ -349,7 +349,7 @@
 							current_option.data( 'triggers_count', triggers_count );
 
 						if ( 0 == triggers_count ) {
-							current_option.addClass( 'rad_dashboard_hidden_option' ).removeClass( 'rad_dashboard_visible_option' );
+							current_option.addClass( 'flm_dashboard_hidden_option' ).removeClass( 'flm_dashboard_visible_option' );
 						}
 					}
 				}
@@ -357,9 +357,9 @@
 		});
 	};
 
-	window.rad_dashboard_save = function rad_dashboard_save( $button ) {
+	window.flm_dashboard_save = function flm_dashboard_save( $button ) {
 		tinyMCE.triggerSave();
-		var options_fromform = $( '.' + dashboardSettings.plugin_class + ' #rad_dashboard_options' ).serialize();
+		var options_fromform = $( '.' + dashboardSettings.plugin_class + ' #flm_dashboard_options' ).serialize();
 		$spinner = $button.parent().find( '.spinner' );
 		$options_subtitle = $button.data( 'subtitle' );
 		$.ajax({
@@ -372,11 +372,11 @@
 				save_settings_nonce : dashboardSettings.save_settings
 			},
 			beforeSend: function ( xhr ){
-				$spinner.addClass( 'rad_dashboard_spinner_visible' );
+				$spinner.addClass( 'flm_dashboard_spinner_visible' );
 			},
 			success: function( data ){
-				$spinner.removeClass( 'rad_dashboard_spinner_visible' );
-				window.rad_dashboard_display_warning( data );
+				$spinner.removeClass( 'flm_dashboard_spinner_visible' );
+				window.flm_dashboard_display_warning( data );
 			}
 		});
 	};
@@ -390,60 +390,60 @@
 		if ( undefined != tab_link ) {
 			var section = ( -1 != tab_link.indexOf( 'header' ) ) ? 'header' : 'side';
 
-			window.rad_dashboard_set_current_tab( tab_link, section );
+			window.flm_dashboard_set_current_tab( tab_link, section );
 		} else {
-			window.rad_dashboard_set_current_tab ( $( 'div#rad_dashboard_navigation > ul > li > ul > li > a' ).first().attr( 'id' ), 'side' );
+			window.flm_dashboard_set_current_tab ( $( 'div#flm_dashboard_navigation > ul > li > ul > li > a' ).first().attr( 'id' ), 'side' );
 		}
 
 		/* Create checkbox/toggle UI based off form data */
 
 		var $body = $('body');
-		$body.on( 'click', 'div.rad_dashboard_multi_selectable', function() {
+		$body.on( 'click', 'div.flm_dashboard_multi_selectable', function() {
 			var checkbox = $( this ).children( 'input' );
 
 			checkbox.prop( 'checked' ) == false ? checkbox.prop( 'checked', true ) : checkbox.prop( 'checked', false );
-			$( this ).toggleClass( 'rad_dashboard_selected rad_dashboard_just_selected' );
+			$( this ).toggleClass( 'flm_dashboard_selected flm_dashboard_just_selected' );
 			$( this ).mouseleave( function() {
-			 	$( this ).removeClass( 'rad_dashboard_just_selected' );
+			 	$( this ).removeClass( 'flm_dashboard_just_selected' );
 			});
 		});
 
-		$body.on( 'click', 'div.rad_dashboard_single_selectable', function() {
-			var tabs = $( this ).parents( '.rad_dashboard_row' ).find( 'div.rad_dashboard_single_selectable' ),
-				inputs = $( this ).parents( '.rad_dashboard_row' ).find( 'input' );
+		$body.on( 'click', 'div.flm_dashboard_single_selectable', function() {
+			var tabs = $( this ).parents( '.flm_dashboard_row' ).find( 'div.flm_dashboard_single_selectable' ),
+				inputs = $( this ).parents( '.flm_dashboard_row' ).find( 'input' );
 
-			tabs.removeClass( 'rad_dashboard_selected' );
+			tabs.removeClass( 'flm_dashboard_selected' );
 			inputs.prop( 'checked', false );
-			$( this ).toggleClass( 'rad_dashboard_selected' );
+			$( this ).toggleClass( 'flm_dashboard_selected' );
 			$( this ).children( 'input' ).prop( 'checked', true );
 		});
 
 		/* Tabs System */
 
 		// Adding href to tabs of each parent element to store the link of current tab in URL properly
-		$( 'div#rad_dashboard_navigation > ul > li > a' ).each( function() {
+		$( 'div#flm_dashboard_navigation > ul > li > a' ).each( function() {
 			var $this_el = $( this );
 			$this_el.attr( 'href', '#tab_' + $this_el.parent().find( 'ul > li > a' ).first().attr( 'id' ) );
 		});
 
-		$body.on( 'click', 'div#rad_dashboard_navigation > ul > li > a', function() {
-			window.rad_dashboard_set_current_tab ( $( this ).parent().find( 'ul > li > a' ).first().attr( 'id' ), 'side');
+		$body.on( 'click', 'div#flm_dashboard_navigation > ul > li > a', function() {
+			window.flm_dashboard_set_current_tab ( $( this ).parent().find( 'ul > li > a' ).first().attr( 'id' ), 'side');
 		});
 
-		$body.on( 'click', '#rad_dashboard_navigation ul li ul li > a', function() {
-			window.rad_dashboard_set_current_tab ( $( this ).attr( 'id' ), '' );
+		$body.on( 'click', '#flm_dashboard_navigation ul li ul li > a', function() {
+			window.flm_dashboard_set_current_tab ( $( this ).attr( 'id' ), '' );
 		});
 
-		$body.on( 'click', 'div#rad_dashboard_header > ul > li > a', function() {
-			window.rad_dashboard_set_current_tab ( $( this ).attr( 'id' ), 'header' );
+		$body.on( 'click', 'div#flm_dashboard_header > ul > li > a', function() {
+			window.flm_dashboard_set_current_tab ( $( this ).attr( 'id' ), 'header' );
 		});
 
 
-		$body.on( 'click', '.rad_dashboard_close', function(){
+		$body.on( 'click', '.flm_dashboard_close', function(){
 			var modal_container = $( this ).parent().parent().parent();
 
 			//Remove the modal container of warning or hide the modal of networks picker
-			if ( modal_container.hasClass( 'rad_dashboard_warning' ) ) {
+			if ( modal_container.hasClass( 'flm_dashboard_warning' ) ) {
 				modal_container.remove();
 			} else {
 				modal_container.css( { 'z-index' : '-1' , 'display' : 'none' } );
@@ -451,7 +451,7 @@
 		});
 
 		//Handle click on the OK button in warning window
-		$body.on( 'click', '.rad_dashboard_ok', function(){
+		$body.on( 'click', '.flm_dashboard_ok', function(){
 			var this_el = $( this ),
 				link = this_el.attr( 'href' ),
 				main_container = this_el.parent().parent().parent();
@@ -463,7 +463,7 @@
 				var tab_link = link.split( '#tab_' )[1],
 					section = ( -1 != tab_link.indexOf( 'header' ) ) ? 'header' : 'side';
 
-				window.rad_dashboard_set_current_tab( tab_link, section );
+				window.flm_dashboard_set_current_tab( tab_link, section );
 
 				return false;
 			}
@@ -475,51 +475,51 @@
 
 		});
 
-		$body.on( 'click', '.rad_dashboard_save_changes:not(.rad_dashboard_custom_save) button', function() {
-			window.rad_dashboard_save( $( this ) );
+		$body.on( 'click', '.flm_dashboard_save_changes:not(.flm_dashboard_custom_save) button', function() {
+			window.flm_dashboard_save( $( this ) );
 			return false;
 		});
 
 		$( '.rad-dashboard-color-picker' ).wpColorPicker();
 
-		$body.on( 'click', '.rad_dashboard_conditional input[type="checkbox"]', function() {
-			window.rad_dashboard_check_conditional_options( $( this ).parent(), false );
+		$body.on( 'click', '.flm_dashboard_conditional input[type="checkbox"]', function() {
+			window.flm_dashboard_check_conditional_options( $( this ).parent(), false );
 		});
 
-		$body.on( 'change', '.rad_dashboard_conditional select', function() {
-			window.rad_dashboard_check_conditional_options( $( this ).parent(), false );
+		$body.on( 'change', '.flm_dashboard_conditional select', function() {
+			window.flm_dashboard_check_conditional_options( $( this ).parent(), false );
 		});
 
-		var $radDashboardConditional = $('.rad_dashboard_conditional');
+		var $radDashboardConditional = $('.flm_dashboard_conditional');
         if ( $radDashboardConditional.length ) {
 			$radDashboardConditional.each( function() {
-				window.rad_dashboard_check_conditional_options( $( this ), true );
+				window.flm_dashboard_check_conditional_options( $( this ), true );
 			});
 		}
 
-		$body.on( 'click', '.rad_dashboard_form span.rad_dashboard_more_info', function() {
-			$( this ).find( '.rad_dashboard_more_text' ).fadeToggle( 400 );
+		$body.on( 'click', '.flm_dashboard_form span.flm_dashboard_more_info', function() {
+			$( this ).find( '.flm_dashboard_more_text' ).fadeToggle( 400 );
 		});
 
 		var $dash_upload_button = $('.rad-dashboard-upload-button');
         if ( $dash_upload_button.length ) {
 			var upload_button = $dash_upload_button;
 
-			rad_dashboard_image_upload( upload_button );
+			flm_dashboard_image_upload( upload_button );
 
 			upload_button.siblings( '.rad-dashboard-upload-field' ).on( 'input', function() {
-				rad_dashboard_generate_preview_image( $(this).siblings( '.rad-dashboard-upload-button' ) );
+				flm_dashboard_generate_preview_image( $(this).siblings( '.rad-dashboard-upload-button' ) );
 				$(this).siblings( '.rad-dashboard-upload-id' ).val('');
 			} );
 
 			upload_button.siblings( '.rad-dashboard-upload-field' ).each( function() {
-				rad_dashboard_generate_preview_image( $(this).siblings( '.rad-dashboard-upload-button' ) );
+				flm_dashboard_generate_preview_image( $(this).siblings( '.rad-dashboard-upload-button' ) );
 			} );
 		}
 
-		$body.on( 'focusin', '.rad_dashboard_search_posts', function() {
+		$body.on( 'focusin', '.flm_dashboard_search_posts', function() {
 			var $this_input = $( this );
-			$this_input.closest('.rad_dashboard_form').find( '.rad_dashboard_live_search_res' ).addClass( 'visible_search_res' );
+			$this_input.closest('.flm_dashboard_form').find( '.flm_dashboard_live_search_res' ).addClass( 'visible_search_res' );
 			if ( ! $this_input.hasClass( 'already_triggered' ) ) {
 				$this_input.addClass( 'already_triggered' );
 
@@ -528,27 +528,27 @@
 		});
 
 		$( document ).click( function() {
-			$( '.rad_dashboard_live_search_res' ).removeClass( 'visible_search_res' );
+			$( '.flm_dashboard_live_search_res' ).removeClass( 'visible_search_res' );
 		});
 
-		$body.on( 'click', '.rad_dashboard_search_posts', function() {
+		$body.on( 'click', '.flm_dashboard_search_posts', function() {
 			return false;
 		});
 
-		$body.on( 'input', '.rad_dashboard_search_posts', function() {
+		$body.on( 'input', '.flm_dashboard_search_posts', function() {
 			handle_live_search( $( this ), 500, 1, true );
 		});
 
-		$body.on( 'click', '.rad_dashboard_search_results li', function() {
+		$body.on( 'click', '.flm_dashboard_search_results li', function() {
 			var $this_item = $( this );
 
-			if ( ! $this_item.hasClass( 'rad_dashboard_no_res' ) ) {
+			if ( ! $this_item.hasClass( 'flm_dashboard_no_res' ) ) {
 				var $text = $this_item.text(),
 					$id = $this_item.data( 'post_id' ),
-					$main_container = $this_item.closest('.rad_dashboard_form'),
-					$display_box = $main_container.find( '.rad_dashboard_selected' ),
+					$main_container = $this_item.closest('.flm_dashboard_form'),
+					$display_box = $main_container.find( '.flm_dashboard_selected' ),
 					$value_field = $main_container.find( 'input[type="hidden"]' ),
-					$new_item = '<span data-post_id="' + $id + '">' + $text + '<span class="rad_dashboard_menu_remove"></span></span>';
+					$new_item = '<span data-post_id="' + $id + '">' + $text + '<span class="flm_dashboard_menu_remove"></span></span>';
 
 				if ( -1 === $display_box.html().indexOf( 'data-post_id="' + $id + '"' ) ) {
 					$display_box.append( $new_item );
@@ -566,7 +566,7 @@
 			return false;
 		});
 
-		$body.on( 'mousewheel DOMMouseScroll', '.rad_dashboard_search_results', function() {
+		$body.on( 'mousewheel DOMMouseScroll', '.flm_dashboard_search_results', function() {
 			var $this_el = $( this ),
 				$page = typeof $this_el.data( 'page' ) === 'undefined' ? 1 : $this_el.data( 'page' ),
 				$max_scroll = typeof $this_el.data( 'scroll' ) === 'undefined' ? 0 : $this_el.data( 'scroll' );
@@ -574,13 +574,13 @@
 			if ( ( 0 === $this_el.scrollTop() % 200 ) && $this_el.scrollTop() > $max_scroll ) {
 				$this_el.data( 'page', $page + 1 );
 				$this_el.data( 'scroll', $this_el.scrollTop() );
-				handle_live_search( $this_el.closest('.rad_dashboard_form').find( '.rad_dashboard_search_posts' ), 0, $page + 1, false );
+				handle_live_search( $this_el.closest('.flm_dashboard_form').find( '.flm_dashboard_search_posts' ), 0, $page + 1, false );
 			}
 		});
 
-		$body.on( 'click', '.rad_dashboard_selected span.rad_dashboard_menu_remove', function() {
+		$body.on( 'click', '.flm_dashboard_selected span.flm_dashboard_menu_remove', function() {
 			var $this_item = $( this ).parent(),
-				$value_field = $this_item.closest('.rad_dashboard_form').find( 'input[type="hidden"]' ),
+				$value_field = $this_item.closest('.flm_dashboard_form').find( 'input[type="hidden"]' ),
 				$value_string = $value_field.val(),
 				$id = $this_item.data( 'post_id' );
 			if ( -1 !== $value_string.indexOf( $id ) ) {
@@ -608,7 +608,7 @@
 						type: 'POST',
 						url: dashboardSettings.ajaxurl,
 						data: {
-							action : 'rad_dashboard_execute_live_search',
+							action : 'flm_dashboard_execute_live_search',
 							dashboard_search : dashboardSettings.search_nonce,
 							dashboard_live_search : $search_value,
 							dashboard_post_type : $post_type,
@@ -616,14 +616,14 @@
 							dashboard_full_content : $full_content
 						},
 						beforeSend: function( data ) {
-							$this_input.parent().find( '.spinner' ).addClass( 'rad_dashboard_spinner_visible' );
+							$this_input.parent().find( '.spinner' ).addClass( 'flm_dashboard_spinner_visible' );
 						},
 						success: function( data ) {
-							$this_input.parent().find( '.spinner' ).removeClass( 'rad_dashboard_spinner_visible' );
+							$this_input.parent().find( '.spinner' ).removeClass( 'flm_dashboard_spinner_visible' );
 							if ( true == $full_content ) {
-								$this_input.closest('.rad_dashboard_form').find( '.rad_dashboard_search_results' ).replaceWith( data );
+								$this_input.closest('.flm_dashboard_form').find( '.flm_dashboard_search_results' ).replaceWith( data );
 							} else {
-								$this_input.closest('.rad_dashboard_form').find( '.rad_dashboard_search_results' ).append( data );
+								$this_input.closest('.flm_dashboard_form').find( '.flm_dashboard_search_results' ).append( data );
 							}
 						}
 					});

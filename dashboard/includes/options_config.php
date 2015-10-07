@@ -2,7 +2,7 @@
 
 /**
  * @return array
- * @description list of all email providers supported in Rapidology. This list is used whenc creating a new optin
+ * @description list of all email providers supported in Free List Machine. This list is used whenc creating a new optin
  * and selecting a new provider. Please keep it alphabetical
  */
 $email_providers_array = array(
@@ -30,11 +30,11 @@ $email_providers_array = array(
 //setup new array for creating a new provider when creating a new optin
 //setup default selection
 $email_providers_new_optin = array(
-	'empty'	=> __('Select One...', 'rapidology')
+	'empty'	=> __('Select One...', 'flm')
 );
 //loop through providers and add them to array. adding wordpress function for internationalization
 foreach ($email_providers_array as $key => $value){
-	$email_providers_new_optin[$key] = __( $value , 'rapidology');
+	$email_providers_new_optin[$key] = __( $value , 'flm');
 }
 
 

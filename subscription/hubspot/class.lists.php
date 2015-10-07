@@ -18,7 +18,7 @@
 */
 require_once('class.baseclient.php');
 
-class HubSpot_Lists_Rapidology extends HubSpot_Baseclient{
+class HubSpot_Lists_FLM extends HubSpot_Baseclient{
 	protected $API_PATH = 'contacts';
 	protected $API_VERSION = 'v1';
 

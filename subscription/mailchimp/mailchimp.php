@@ -13,7 +13,7 @@
  * @author Drew McLellan <drew.mclellan@gmail.com>
  * @version 1.1.1
  */
-class MailChimp_Rapidology
+class MailChimp_FLM
 {
     private $api_key;
     private $api_endpoint = 'https://<dc>.api.mailchimp.com/2.0';

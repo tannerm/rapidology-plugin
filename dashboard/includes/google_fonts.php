@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class RAD_Dashboard_Fonts {
+class FLM_Dashboard_Fonts {
 
 	/**
 	 * Returns the list of popular google fonts

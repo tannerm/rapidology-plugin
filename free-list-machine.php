@@ -1,11 +1,11 @@
 <?php
 /*
- * Plugin Name: Rapidology By LeadPages
- * Plugin URI: http://www.rapidology.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
+ * Plugin Name: Free List Machine By Contest Domination
+ * Plugin URI: http://www.contestdomination.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
  * Version: 1.2.3
  * Description: 100% Free List Building & Popup Plugin...With Over 100 Responsive Templates & 6 Different Display Types For Growing Your Email Newsletter
- * Author: Rapidology
- * Author URI: http://www.rapidology.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
+ * Author: Free List Machine
+ * Author URI: http://www.contestdomination.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
  * License: GPLv2 or later
  */
 
@@ -13,51 +13,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-define( 'RAD_RAPIDOLOGY_PLUGIN_DIR', trailingslashit( dirname( __FILE__ ) ) );
-define( 'RAD_RAPIDOLOGY_PLUGIN_URI', plugins_url( '', __FILE__ ) );
+define( 'FLM_PLUGIN_DIR', trailingslashit( dirname( __FILE__ ) ) );
+define( 'FLM_PLUGIN_URI', plugins_url( '', __FILE__ ) );
 
-if ( ! class_exists( 'RAD_Dashboard' ) ) {
-	require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'dashboard/dashboard.php' );
+if ( ! class_exists( 'FLM_Dashboard' ) ) {
+	require_once( FLM_PLUGIN_DIR . 'dashboard/dashboard.php' );
 }
 
-require_once('includes/updater.php');
-require_once('includes/rapidology_functions.php');
-if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
-    $config = array(
-        'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
-        'proper_folder_name' => dirname( plugin_basename( __FILE__ ) ), // this is the name of the folder your plugin lives in
-		'zip_url' => 'https://rapidology.com/download/rapidology.zip', // the zip url of the github repo
-		'release_url' => 'https://api.github.com/repos/leadpages/rapidology-plugin/releases',
-        'api_url' => 'https://api.github.com/repos/leadpages/rapidology-plugin', // the github API url of your github repo
-        'raw_url' => 'https://raw.github.com/leadpages/rapidology-plugin/master', // the github raw url of your github repo
-        'github_url' => 'https://github.com/leadpages/rapidology-plugin', // the github url of your github repo
-        'sslverify' => true, // wether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
-        'requires' => '3.5', // which version of WordPress does your plugin require?
-        'tested' => '4.3', // which version of WordPress is your plugin tested up to?
-        'readme' => 'README.md' // which file to use as the readme for the version number
-    );
-    new WP_GitHub_Updater($config);
-}
+require_once('includes/flm_functions.php');
 
-
-
-
-
-class RAD_Rapidology extends RAD_Dashboard {
+class Free_List_Machine extends FLM_Dashboard {
 	var $plugin_version = '1.2.3';
 	var $db_version = '1.0';
-	var $_options_pagename = 'rad_rapidology_options';
+	var $_options_pagename = 'flm_options';
 	var $menu_page;
 	var $protocol;
-	var $privacy_url = 'http://www.rapidology.com/privacy';
-	var $tou_url = 'http://www.rapidology.com/tou';
+	var $privacy_url = 'http://www.contestdomination.com/privacy';
+	var $tou_url = 'http://www.contestdomination.com/tou';
 
 	private static $_this;
 
 	function __construct() {
 		// Don't allow more than one instance of the class
 		if ( isset( self::$_this ) ) {
-			wp_die( sprintf( __( '%s is a singleton class and you cannot create a second instance.', 'rapidology' ),
+			wp_die( sprintf( __( '%s is a singleton class and you cannot create a second instance.', 'flm' ),
 					get_class( $this ) )
 			);
 		}
@@ -72,109 +51,109 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 		add_action( 'admin_init', array( $this, 'execute_footer_text' ) );
 
-		add_filter( 'rad_rapidology_import_sub_array', array( $this, 'import_settings' ) );
-		add_filter( 'rad_rapidology_import_array', array( $this, 'import_filter' ) );
-		add_filter( 'rad_rapidology_export_exclude', array( $this, 'filter_export_settings' ) );
-		add_filter( 'rad_rapidology_save_button_class', array( $this, 'save_btn_class' ) );
+		add_filter( 'flm_import_sub_array', array( $this, 'import_settings' ) );
+		add_filter( 'flm_import_array', array( $this, 'import_filter' ) );
+		add_filter( 'flm_export_exclude', array( $this, 'filter_export_settings' ) );
+		add_filter( 'flm_save_button_class', array( $this, 'save_btn_class' ) );
 
 
 		// generate home tab in dashboard
-		add_action( 'rad_rapidology_after_header_options', array( $this, 'generate_home_tab' ) );
+		add_action( 'flm_after_header_options', array( $this, 'generate_home_tab' ) );
 
-		add_action( 'rad_rapidology_after_main_options', array( $this, 'generate_premade_templates' ) );
+		add_action( 'flm_after_main_options', array( $this, 'generate_premade_templates' ) );
 
-		add_action( 'rad_rapidology_after_save_button', array( $this, 'add_next_button' ) );
+		add_action( 'flm_after_save_button', array( $this, 'add_next_button' ) );
 
 		$plugin_file = plugin_basename( __FILE__ );
 		add_filter( "plugin_action_links_{$plugin_file}", array( $this, 'add_settings_link' ) );
 
 
 		$dashboard_args = array(
-			'rad_dashboard_options_pagename'  => $this->_options_pagename,
-			'rad_dashboard_plugin_name'       => 'rapidology',
-			'rad_dashboard_save_button_text'  => __( 'Save & Exit', 'rapidology' ),
-			'rad_dashboard_plugin_class_name' => 'rad_rapidology',
-			'rad_dashboard_options_path'      => RAD_RAPIDOLOGY_PLUGIN_DIR . '/dashboard/includes/options.php',
-			'rad_dashboard_options_page'      => 'toplevel_page',
+			'flm_dashboard_options_pagename'  => $this->_options_pagename,
+			'flm_dashboard_plugin_name'       => 'flm',
+			'flm_dashboard_save_button_text'  => __( 'Save & Exit', 'flm' ),
+			'flm_dashboard_plugin_class_name' => 'Free_List_Machine',
+			'flm_dashboard_options_path'      => FLM_PLUGIN_DIR . '/dashboard/includes/options.php',
+			'flm_dashboard_options_page'      => 'toplevel_page',
 		);
 
 		parent::__construct( $dashboard_args );
 
 		// Register save settings function for ajax request
-		add_action( 'wp_ajax_rad_rapidology_save_settings', array( $this, 'rapidology_save_settings' ) );
+		add_action( 'wp_ajax_flm_save_settings', array( $this, 'flm_save_settings' ) );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts_styles' ) );
 
-		add_action( 'wp_ajax_rapidology_reset_options_page', array( $this, 'rapidology_reset_options_page' ) );
+		add_action( 'wp_ajax_flm_reset_options_page', array( $this, 'flm_reset_options_page' ) );
 
-		add_action( 'wp_ajax_rapidology_remove_optin', array( $this, 'remove_optin' ) );
+		add_action( 'wp_ajax_flm_remove_optin', array( $this, 'remove_optin' ) );
 
-		add_action( 'wp_ajax_rapidology_duplicate_optin', array( $this, 'duplicate_optin' ) );
+		add_action( 'wp_ajax_flm_duplicate_optin', array( $this, 'duplicate_optin' ) );
 
-		add_action( 'wp_ajax_rapidology_add_variant', array( $this, 'add_variant' ) );
+		add_action( 'wp_ajax_flm_add_variant', array( $this, 'add_variant' ) );
 
-		add_action( 'wp_ajax_rapidology_home_tab_tables', array( $this, 'home_tab_tables' ) );
+		add_action( 'wp_ajax_flm_home_tab_tables', array( $this, 'home_tab_tables' ) );
 
-		add_action( 'wp_ajax_rapidology_toggle_optin_status', array( $this, 'toggle_optin_status' ) );
+		add_action( 'wp_ajax_flm_toggle_optin_status', array( $this, 'toggle_optin_status' ) );
 
-		add_action( 'wp_ajax_rapidology_authorize_account', array( $this, 'authorize_account' ) );
+		add_action( 'wp_ajax_flm_authorize_account', array( $this, 'authorize_account' ) );
 
-		add_action( 'wp_ajax_rapidology_reset_accounts_table', array( $this, 'reset_accounts_table' ) );
+		add_action( 'wp_ajax_flm_reset_accounts_table', array( $this, 'reset_accounts_table' ) );
 
-		add_action( 'wp_ajax_rapidology_generate_mailing_lists', array( $this, 'generate_mailing_lists' ) );
+		add_action( 'wp_ajax_flm_generate_mailing_lists', array( $this, 'generate_mailing_lists' ) );
 
-		add_action( 'wp_ajax_rapidology_generate_new_account_fields', array( $this, 'generate_new_account_fields' ) );
+		add_action( 'wp_ajax_flm_generate_new_account_fields', array( $this, 'generate_new_account_fields' ) );
 
-		add_action( 'wp_ajax_rapidology_generate_accounts_list', array( $this, 'generate_accounts_list' ) );
+		add_action( 'wp_ajax_flm_generate_accounts_list', array( $this, 'generate_accounts_list' ) );
 
-		add_action( 'wp_ajax_rapidology_generate_current_lists', array( $this, 'generate_current_lists' ) );
+		add_action( 'wp_ajax_flm_generate_current_lists', array( $this, 'generate_current_lists' ) );
 
-		add_action( 'wp_ajax_rapidology_generate_edit_account_page', array( $this, 'generate_edit_account_page' ) );
+		add_action( 'wp_ajax_flm_generate_edit_account_page', array( $this, 'generate_edit_account_page' ) );
 
-		add_action( 'wp_ajax_rapidology_save_account_tab', array( $this, 'save_account_tab' ) );
+		add_action( 'wp_ajax_flm_save_account_tab', array( $this, 'save_account_tab' ) );
 
-		add_action( 'wp_ajax_rapidology_ab_test_actions', array( $this, 'ab_test_actions' ) );
+		add_action( 'wp_ajax_flm_ab_test_actions', array( $this, 'ab_test_actions' ) );
 
-		add_action( 'wp_ajax_rapidology_get_stats_graph_ajax', array( $this, 'get_stats_graph_ajax' ) );
+		add_action( 'wp_ajax_flm_get_stats_graph_ajax', array( $this, 'get_stats_graph_ajax' ) );
 
-		add_action( 'wp_ajax_rapidology_refresh_optins_stats_table', array( $this, 'refresh_optins_stats_table' ) );
+		add_action( 'wp_ajax_flm_refresh_optins_stats_table', array( $this, 'refresh_optins_stats_table' ) );
 
-		add_action( 'wp_ajax_rapidology_reset_stats', array( $this, 'reset_stats' ) );
+		add_action( 'wp_ajax_flm_reset_stats', array( $this, 'reset_stats' ) );
 
-		add_action( 'wp_ajax_rapidology_pick_winner_optin', array( $this, 'pick_winner_optin' ) );
+		add_action( 'wp_ajax_flm_pick_winner_optin', array( $this, 'pick_winner_optin' ) );
 
-		add_action( 'wp_ajax_rapidology_clear_stats', array( $this, 'clear_stats' ) );
+		add_action( 'wp_ajax_flm_clear_stats', array( $this, 'clear_stats' ) );
 
-		add_action( 'wp_ajax_rapidology_get_premade_values', array( $this, 'get_premade_values' ) );
-		add_action( 'wp_ajax_rapidology_generate_premade_grid', array( $this, 'generate_premade_grid' ) );
+		add_action( 'wp_ajax_flm_get_premade_values', array( $this, 'get_premade_values' ) );
+		add_action( 'wp_ajax_flm_generate_premade_grid', array( $this, 'generate_premade_grid' ) );
 
-		add_action( 'wp_ajax_rapidology_display_preview', array( $this, 'display_preview' ) );
+		add_action( 'wp_ajax_flm_display_preview', array( $this, 'display_preview' ) );
 
-		add_action( 'wp_ajax_rapidology_handle_stats_adding', array( $this, 'handle_stats_adding' ) );
-		add_action( 'wp_ajax_nopriv_rapidology_handle_stats_adding', array( $this, 'handle_stats_adding' ) );
+		add_action( 'wp_ajax_flm_handle_stats_adding', array( $this, 'handle_stats_adding' ) );
+		add_action( 'wp_ajax_nopriv_flm_handle_stats_adding', array( $this, 'handle_stats_adding' ) );
 
-		add_action( 'wp_ajax_rapidology_subscribe', array( $this, 'subscribe' ) );
-		add_action( 'wp_ajax_nopriv_rapidology_subscribe', array( $this, 'subscribe' ) );
+		add_action( 'wp_ajax_flm_subscribe', array( $this, 'subscribe' ) );
+		add_action( 'wp_ajax_nopriv_flm_subscribe', array( $this, 'subscribe' ) );
 
 		add_action( 'widgets_init', array( $this, 'register_widget' ) );
 
 		add_action( 'after_setup_theme', array( $this, 'register_image_sizes' ) );
 
-		add_shortcode( 'rad_rapidology_inline', array( $this, 'display_inline_shortcode' ) );
-		add_shortcode( 'rad_rapidology_locked', array( $this, 'display_locked_shortcode' ) );
+		add_shortcode( 'flm_inline', array( $this, 'display_inline_shortcode' ) );
+		add_shortcode( 'flm_locked', array( $this, 'display_locked_shortcode' ) );
 
 		add_filter( 'body_class', array( $this, 'add_body_class' ) );
 		register_activation_hook( __FILE__, 'rapid_version_check' );
 
-		if($pagenow == 'plugins.php' || isset($_GET['page']) && $_GET['page']=='rad_rapidology_options'){
+		if($pagenow == 'plugins.php' || isset($_GET['page']) && $_GET['page']=='flm_options'){
 			add_action( 'admin_notices', 'rapid_version_check' );
 		}
 		register_activation_hook( __FILE__, array( $this, 'activate_plugin' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate_plugin' ) );
-		add_action( 'rapidology_lists_auto_refresh', array( $this, 'perform_auto_refresh' ) );
-		add_action( 'rapidology_stats_auto_refresh', array( $this, 'perform_stats_refresh' ) );
+		add_action( 'flm_lists_auto_refresh', array( $this, 'perform_auto_refresh' ) );
+		add_action( 'flm_stats_auto_refresh', array( $this, 'perform_stats_refresh' ) );
 
 		$this->frontend_register_locations();
 
@@ -187,7 +166,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 	function activate_plugin() {
 		// schedule lists auto update daily
-		wp_schedule_event( time(), 'daily', 'rapidology_lists_auto_refresh' );
+		wp_schedule_event( time(), 'daily', 'flm_lists_auto_refresh' );
 
 		//install the db for stats
 		$this->db_install();
@@ -195,8 +174,8 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 	function deactivate_plugin() {
 		// remove lists auto updates from wp cron if plugin deactivated
-		wp_clear_scheduled_hook( 'rapidology_lists_auto_refresh' );
-		wp_clear_scheduled_hook( 'rapidology_stats_auto_refresh' );
+		wp_clear_scheduled_hook( 'flm_lists_auto_refresh' );
+		wp_clear_scheduled_hook( 'flm_stats_auto_refresh' );
 	}
 
 	function define_page_name() {
@@ -214,56 +193,56 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 	function add_menu_link() {
 		$menu_page = add_menu_page(
-			__( 'Rapidology', 'rapidology' ),
-			__( 'Rapidology', 'rapidology' ),
+			__( 'Free List Machine', 'flm' ),
+			__( 'Free List Machine', 'flm' ),
 			'manage_options',
-			'rad_rapidology_options',
+			'flm_options',
 			array( $this, 'options_page' )
 		);
-		add_submenu_page( 'rad_rapidology_options', __( 'Optin Forms', 'rapidology' ), __( 'Optin Forms', 'rapidology' ), 'manage_options', 'rad_rapidology_options' );
-		add_submenu_page( 'rad_rapidology_options', __( 'Email Accounts', 'rapidology' ), __( 'Email Accounts', 'rapidology' ), 'manage_options', 'admin.php?page=rad_rapidology_options#tab_rad_dashboard_tab_content_header_accounts' );
-		add_submenu_page( 'rad_rapidology_options', __( 'Statistics', 'rapidology' ), __( 'Statistics', 'rapidology' ), 'manage_options', 'admin.php?page=rad_rapidology_options#tab_rad_dashboard_tab_content_header_stats' );
-		add_submenu_page( 'rad_rapidology_options', __( 'Import & Export', 'rapidology' ), __( 'Import & Export', 'rapidology' ), 'manage_options', 'admin.php?page=rad_rapidology_options#tab_rad_dashboard_tab_content_header_importexport' );
+		add_submenu_page( 'flm_options', __( 'Optin Forms', 'flm' ), __( 'Optin Forms', 'flm' ), 'manage_options', 'flm_options' );
+		add_submenu_page( 'flm_options', __( 'Email Accounts', 'flm' ), __( 'Email Accounts', 'flm' ), 'manage_options', 'admin.php?page=flm_options#tab_flm_dashboard_tab_content_header_accounts' );
+		add_submenu_page( 'flm_options', __( 'Statistics', 'flm' ), __( 'Statistics', 'flm' ), 'manage_options', 'admin.php?page=flm_options#tab_flm_dashboard_tab_content_header_stats' );
+		add_submenu_page( 'flm_options', __( 'Import & Export', 'flm' ), __( 'Import & Export', 'flm' ), 'manage_options', 'admin.php?page=flm_options#tab_flm_dashboard_tab_content_header_importexport' );
 	}
 
 	function add_body_class( $body_class ) {
-		$body_class[] = 'rad_rapidology';
+		$body_class[] = 'flm';
 
 		return $body_class;
 	}
 
 	function save_btn_class() {
-		return 'rad_dashboard_custom_save';
+		return 'flm_dashboard_custom_save';
 	}
 
 	/**
 	 * Adds plugin localization
-	 * Domain: rapidology
+	 * Domain: flm
 	 *
 	 * @return void
 	 */
 	function add_localization() {
-		load_plugin_textdomain( 'rapidology', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'flm', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
 	// Add settings link on plugin page
 	function add_settings_link( $links ) {
-		$settings_link = sprintf( '<a href="admin.php?page=rad_rapidology_options">%1$s</a>', __( 'Settings', 'rapidology' ) );
+		$settings_link = sprintf( '<a href="admin.php?page=flm_options">%1$s</a>', __( 'Settings', 'flm' ) );
 		array_unshift( $links, $settings_link );
 
 		return $links;
 	}
 
 	function options_page() {
-		RAD_Rapidology::generate_options_page( $this->generate_optin_id() );
+		Free_List_Machine::generate_options_page( $this->generate_optin_id() );
 	}
 
 	function import_settings() {
 		return true;
 	}
 
-	function rapidology_save_settings() {
-		RAD_Rapidology::dashboard_save_settings();
+	function flm_save_settings() {
+		Free_List_Machine::dashboard_save_settings();
 	}
 
 	function filter_export_settings( $options ) {
@@ -274,62 +253,62 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 	/**
 	 *
-	 * Adds the "Next" button into the Rapidology dashboard via RAD_Dashboard action.
+	 * Adds the "Next" button into the Free List Machine dashboard via FLM_Dashboard action.
 	 * @return prints the data on screen
 	 *
 	 */
 	function add_next_button() {
 		printf( '
-			<div class="rad_dashboard_row rad_dashboard_next_design">
-				<button class="rad_dashboard_icon">%1$s</button>
+			<div class="flm_dashboard_row flm_dashboard_next_design">
+				<button class="flm_dashboard_icon">%1$s</button>
 			</div>',
-			__( 'Next: Design Your Optin', 'rapidology' )
+			__( 'Next: Design Your Optin', 'flm' )
 		);
 
 		printf( '
-			<div class="rad_dashboard_row rad_dashboard_next_display">
-				<button class="rad_dashboard_icon">%1$s</button>
+			<div class="flm_dashboard_row flm_dashboard_next_display">
+				<button class="flm_dashboard_icon">%1$s</button>
 			</div>',
-			__( 'Next: Display Settings', 'rapidology' )
+			__( 'Next: Display Settings', 'flm' )
 		);
 
 		printf( '
-			<div class="rad_dashboard_row rad_dashboard_next_customize">
-				<button class="rad_dashboard_icon" data-selected_layout="layout_1">%1$s</button>
+			<div class="flm_dashboard_row flm_dashboard_next_customize">
+				<button class="flm_dashboard_icon" data-selected_layout="layout_1">%1$s</button>
 			</div>',
-			__( 'Next: Customize', 'rapidology' )
+			__( 'Next: Customize', 'flm' )
 		);
 
 		printf( '
-			<div class="rad_dashboard_row rad_dashboard_next_shortcode">
-				<button class="rad_dashboard_icon">%1$s</button>
+			<div class="flm_dashboard_row flm_dashboard_next_shortcode">
+				<button class="flm_dashboard_icon">%1$s</button>
 			</div>',
-			__( 'Generate Shortcode', 'rapidology' )
+			__( 'Generate Shortcode', 'flm' )
 		);
 	}
 
 	/**
-	 * Retrieves the Rapidology options from DB and makes it available outside the class
+	 * Retrieves the Free List Machine options from DB and makes it available outside the class
 	 * @return array
 	 */
-	public static function get_rapidology_options() {
-		return get_option( 'rad_rapidology_options' ) ? get_option( 'rad_rapidology_options' ) : array();
+	public static function get_flm_options() {
+		return get_option( 'flm_options' ) ? get_option( 'flm_options' ) : array();
 	}
 
 	/**
-	 * Updates the Rapidology options outside the class
+	 * Updates the Free List Machine options outside the class
 	 * @return void
 	 */
-	public static function update_rapidology_options( $update_array ) {
-		$dashboard_options = RAD_Rapidology::get_rapidology_options();
+	public static function update_flm_options( $update_array ) {
+		$dashboard_options = Free_List_Machine::get_flm_options();
 
 		$updated_options = array_merge( $dashboard_options, $update_array );
-		update_option( 'rad_rapidology_options', $updated_options );
+		update_option( 'flm_options', $updated_options );
 	}
 
 	/**
 	 * Filters the options_array before importing data. Function generates new IDs for imported options to avoid replacement of existing ones.
-	 * Filter is used in RAD_Dashboard class
+	 * Filter is used in FLM_Dashboard class
 	 * @return array
 	 */
 	function import_filter( $options_array ) {
@@ -358,8 +337,8 @@ class RAD_Rapidology extends RAD_Dashboard {
 	function add_mce_button( $plugin_array ) {
 		global $typenow;
 
-		wp_enqueue_style( 'rapidology-shortcodes', RAD_RAPIDOLOGY_PLUGIN_URI . '/css/tinymcebutton.css', array(), $this->plugin_version );
-		$plugin_array['rapidology'] = RAD_RAPIDOLOGY_PLUGIN_URI . '/js/rapidology-mce-buttons.js';
+		wp_enqueue_style( 'flm-shortcodes', FLM_PLUGIN_URI . '/css/tinymcebutton.css', array(), $this->plugin_version );
+		$plugin_array['flm'] = FLM_PLUGIN_URI . '/js/flm-mce-buttons.js';
 
 
 		return $plugin_array;
@@ -368,7 +347,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	function register_mce_button( $buttons ) {
 		global $typenow;
 
-		array_push( $buttons, 'rapidology_button' );
+		array_push( $buttons, 'flm_button' );
 
 		return $buttons;
 	}
@@ -378,7 +357,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * Pass locked_optins and inline_optins lists to tiny-MCE script
 	 */
 	function tiny_mce_vars() {
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 		$locked_array  = array();
 		$inline_array  = array();
 		$onclick_array = array();
@@ -404,31 +383,31 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 		if ( empty( $locked_array ) ) {
 			$locked_array = array(
-				'empty' => __( 'No optins available', 'rapidology' ),
+				'empty' => __( 'No optins available', 'flm' ),
 			);
 		}
 
 		if ( empty( $inline_array ) ) {
 			$inline_array = array(
-				'empty' => __( 'No optins available', 'rapidology' ),
+				'empty' => __( 'No optins available', 'flm' ),
 			);
 		}
 		if ( empty( $onclick_array ) ) {
 			$onclick_array = array(
-				'empty' => __( 'No optins available', 'rapidology' ),
+				'empty' => __( 'No optins available', 'flm' ),
 			);
 		}
 		?>
 
 		<!-- TinyMCE Shortcode Plugin -->
 		<script type='text/javascript'>
-			var rapidology = {
+			var flm = {
 				'onclick_optins'	: '<?php echo json_encode( $onclick_array ); ?>',
 				'locked_optins': '<?php echo json_encode( $locked_array ); ?>',
 				'inline_optins': '<?php echo json_encode( $inline_array ); ?>',
-				'rapidology_tooltip': '<?php _e( "insert rapidology Opt-In", "rapidology" ); ?>',
-				'inline_text': '<?php _e( "Inline Opt-In", "rapidology" ); ?>',
-				'locked_text': '<?php _e( "Locked Content Opt-In", "rapidology" ); ?>'
+				'flm_tooltip': '<?php _e( "insert flm Opt-In", "flm" ); ?>',
+				'inline_text': '<?php _e( "Inline Opt-In", "flm" ); ?>',
+				'locked_text': '<?php _e( "Locked Content Opt-In", "flm" ); ?>'
 			}
 		</script>
 		<!-- TinyMCE Shortcode Plugin -->
@@ -438,7 +417,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	function db_install() {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . 'rad_rapidology_stats';
+		$table_name = $wpdb->prefix . 'flm_stats';
 
 		/*
 		 * We'll set the default character set and collation for this table.
@@ -473,63 +452,63 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$db_version = array(
 			'db_version' => $this->db_version,
 		);
-		RAD_Rapidology::update_option( $db_version );
+		Free_List_Machine::update_option( $db_version );
 	}
 
 	function register_image_sizes() {
-		add_image_size( 'rapidology_image', 610 );
+		add_image_size( 'flm_image', 610 );
 	}
 
 	/**
-	 * Generates the Rapidology's Home, Stats, Accounts tabs. Hooked to Dashboard class
+	 * Generates the Free List Machine's Home, Stats, Accounts tabs. Hooked to Dashboard class
 	 */
 	function generate_home_tab( $option, $dashboard_settings = array() ) {
 		switch ( $option['type'] ) {
 			case 'home' :
 				printf( '
-					<div class="rad_dashboard_row rad_dashboard_new_optin">
+					<div class="flm_dashboard_row flm_dashboard_new_optin">
 						<h1>%2$s</h1>
-						<button class="rad_dashboard_icon">%1$s</button>
+						<button class="flm_dashboard_icon">%1$s</button>
 						<input type="hidden" name="action" value="new_optin" />
 					</div>',
-					esc_html__( 'new optin', 'rapidology' ),
-					esc_html__( 'Active Optins', 'rapidology' )
+					esc_html__( 'new optin', 'flm' ),
+					esc_html__( 'Active Optins', 'flm' )
 				);
 				printf( '
-					<div class="rad_dashboard_row rad_dashboard_optin_select">
+					<div class="flm_dashboard_row flm_dashboard_optin_select">
 						<h3>%1$s</h3>
-						<span class="rad_dashboard_icon rad_dashboard_close_button"></span>
+						<span class="flm_dashboard_icon flm_dashboard_close_button"></span>
 						<ul>
-							<li class="rad_dashboard_optin_type rad_dashboard_optin_add rad_dashboard_optin_type_popup" data-type="pop_up">
+							<li class="flm_dashboard_optin_type flm_dashboard_optin_add flm_dashboard_optin_type_popup" data-type="pop_up">
 								<h6>%2$s</h6>
 								<div class="optin_select_grey">
 									<div class="optin_select_blue">
 									</div>
 								</div>
 							</li>
-							<li class="rad_dashboard_optin_type rad_dashboard_optin_add rad_dashboard_optin_type_flyin" data-type="flyin">
+							<li class="flm_dashboard_optin_type flm_dashboard_optin_add flm_dashboard_optin_type_flyin" data-type="flyin">
 								<h6>%3$s</h6>
 								<div class="optin_select_grey"></div>
 								<div class="optin_select_blue"></div>
 							</li>
-							<li class="rad_dashboard_optin_type rad_dashboard_optin_add rad_dashboard_optin_type_below" data-type="below_post">
+							<li class="flm_dashboard_optin_type flm_dashboard_optin_add flm_dashboard_optin_type_below" data-type="below_post">
 								<h6>%4$s</h6>
 								<div class="optin_select_grey"></div>
 								<div class="optin_select_blue"></div>
 							</li>
-							<li class="rad_dashboard_optin_type rad_dashboard_optin_add rad_dashboard_optin_type_inline" data-type="inline">
+							<li class="flm_dashboard_optin_type flm_dashboard_optin_add flm_dashboard_optin_type_inline" data-type="inline">
 								<h6>%5$s</h6>
 								<div class="optin_select_grey"></div>
 								<div class="optin_select_blue"></div>
 								<div class="optin_select_grey"></div>
 							</li>
-							<li class="rad_dashboard_optin_type rad_dashboard_optin_add rad_dashboard_optin_type_locked" data-type="locked">
+							<li class="flm_dashboard_optin_type flm_dashboard_optin_add flm_dashboard_optin_type_locked" data-type="locked">
 								<h6>%6$s</h6>
 								<div class="optin_select_grey"></div>
 								<div class="optin_select_blue"></div>
 								<div class="optin_select_grey"></div>
 							</li>
-							<li class="rad_dashboard_optin_type rad_dashboard_optin_add rad_dashboard_optin_type_widget" data-type="widget">
+							<li class="flm_dashboard_optin_type flm_dashboard_optin_add flm_dashboard_optin_type_widget" data-type="widget">
 								<h6>%7$s</h6>
 								<div class="optin_select_grey"></div>
 								<div class="optin_select_blue"></div>
@@ -538,13 +517,13 @@ class RAD_Rapidology extends RAD_Dashboard {
 							</li>
 						</ul>
 					</div>',
-					esc_html__( 'select optin type to begin', 'rapidology' ),
-					esc_html__( 'pop up', 'rapidology' ),
-					esc_html__( 'fly in', 'rapidology' ),
-					esc_html__( 'below post', 'rapidology' ),
-					esc_html__( 'inline', 'rapidology' ),
-					esc_html__( 'locked content', 'rapidology' ),
-					esc_html__( 'widget', 'rapidology' )
+					esc_html__( 'select optin type to begin', 'flm' ),
+					esc_html__( 'pop up', 'flm' ),
+					esc_html__( 'fly in', 'flm' ),
+					esc_html__( 'below post', 'flm' ),
+					esc_html__( 'inline', 'flm' ),
+					esc_html__( 'locked content', 'flm' ),
+					esc_html__( 'widget', 'flm' )
 				);
 
 				$this->display_home_tab_tables();
@@ -552,42 +531,42 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 			case 'account' :
 				printf( '
-					<div class="rad_dashboard_row rad_dashboard_new_account_row">
+					<div class="flm_dashboard_row flm_dashboard_new_account_row">
 						<h1>%2$s</h1>
-						<button class="rad_dashboard_icon">%1$s</button>
+						<button class="flm_dashboard_icon">%1$s</button>
 						<input type="hidden" name="action" value="new_account" />
 					</div>',
-					esc_html__( 'new account', 'rapidology' ),
-					esc_html__( 'My Accounts', 'rapidology' )
+					esc_html__( 'new account', 'flm' ),
+					esc_html__( 'My Accounts', 'flm' )
 				);
 
 				$this->display_accounts_table();
 				break;
 
 			case 'edit_account' :
-				echo '<div id="rad_dashboard_edit_account_tab"></div>';
+				echo '<div id="flm_dashboard_edit_account_tab"></div>';
 				break;
 
 			case 'stats' :
 				printf( '
-					<div class="rad_dashboard_row rad_dashboard_stats_row">
+					<div class="flm_dashboard_row flm_dashboard_stats_row">
 						<h1>%1$s</h1>
-						<div class="rad_rapidology_stats_controls">
-							<button class="rad_dashboard_icon rad_rapidology_clear_stats">%2$s</button>
-							<span class="rad_dashboard_confirmation">%4$s</span>
-							<button class="rad_dashboard_icon rad_rapidology_refresh_stats">%3$s</button>
+						<div class="flm_stats_controls">
+							<button class="flm_dashboard_icon flm_clear_stats">%2$s</button>
+							<span class="flm_dashboard_confirmation">%4$s</span>
+							<button class="flm_dashboard_icon flm_refresh_stats">%3$s</button>
 						</div>
 					</div>
-					<span class="rad_rapidology_stats_spinner"></span>
-					<div class="rad_dashboard_stats_contents"></div>',
+					<span class="flm_stats_spinner"></span>
+					<div class="flm_dashboard_stats_contents"></div>',
 					esc_html( $option['title'] ),
-					esc_html__( 'Clear Stats', 'rapidology' ),
-					esc_html__( 'Refresh Stats', 'rapidology' ),
+					esc_html__( 'Clear Stats', 'flm' ),
+					esc_html__( 'Refresh Stats', 'flm' ),
 					sprintf(
-						'%1$s<span class="rad_dashboard_confirm_stats">%2$s</span><span class="rad_dashboard_cancel_delete">%3$s</span>',
-						esc_html__( 'Remove all the stats data?', 'rapidology' ),
-						esc_html__( 'Yes', 'rapidology' ),
-						esc_html__( 'No', 'rapidology' )
+						'%1$s<span class="flm_dashboard_confirm_stats">%2$s</span><span class="flm_dashboard_cancel_delete">%3$s</span>',
+						esc_html__( 'Remove all the stats data?', 'flm' ),
+						esc_html__( 'Yes', 'flm' ),
+						esc_html__( 'No', 'flm' )
 					)
 				);
 				break;
@@ -600,40 +579,40 @@ class RAD_Rapidology extends RAD_Dashboard {
 	function generate_premade_templates( $option ) {
 		switch ( $option['type'] ) {
 			case 'premade_templates' :
-				echo '<div class="rad_rapidology_premade_grid"><span class="spinner rad_rapidology_premade_spinner"></span></div>';
+				echo '<div class="flm_premade_grid"><span class="spinner flm_premade_spinner"></span></div>';
 				break;
 			case 'preview_optin' :
 				printf( '
-					<div class="rad_dashboard_row rad_dashboard_preview">
-						<button class="rad_dashboard_icon">%1$s</button>
+					<div class="flm_dashboard_row flm_dashboard_preview">
+						<button class="flm_dashboard_icon">%1$s</button>
 					</div>',
-					esc_html__( 'Preview', 'rapidology' )
+					esc_html__( 'Preview', 'flm' )
 				);
 				break;
 		}
 	}
 
 	function generate_premade_grid() {
-		wp_verify_nonce( $_POST['rapidology_premade_nonce'], 'rapidology_premade' );
+		wp_verify_nonce( $_POST['flm_premade_nonce'], 'flm_premade' );
 
-		require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'includes/premade-layouts.php' );
+		require_once( FLM_PLUGIN_DIR . 'includes/premade-layouts.php' );
 		$output = '';
 
 		if ( isset( $all_layouts ) ) {
 			$i = 0;
 
-			$output .= '<div class="rad_rapidology_premade_grid">';
+			$output .= '<div class="flm_premade_grid">';
 
 			foreach ( $all_layouts as $layout_id => $layout_options ) {
 				$output .= sprintf( '
-					<div class="rad_rapidology_premade_item%2$s rad_rapidology_premade_id_%1$s" data-layout="%1$s">
-						<div class="rad_rapidology_premade_item_inner">
+					<div class="flm_premade_item%2$s flm_premade_id_%1$s" data-layout="%1$s">
+						<div class="flm_premade_item_inner">
 							<img src="%3$s" alt="" />
 						</div>
 					</div>',
 					esc_attr( $layout_id ),
-					0 == $i ? ' rad_rapidology_layout_selected' : '',
-					esc_attr( RAD_RAPIDOLOGY_PLUGIN_URI . '/images/thumb_' . $layout_id . '.svg' )
+					0 == $i ? ' flm_layout_selected' : '',
+					esc_attr( FLM_PLUGIN_URI . '/images/thumb_' . $layout_id . '.svg' )
 				);
 				$i ++;
 			}
@@ -648,13 +627,13 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * Gets the layouts data, converts it to json string and passes back to js script to fill the form with predefined values
 	 */
 	function get_premade_values() {
-		wp_verify_nonce( $_POST['rapidology_premade_nonce'], 'rapidology_premade' );
+		wp_verify_nonce( $_POST['flm_premade_nonce'], 'flm_premade' );
 
 		$premade_data_json = str_replace( '\\', '', $_POST['premade_data_array'] );
 		$premade_data      = json_decode( $premade_data_json, true );
 		$layout_id         = $premade_data['id'];
 
-		require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'includes/premade-layouts.php' );
+		require_once( FLM_PLUGIN_DIR . 'includes/premade-layouts.php' );
 
 		if ( isset( $all_layouts[ $layout_id ] ) ) {
 			$options_set = json_encode( $all_layouts[ $layout_id ] );
@@ -667,50 +646,50 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * Generates output for the Stats tab
 	 */
 	function generate_stats_tab() {
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 
 		$output = sprintf( '
-			<div class="rad_dashboard_stats_contents rad_dashboard_stats_ready">
-				<div class="rad_dashboard_all_time_stats">
+			<div class="flm_dashboard_stats_contents flm_dashboard_stats_ready">
+				<div class="flm_dashboard_all_time_stats">
 					<h3>%1$s</h3>
 					%2$s
 				</div>
-				<div class="rad_dashboard_optins_stats rad_dashboard_optins_all_table">
-					<div class="rad_dashboard_optins_list">
+				<div class="flm_dashboard_optins_stats flm_dashboard_optins_all_table">
+					<div class="flm_dashboard_optins_list">
 						%3$s
 					</div>
 				</div>
-				<div class="rad_dashboard_optins_stats rad_dashboard_lists_stats_graph">
-					<div class="rad_rapidology_graph_header">
+				<div class="flm_dashboard_optins_stats flm_dashboard_lists_stats_graph">
+					<div class="flm_graph_header">
 						<h3>%6$s</h3>
-						<div class="rad_rapidology_graph_controls">
-							<a href="#" class="rad_rapidology_graph_button rad_rapidology_active_button" data-period="30">%7$s</a>
-							<a href="#" class="rad_rapidology_graph_button" data-period="12">%8$s</a>
-							<select class="rad_rapidology_graph_select_list">%9$s</select>
+						<div class="flm_graph_controls">
+							<a href="#" class="flm_graph_button flm_active_button" data-period="30">%7$s</a>
+							<a href="#" class="flm_graph_button" data-period="12">%8$s</a>
+							<select class="flm_graph_select_list">%9$s</select>
 						</div>
 					</div>
 					%5$s
 				</div>
-				<div class="rad_dashboard_optins_stats rad_dashboard_lists_stats">
+				<div class="flm_dashboard_optins_stats flm_dashboard_lists_stats">
 					%4$s
 				</div>
 				%10$s
 			</div>',
-			esc_html__( 'Overview', 'rapidology' ),
+			esc_html__( 'Overview', 'flm' ),
 			$this->generate_all_time_stats(),
 			$this->generate_optins_stats_table( 'conversion_rate', true ),
 			( ! empty( $options_array['accounts'] ) )
 				? sprintf(
-				'<div class="rad_dashboard_optins_list">
+				'<div class="flm_dashboard_optins_list">
 						%1$s
 					</div>',
 				$this->generate_lists_stats_table( 'count', true )
 			)
 				: '',
 			$this->generate_lists_stats_graph( 30, 'day', '' ), // #5
-			esc_html__( 'New sign ups', 'rapidology' ),
-			esc_html__( 'Last 30 days', 'rapidology' ),
-			esc_html__( 'Last 12 month', 'rapidology' ),
+			esc_html__( 'New sign ups', 'flm' ),
+			esc_html__( 'Last 30 days', 'flm' ),
+			esc_html__( 'Last 12 month', 'flm' ),
 			$this->generate_all_lists_select(),
 			$this->generate_pages_stats() // #10
 		);
@@ -723,18 +702,18 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function reset_stats() {
-		wp_verify_nonce( $_POST['rapidology_stats_nonce'], 'rapidology_stats' );
-		$force_update = ! empty( $_POST['rapidology_force_upd_stats'] ) ? sanitize_text_field( $_POST['rapidology_force_upd_stats'] ) : '';
+		wp_verify_nonce( $_POST['flm_stats_nonce'], 'flm_stats' );
+		$force_update = ! empty( $_POST['flm_force_upd_stats'] ) ? sanitize_text_field( $_POST['flm_force_upd_stats'] ) : '';
 
-		if ( get_option( 'rad_rapidology_stats_cache' ) && 'true' !== $force_update ) {
-			$output = get_option( 'rad_rapidology_stats_cache' );
+		if ( get_option( 'flm_stats_cache' ) && 'true' !== $force_update ) {
+			$output = get_option( 'flm_stats_cache' );
 		} else {
 			$output = $this->generate_stats_tab();
-			update_option( 'rad_rapidology_stats_cache', $output );
+			update_option( 'flm_stats_cache', $output );
 		}
 
-		if ( ! wp_get_schedule( 'rapidology_stats_auto_refresh' ) ) {
-			wp_schedule_event( time(), 'daily', 'rapidology_stats_auto_refresh' );
+		if ( ! wp_get_schedule( 'flm_stats_auto_refresh' ) ) {
+			wp_schedule_event( time(), 'daily', 'flm_stats_auto_refresh' );
 		}
 
 		die( $output );
@@ -746,7 +725,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function perform_stats_refresh() {
 		$fresh_stats = $output = $this->generate_stats_tab();
-		update_option( 'rad_rapidology_stats_cache', $fresh_stats );
+		update_option( 'flm_stats_cache', $fresh_stats );
 	}
 
 	/**
@@ -754,11 +733,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return void
 	 */
 	function clear_stats() {
-		wp_verify_nonce( $_POST['rapidology_stats_nonce'], 'rapidology_stats' );
+		wp_verify_nonce( $_POST['flm_stats_nonce'], 'flm_stats' );
 
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . 'rad_rapidology_stats';
+		$table_name = $wpdb->prefix . 'flm_stats';
 
 		// construct sql query to mark removed options as removed in stats DB
 		$sql = "TRUNCATE TABLE $table_name";
@@ -771,8 +750,8 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function generate_all_lists_select() {
-		$options_array = RAD_Rapidology::get_rapidology_options();
-		$output        = sprintf( '<option value="all">%1$s</option>', __( 'All lists', 'rapidology' ) );
+		$options_array = Free_List_Machine::get_flm_options();
+		$output        = sprintf( '<option value="all">%1$s</option>', __( 'All lists', 'flm' ) );
 
 		if ( ! empty( $options_array['accounts'] ) ) {
 			foreach ( $options_array['accounts'] as $service => $accounts ) {
@@ -806,7 +785,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$growth_rate = $this->calculate_growth_rate( 'all' );
 
 		$ouptut = sprintf(
-			'<div class="rad_dashboard_stats_container">
+			'<div class="flm_dashboard_stats_container">
 				<div class="all_stats_column conversion_rate">
 					<span class="value">%1$s</span>
 					<span class="caption">%2$s</span>
@@ -822,12 +801,12 @@ class RAD_Rapidology extends RAD_Dashboard {
 				<div style="clear: both;"></div>
 			</div>',
 			$conversion_rate . '%',
-			__( 'Conversion Rate', 'rapidology' ),
+			__( 'Conversion Rate', 'flm' ),
 			$all_subscribers,
-			__( 'Subscribers', 'rapidology' ),
+			__( 'Subscribers', 'flm' ),
 			$growth_rate,
-			__( 'Subscriber Growth', 'rapidology' ),
-			__( 'week', 'rapidology' )
+			__( 'Subscriber Growth', 'flm' ),
+			__( 'week', 'flm' )
 		);
 
 		return $ouptut;
@@ -838,7 +817,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function generate_optins_stats_table( $orderby = 'conversion_rate', $include_header = false ) {
-		$options_array     = RAD_Rapidology::get_rapidology_options();
+		$options_array     = Free_List_Machine::get_flm_options();
 		$optins_count      = 0;
 		$output            = '';
 		$total_impressions = 0;
@@ -851,21 +830,21 @@ class RAD_Rapidology extends RAD_Dashboard {
 						$output .= sprintf(
 							'<ul>
 								<li data-table="optins">
-									<div class="rad_dashboard_table_name rad_dashboard_table_column rad_table_header">%1$s</div>
-									<div class="rad_dashboard_table_impressions rad_dashboard_table_column rad_dashboard_icon rad_dashboard_sort_button" data-order_by="impressions">%2$s</div>
-									<div class="rad_dashboard_table_conversions rad_dashboard_table_column rad_dashboard_icon rad_dashboard_sort_button" data-order_by="conversions">%3$s</div>
-									<div class="rad_dashboard_table_rate rad_dashboard_table_column rad_dashboard_icon rad_dashboard_sort_button active_sorting" data-order_by="conversion_rate">%4$s</div>
+									<div class="flm_dashboard_table_name flm_dashboard_table_column rad_table_header">%1$s</div>
+									<div class="flm_dashboard_table_impressions flm_dashboard_table_column flm_dashboard_icon flm_dashboard_sort_button" data-order_by="impressions">%2$s</div>
+									<div class="flm_dashboard_table_conversions flm_dashboard_table_column flm_dashboard_icon flm_dashboard_sort_button" data-order_by="conversions">%3$s</div>
+									<div class="flm_dashboard_table_rate flm_dashboard_table_column flm_dashboard_icon flm_dashboard_sort_button active_sorting" data-order_by="conversion_rate">%4$s</div>
 									<div style="clear: both;"></div>
 								</li>
 							</ul>',
-							__( 'My Optins', 'rapidology' ),
-							__( 'Impressions', 'rapidology' ),
-							__( 'Conversions', 'rapidology' ),
-							__( 'Conversion Rate', 'rapidology' )
+							__( 'My Optins', 'flm' ),
+							__( 'Impressions', 'flm' ),
+							__( 'Conversions', 'flm' ),
+							__( 'Conversion Rate', 'flm' )
 						);
 					}
 
-					$output .= '<ul class="rad_dashboard_table_contents">';
+					$output .= '<ul class="flm_dashboard_table_contents">';
 				}
 
 				$total_impressions += $impressions = $this->stats_count( $optin_id, 'imp' );
@@ -896,11 +875,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 				}
 
 				$output .= sprintf(
-					'<li class="rad_dashboard_optins_item rad_dashboard_parent_item">
-						<div class="rad_dashboard_table_name rad_dashboard_table_column rad_dashboard_icon rad_dashboard_type_%5$s rad_dashboard_status_%6$s">%1$s</div>
-						<div class="rad_dashboard_table_impressions rad_dashboard_table_column">%2$s</div>
-						<div class="rad_dashboard_table_conversions rad_dashboard_table_column">%3$s</div>
-						<div class="rad_dashboard_table_rate rad_dashboard_table_column">%4$s</div>
+					'<li class="flm_dashboard_optins_item flm_dashboard_parent_item">
+						<div class="flm_dashboard_table_name flm_dashboard_table_column flm_dashboard_icon flm_dashboard_type_%5$s flm_dashboard_status_%6$s">%1$s</div>
+						<div class="flm_dashboard_table_impressions flm_dashboard_table_column">%2$s</div>
+						<div class="flm_dashboard_table_conversions flm_dashboard_table_column">%3$s</div>
+						<div class="flm_dashboard_table_rate flm_dashboard_table_column">%4$s</div>
 						<div style="clear: both;"></div>
 					</li>',
 					esc_html( $details['name'] ),
@@ -915,11 +894,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 		if ( 0 < $optins_count ) {
 			$output .= sprintf(
-				'<li class="rad_dashboard_optins_item_bottom_row">
-					<div class="rad_dashboard_table_name rad_dashboard_table_column"></div>
-					<div class="rad_dashboard_table_impressions rad_dashboard_table_column">%1$s</div>
-					<div class="rad_dashboard_table_conversions rad_dashboard_table_column">%2$s</div>
-					<div class="rad_dashboard_table_rate rad_dashboard_table_column">%3$s</div>
+				'<li class="flm_dashboard_optins_item_bottom_row">
+					<div class="flm_dashboard_table_name flm_dashboard_table_column"></div>
+					<div class="flm_dashboard_table_impressions flm_dashboard_table_column">%1$s</div>
+					<div class="flm_dashboard_table_conversions flm_dashboard_table_column">%2$s</div>
+					<div class="flm_dashboard_table_rate flm_dashboard_table_column">%3$s</div>
 				</li>',
 				$this->get_compact_number( $total_impressions ),
 				$this->get_compact_number( $total_conversions ),
@@ -1013,19 +992,19 @@ class RAD_Rapidology extends RAD_Dashboard {
 			$output               = '';
 
 			if ( ! empty( $rate_by_pages_sorted ) ) {
-				$options_array  = RAD_Rapidology::get_rapidology_options();
+				$options_array  = Free_List_Machine::get_flm_options();
 				$table_contents = '<ul>';
 
 				for ( $i = 0; $i < 5; $i ++ ) {
 					if ( ! empty( $rate_by_pages_sorted[ $i ] ) ) {
 						$table_contents .= sprintf(
 							'<li class="rad_table_page_row">
-								<div class="rad_dashboard_table_name rad_dashboard_table_column rad_table_page_row">%1$s</div>
-								<div class="rad_dashboard_table_pages_rate rad_dashboard_table_column">%2$s</div>
+								<div class="flm_dashboard_table_name flm_dashboard_table_column rad_table_page_row">%1$s</div>
+								<div class="flm_dashboard_table_pages_rate flm_dashboard_table_column">%2$s</div>
 								<div style="clear: both;"></div>
 							</li>',
 							- 1 == $rate_by_pages_sorted[ $i ]['page_id']
-								? __( 'Homepage', 'rapidology' )
+								? __( 'Homepage', 'flm' )
 								: esc_html( get_the_title( $rate_by_pages_sorted[ $i ]['page_id'] ) ),
 							esc_html( $rate_by_pages_sorted[ $i ]['page_rate'] ) . '%'
 						);
@@ -1037,9 +1016,9 @@ class RAD_Rapidology extends RAD_Dashboard {
 							}
 
 							$table_contents .= sprintf(
-								'<li class="rad_table_optin_row rad_dashboard_optins_item">
-									<div class="rad_dashboard_table_name rad_dashboard_table_column rad_dashboard_icon rad_dashboard_type_%3$s rad_dashboard_status_%4$s">%1$s</div>
-									<div class="rad_dashboard_table_pages_rate rad_dashboard_table_column">%2$s</div>
+								'<li class="rad_table_optin_row flm_dashboard_optins_item">
+									<div class="flm_dashboard_table_name flm_dashboard_table_column flm_dashboard_icon flm_dashboard_type_%3$s flm_dashboard_status_%4$s">%1$s</div>
+									<div class="flm_dashboard_table_pages_rate flm_dashboard_table_column">%2$s</div>
 									<div style="clear: both;"></div>
 								</li>',
 								( isset( $options_array[ $optin_details['optin_id'] ]['optin_name'] ) )
@@ -1058,20 +1037,20 @@ class RAD_Rapidology extends RAD_Dashboard {
 				$table_contents .= '</ul>';
 
 				$output = sprintf(
-					'<div class="rad_dashboard_optins_stats rad_dashboard_pages_stats">
-						<div class="rad_dashboard_optins_list">
+					'<div class="flm_dashboard_optins_stats flm_dashboard_pages_stats">
+						<div class="flm_dashboard_optins_list">
 							<ul>
 								<li>
-									<div class="rad_dashboard_table_name rad_dashboard_table_column rad_table_header">%1$s</div>
-									<div class="rad_dashboard_table_pages_rate rad_dashboard_table_column rad_table_header">%2$s</div>
+									<div class="flm_dashboard_table_name flm_dashboard_table_column rad_table_header">%1$s</div>
+									<div class="flm_dashboard_table_pages_rate flm_dashboard_table_column rad_table_header">%2$s</div>
 									<div style="clear: both;"></div>
 								</li>
 							</ul>
 							%3$s
 						</div>
 					</div>',
-					__( 'Highest converting pages', 'rapidology' ),
-					__( 'Conversion rate', 'rapidology' ),
+					__( 'Highest converting pages', 'flm' ),
+					__( 'Conversion rate', 'flm' ),
 					$table_contents
 				);
 			}
@@ -1085,7 +1064,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function generate_lists_stats_table( $orderby = 'count', $include_header = false ) {
-		$options_array     = RAD_Rapidology::get_rapidology_options();
+		$options_array     = Free_List_Machine::get_flm_options();
 		$optins_count      = 0;
 		$output            = '';
 		$total_subscribers = 0;
@@ -1100,21 +1079,21 @@ class RAD_Rapidology extends RAD_Dashboard {
 									$output .= sprintf(
 										'<ul>
 											<li data-table="lists">
-												<div class="rad_dashboard_table_name rad_dashboard_table_column rad_table_header">%1$s</div>
-												<div class="rad_dashboard_table_impressions rad_dashboard_table_column rad_dashboard_icon rad_dashboard_sort_button" data-order_by="service">%2$s</div>
-												<div class="rad_dashboard_table_rate rad_dashboard_table_column rad_dashboard_icon rad_dashboard_sort_button active_sorting" data-order_by="count">%3$s</div>
-												<div class="rad_dashboard_table_conversions rad_dashboard_table_column rad_dashboard_icon rad_dashboard_sort_button" data-order_by="growth">%4$s</div>
+												<div class="flm_dashboard_table_name flm_dashboard_table_column rad_table_header">%1$s</div>
+												<div class="flm_dashboard_table_impressions flm_dashboard_table_column flm_dashboard_icon flm_dashboard_sort_button" data-order_by="service">%2$s</div>
+												<div class="flm_dashboard_table_rate flm_dashboard_table_column flm_dashboard_icon flm_dashboard_sort_button active_sorting" data-order_by="count">%3$s</div>
+												<div class="flm_dashboard_table_conversions flm_dashboard_table_column flm_dashboard_icon flm_dashboard_sort_button" data-order_by="growth">%4$s</div>
 												<div style="clear: both;"></div>
 											</li>
 										</ul>',
-										esc_html__( 'My Lists', 'rapidology' ),
-										esc_html__( 'Provider', 'rapidology' ),
-										esc_html__( 'Subscribers', 'rapidology' ),
-										esc_html__( 'Growth Rate', 'rapidology' )
+										esc_html__( 'My Lists', 'flm' ),
+										esc_html__( 'Provider', 'flm' ),
+										esc_html__( 'Subscribers', 'flm' ),
+										esc_html__( 'Growth Rate', 'flm' )
 									);
 								}
 
-								$output .= '<ul class="rad_dashboard_table_contents">';
+								$output .= '<ul class="flm_dashboard_table_contents">';
 							}
 
 							$total_subscribers += $list_data['subscribers_count'];
@@ -1140,33 +1119,33 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 			foreach ( $sorted_array as $single_list ) {
 				$output .= sprintf(
-					'<li class="rad_dashboard_optins_item rad_dashboard_parent_item">
-						<div class="rad_dashboard_table_name rad_dashboard_table_column">%1$s</div>
-						<div class="rad_dashboard_table_conversions rad_dashboard_table_column">%2$s</div>
-						<div class="rad_dashboard_table_rate rad_dashboard_table_column">%3$s</div>
-						<div class="rad_dashboard_table_impressions rad_dashboard_table_column">%4$s/%5$s</div>
+					'<li class="flm_dashboard_optins_item flm_dashboard_parent_item">
+						<div class="flm_dashboard_table_name flm_dashboard_table_column">%1$s</div>
+						<div class="flm_dashboard_table_conversions flm_dashboard_table_column">%2$s</div>
+						<div class="flm_dashboard_table_rate flm_dashboard_table_column">%3$s</div>
+						<div class="flm_dashboard_table_impressions flm_dashboard_table_column">%4$s/%5$s</div>
 						<div style="clear: both;"></div>
 					</li>',
 					esc_html( $single_list['name'] ),
 					esc_html( $single_list['service'] ),
-					'ontraport' == $single_list['service'] ? esc_html__( 'n/a', 'rapidology' ) : esc_html( $single_list['count'] ),
+					'ontraport' == $single_list['service'] ? esc_html__( 'n/a', 'flm' ) : esc_html( $single_list['count'] ),
 					esc_html( $single_list['growth'] ),
-					esc_html__( 'week', 'rapidology' )
+					esc_html__( 'week', 'flm' )
 				);
 			}
 		}
 
 		if ( 0 < $optins_count ) {
 			$output .= sprintf(
-				'<li class="rad_dashboard_optins_item_bottom_row">
-					<div class="rad_dashboard_table_name rad_dashboard_table_column"></div>
-					<div class="rad_dashboard_table_conversions rad_dashboard_table_column"></div>
-					<div class="rad_dashboard_table_rate rad_dashboard_table_column">%1$s</div>
-					<div class="rad_dashboard_table_impressions rad_dashboard_table_column">%2$s/%3$s</div>
+				'<li class="flm_dashboard_optins_item_bottom_row">
+					<div class="flm_dashboard_table_name flm_dashboard_table_column"></div>
+					<div class="flm_dashboard_table_conversions flm_dashboard_table_column"></div>
+					<div class="flm_dashboard_table_rate flm_dashboard_table_column">%1$s</div>
+					<div class="flm_dashboard_table_impressions flm_dashboard_table_column">%2$s/%3$s</div>
 				</li>',
 				esc_html( $total_subscribers ),
 				esc_html( $this->calculate_growth_rate( 'all' ) ),
-				esc_html__( 'week', 'rapidology' )
+				esc_html__( 'week', 'flm' )
 			);
 			$output .= '</ul>';
 		}
@@ -1205,7 +1184,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$stats_count = 0;
 		$optin_id    = 'all' == $optin_id ? '*' : $optin_id;
 
-		$table_name = $wpdb->prefix . 'rad_rapidology_stats';
+		$table_name = $wpdb->prefix . 'flm_stats';
 
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name ) {
 			// construct sql query to get all the conversions from db
@@ -1231,7 +1210,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		global $wpdb;
 		$conversions = array();
 
-		$table_name = $wpdb->prefix . 'rad_rapidology_stats';
+		$table_name = $wpdb->prefix . 'flm_stats';
 
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name ) {
 			// construct sql query to get all the conversions from db
@@ -1249,7 +1228,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 		$all_pages = array();
 
-		$table_name = $wpdb->prefix . 'rad_rapidology_stats';
+		$table_name = $wpdb->prefix . 'flm_stats';
 
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name ) {
 			// construct sql query to get all the conversions from db
@@ -1268,7 +1247,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$all_optins       = array();
 		$all_optins_final = array();
 
-		$table_name = $wpdb->prefix . 'rad_rapidology_stats';
+		$table_name = $wpdb->prefix . 'flm_stats';
 
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name ) {
 			// construct sql query to get all the conversions from db
@@ -1322,7 +1301,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function calculate_subscribers( $period, $service = '', $account_name = '', $list_id = '' ) {
-		$options_array     = RAD_Rapidology::get_rapidology_options();
+		$options_array     = Free_List_Machine::get_flm_options();
 		$subscribers_count = 0;
 
 		if ( 'all' === $period ) {
@@ -1407,20 +1386,20 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function generate_stats_graph_output( $period, $day_or_month, $data ) {
-		$result = '<div class="rad_dashboard_lists_stats_graph_container">';
+		$result = '<div class="flm_dashboard_lists_stats_graph_container">';
 		$result .= sprintf(
-			'<ul class="rad_rapidology_graph_%1$s rad_rapidology_graph">',
+			'<ul class="flm_graph_%1$s flm_graph">',
 			esc_attr( $period )
 		);
 		$bars_count = 0;
 
 		for ( $i = 1; $i <= $period; $i ++ ) {
 			$result .= sprintf( '<li%1$s>',
-				$period == $i ? ' class="rad_rapidology_graph_last"' : ''
+				$period == $i ? ' class="flm_graph_last"' : ''
 			);
 
 			if ( array_key_exists( $i, $data ) ) {
-				$result .= sprintf( '<div value="%1$s" class="rad_rapidology_graph_bar">',
+				$result .= sprintf( '<div value="%1$s" class="flm_graph_bar">',
 					esc_attr( $data[ $i ]['subtotal'] )
 				);
 
@@ -1443,20 +1422,20 @@ class RAD_Rapidology extends RAD_Dashboard {
 		}
 
 		$result .= sprintf(
-			'<div class="rad_rapidology_overall">
+			'<div class="flm_overall">
 				<span class="total_signups">%1$s | </span>
 				<span class="signups_period">%2$s</span>
 			</div>',
 			sprintf(
 				'%1$s %2$s',
 				esc_html( $data[ 'total_subscribers_' . $period ] ),
-				esc_html__( 'New Signups', 'rapidology' )
+				esc_html__( 'New Signups', 'flm' )
 			),
 			sprintf(
 				'%1$s %2$s %3$s',
 				esc_html( $per_day ),
-				esc_html__( 'Per', 'rapidology' ),
-				'day' == $day_or_month ? esc_html__( 'Day', 'rapidology' ) : esc_html__( 'Month', 'rapidology' )
+				esc_html__( 'Per', 'flm' ),
+				'day' == $day_or_month ? esc_html__( 'Day', 'flm' ) : esc_html__( 'Month', 'flm' )
 			)
 		);
 
@@ -1469,9 +1448,9 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * Generates the lists stats graph and passes it to jQuery
 	 */
 	function get_stats_graph_ajax() {
-		wp_verify_nonce( $_POST['rapidology_stats_nonce'], 'rapidology_stats' );
-		$list_id = ! empty( $_POST['rapidology_list'] ) ? sanitize_text_field( $_POST['rapidology_list'] ) : '';
-		$period  = ! empty( $_POST['rapidology_period'] ) ? sanitize_text_field( $_POST['rapidology_period'] ) : '';
+		wp_verify_nonce( $_POST['flm_stats_nonce'], 'flm_stats' );
+		$list_id = ! empty( $_POST['flm_list'] ) ? sanitize_text_field( $_POST['flm_list'] ) : '';
+		$period  = ! empty( $_POST['flm_period'] ) ? sanitize_text_field( $_POST['flm_period'] ) : '';
 
 		$day_or_month = '30' == $period ? 'day' : 'month';
 		$list_id      = 'all' == $list_id ? '' : $list_id;
@@ -1485,9 +1464,9 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * Generates the optins stats table and passes it to jQuery
 	 */
 	function refresh_optins_stats_table() {
-		wp_verify_nonce( $_POST['rapidology_stats_nonce'], 'rapidology_stats' );
-		$orderby = ! empty( $_POST['rapidology_orderby'] ) ? sanitize_text_field( $_POST['rapidology_orderby'] ) : '';
-		$table   = ! empty( $_POST['rapidology_stats_table'] ) ? sanitize_text_field( $_POST['rapidology_stats_table'] ) : '';
+		wp_verify_nonce( $_POST['flm_stats_nonce'], 'flm_stats' );
+		$orderby = ! empty( $_POST['flm_orderby'] ) ? sanitize_text_field( $_POST['flm_orderby'] ) : '';
+		$table   = ! empty( $_POST['flm_stats_table'] ) ? sanitize_text_field( $_POST['flm_stats_table'] ) : '';
 
 		if ( 'optins' === $table ) {
 			$output = $this->generate_optins_stats_table( $orderby );
@@ -1533,22 +1512,22 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function generate_new_account_fields() {
 		wp_verify_nonce( $_POST['accounts_tab_nonce'], 'accounts_tab' );
-		$service = ! empty( $_POST['rapidology_service'] ) ? sanitize_text_field( $_POST['rapidology_service'] ) : '';
+		$service = ! empty( $_POST['flm_service'] ) ? sanitize_text_field( $_POST['flm_service'] ) : '';
 
 		if ( 'empty' == $service ) {
-			echo '<ul class="rad_dashboard_new_account_fields"><li></li></ul>';
+			echo '<ul class="flm_dashboard_new_account_fields"><li></li></ul>';
 		} else {
 			$form_fields = $this->generate_new_account_form( $service );
 
 			printf(
-				'<ul class="rad_dashboard_new_account_fields">
-					<li class="select rad_dashboard_select_account">
+				'<ul class="flm_dashboard_new_account_fields">
+					<li class="select flm_dashboard_select_account">
 						%3$s
-						<button class="rad_dashboard_icon authorize_service new_account_tab" data-service="%2$s">%1$s</button>
+						<button class="flm_dashboard_icon authorize_service new_account_tab" data-service="%2$s">%1$s</button>
 						<span class="spinner"></span>
 					</li>
 				</ul>',
-				esc_html__( 'Authorize', 'rapidology' ),
+				esc_html__( 'Authorize', 'flm' ),
 				esc_attr( $service ),
 				$form_fields
 			);
@@ -1562,59 +1541,59 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function generate_edit_account_page() {
 		wp_verify_nonce( $_POST['accounts_tab_nonce'], 'accounts_tab' );
-		$edit_account = ! empty( $_POST['rapidology_edit_account'] ) ? sanitize_text_field( $_POST['rapidology_edit_account'] ) : '';
-		$account_name = ! empty( $_POST['rapidology_account_name'] ) ? sanitize_text_field( $_POST['rapidology_account_name'] ) : '';
-		$service      = ! empty( $_POST['rapidology_service'] ) ? sanitize_text_field( $_POST['rapidology_service'] ) : '';
+		$edit_account = ! empty( $_POST['flm_edit_account'] ) ? sanitize_text_field( $_POST['flm_edit_account'] ) : '';
+		$account_name = ! empty( $_POST['flm_account_name'] ) ? sanitize_text_field( $_POST['flm_account_name'] ) : '';
+		$service      = ! empty( $_POST['flm_service'] ) ? sanitize_text_field( $_POST['flm_service'] ) : '';
 
-		echo '<div id="rad_dashboard_edit_account_tab">';
+		echo '<div id="flm_dashboard_edit_account_tab">';
 
 		printf(
-			'<div class="rad_dashboard_row rad_dashboard_new_account_row">
+			'<div class="flm_dashboard_row flm_dashboard_new_account_row">
 				<h1>%1$s</h1>
 				<p>%2$s</p>
 			</div>',
 			( 'true' == $edit_account )
 				? esc_html( $account_name )
-				: esc_html__( 'New Account Setup', 'rapidology' ),
+				: esc_html__( 'New Account Setup', 'flm' ),
 			( 'true' == $edit_account )
-				? esc_html__( 'You can view and re-authorize this account’s settings below', 'rapidology' )
-				: esc_html__( 'Setup a new email marketing service account below', 'rapidology' )
+				? esc_html__( 'You can view and re-authorize this account’s settings below', 'flm' )
+				: esc_html__( 'Setup a new email marketing service account below', 'flm' )
 		);
 
 		if ( 'true' == $edit_account ) {
 			$form_fields = $this->generate_new_account_form( $service, $account_name, false );
 
 			printf(
-				'<div class="rad_dashboard_form rad_dashboard_row">
+				'<div class="flm_dashboard_form flm_dashboard_row">
 					<h2>%1$s</h2>
 					<div style="clear:both;"></div>
-					<ul class="rad_dashboard_new_account_fields rad_dashboard_edit_account_fields">
-						<li class="select rad_dashboard_select_account">
+					<ul class="flm_dashboard_new_account_fields flm_dashboard_edit_account_fields">
+						<li class="select flm_dashboard_select_account">
 							%2$s
-							<button class="rad_dashboard_icon authorize_service new_account_tab" data-service="%7$s" data-account_name="%4$s">%3$s</button>
+							<button class="flm_dashboard_icon authorize_service new_account_tab" data-service="%7$s" data-account_name="%4$s">%3$s</button>
 							<span class="spinner"></span>
 						</li>
 					</ul>
 					%5$s
-					<button class="rad_dashboard_icon save_account_tab" data-service="%7$s">%6$s</button>
+					<button class="flm_dashboard_icon save_account_tab" data-service="%7$s">%6$s</button>
 				</div>',
 				esc_html( $service ),
 				$form_fields,
-				esc_html__( 'Re-Authorize', 'rapidology' ),
+				esc_html__( 'Re-Authorize', 'flm' ),
 				esc_attr( $account_name ),
 				$this->display_currrent_lists( $service, $account_name ),
-				esc_html__( 'save & exit', 'rapidology' ),
+				esc_html__( 'save & exit', 'flm' ),
 				esc_attr( $service )
 			);
 		} else {
 			//dropdown is in alphabetical order, please add the new optin here in the right spot. Add to replacement values at the bottom to keep #'s in order
 			//new account dropdown
 			printf(
-				'<div class="rad_dashboard_form rad_dashboard_row">
+				'<div class="flm_dashboard_form flm_dashboard_row">
 					<h2>%1$s</h2>
 					<div style="clear:both;"></div>
 					<ul>
-						<li class="select rad_dashboard_select_provider_new">
+						<li class="select flm_dashboard_select_provider_new">
 							<p>Select Email Provider</p>
 							<select>
 								<option value="empty" selected>%2$s</option>
@@ -1638,29 +1617,29 @@ class RAD_Rapidology extends RAD_Dashboard {
 							</select>
 						</li>
 					</ul>
-					<ul class="rad_dashboard_new_account_fields"><li></li></ul>
-					<button class="rad_dashboard_icon save_account_tab">%12$s</button>
+					<ul class="flm_dashboard_new_account_fields"><li></li></ul>
+					<button class="flm_dashboard_icon save_account_tab">%12$s</button>
 				</div>',
-				esc_html__( 'New account settings', 'rapidology' ),#1
-				esc_html__( 'Select One...', 'rapidology' ),#2
-				esc_html__( 'MailChimp', 'rapidology' ),#3
-				esc_html__( 'AWeber', 'rapidology' ),#4
-				esc_html__( 'Constant Contact', 'rapidology' ),#5
-				esc_html__( 'Campaign Monitor', 'rapidology' ),#6
-				esc_html__( 'Mad Mimi', 'rapidology' ),#7
-				esc_html__( 'iContact', 'rapidology' ),#8
-				esc_html__( 'GetResponse', 'rapidology' ),#9
-				esc_html__( 'Sendinblue', 'rapidology' ),#10
-				esc_html__( 'MailPoet', 'rapidology' ),#11
-				esc_html__( 'save & exit', 'rapidology' ),#12
-				esc_html__( 'Ontraport', 'rapidology' ),#13
-				esc_html__( 'Feedblitz', 'rapidology' ),#14
-				esc_html__( 'Infusionsoft', 'rapidology' ),#15
-				esc_html__( 'Emma', 'rapidology' ),#16
-				esc_html__( 'HubSpot Lists', 'rapidology' ),#17
-				esc_html__( 'Salesforce', 'rapidology' ),#18
-				esc_html__( 'Active Campaign', 'rapidology' ),#19
-				esc_html__( 'HubSpot Standard', 'rapidology')#20
+				esc_html__( 'New account settings', 'flm' ),#1
+				esc_html__( 'Select One...', 'flm' ),#2
+				esc_html__( 'MailChimp', 'flm' ),#3
+				esc_html__( 'AWeber', 'flm' ),#4
+				esc_html__( 'Constant Contact', 'flm' ),#5
+				esc_html__( 'Campaign Monitor', 'flm' ),#6
+				esc_html__( 'Mad Mimi', 'flm' ),#7
+				esc_html__( 'iContact', 'flm' ),#8
+				esc_html__( 'GetResponse', 'flm' ),#9
+				esc_html__( 'Sendinblue', 'flm' ),#10
+				esc_html__( 'MailPoet', 'flm' ),#11
+				esc_html__( 'save & exit', 'flm' ),#12
+				esc_html__( 'Ontraport', 'flm' ),#13
+				esc_html__( 'Feedblitz', 'flm' ),#14
+				esc_html__( 'Infusionsoft', 'flm' ),#15
+				esc_html__( 'Emma', 'flm' ),#16
+				esc_html__( 'HubSpot Lists', 'flm' ),#17
+				esc_html__( 'Salesforce', 'flm' ),#18
+				esc_html__( 'Active Campaign', 'flm' ),#19
+				esc_html__( 'HubSpot Standard', 'flm')#20
 
 			);
 		}
@@ -1675,8 +1654,8 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function generate_current_lists() {
 		wp_verify_nonce( $_POST['accounts_tab_nonce'], 'accounts_tab' );
-		$service = ! empty( $_POST['rapidology_service'] ) ? sanitize_text_field( $_POST['rapidology_service'] ) : '';
-		$name    = ! empty( $_POST['rapidology_upd_name'] ) ? sanitize_text_field( $_POST['rapidology_upd_name'] ) : '';
+		$service = ! empty( $_POST['flm_service'] ) ? sanitize_text_field( $_POST['flm_service'] ) : '';
+		$name    = ! empty( $_POST['flm_upd_name'] ) ? sanitize_text_field( $_POST['flm_upd_name'] ) : '';
 
 		echo $this->display_currrent_lists( $service, $name );
 
@@ -1688,7 +1667,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function display_currrent_lists( $service = '', $name = '' ) {
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 		$all_lists     = array();
 		$name          = str_replace( array( '"', "'" ), '', stripslashes( $name ) );
 
@@ -1699,15 +1678,15 @@ class RAD_Rapidology extends RAD_Dashboard {
 		}
 
 		$output = sprintf(
-			'<div class="rad_dashboard_row rad_dashboard_new_account_lists">
+			'<div class="flm_dashboard_row flm_dashboard_new_account_lists">
 				<h2>%1$s</h2>
 				<div style="clear:both;"></div>
 				<p>%2$s</p>
 			</div>',
-			esc_html__( 'Account Lists', 'rapidology' ),
+			esc_html__( 'Account Lists', 'flm' ),
 			! empty( $all_lists )
 				? implode( ', ', array_map( 'esc_html', $all_lists ) )
-				: __( 'No lists available for this account', 'rapidology' )
+				: __( 'No lists available for this account', 'flm' )
 		);
 
 		return $output;
@@ -1718,10 +1697,10 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function save_account_tab() {
 		wp_verify_nonce( $_POST['accounts_tab_nonce'], 'accounts_tab' );
-		$service = ! empty( $_POST['rapidology_service'] ) ? sanitize_text_field( $_POST['rapidology_service'] ) : '';
-		$name    = ! empty( $_POST['rapidology_account_name'] ) ? sanitize_text_field( $_POST['rapidology_account_name'] ) : '';
+		$service = ! empty( $_POST['flm_service'] ) ? sanitize_text_field( $_POST['flm_service'] ) : '';
+		$name    = ! empty( $_POST['flm_account_name'] ) ? sanitize_text_field( $_POST['flm_account_name'] ) : '';
 
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 
 		if ( ! isset( $options_array['accounts'][ $service ][ $name ] ) ) {
 			$this->update_account( $service, $name, array(
@@ -1737,54 +1716,54 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * Generates and displays the table with all accounts for Accounts tab
 	 */
 	function display_accounts_table() {
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 
-		echo '<div class="rad_dashboard_accounts_content">';
+		echo '<div class="flm_dashboard_accounts_content">';
 		if ( ! empty( $options_array['accounts'] ) ) {
 			foreach ( $options_array['accounts'] as $service => $details ) {
 				if ( ! empty( $details ) ) {
 					$optins_count = 0;
 					$output       = '';
 					printf(
-						'<div class="rad_dashboard_row rad_dashboard_accounts_title">
-							<span class="rad_dashboard_service_logo_%1$s"></span>
+						'<div class="flm_dashboard_row flm_dashboard_accounts_title">
+							<span class="flm_dashboard_service_logo_%1$s"></span>
 						</div>',
 						esc_attr( $service )
 					);
 					foreach ( $details as $account_name => $value ) {
 						if ( 0 === $optins_count ) {
 							$output .= sprintf(
-								'<div class="rad_dashboard_optins_list">
+								'<div class="flm_dashboard_optins_list">
 									<ul>
 										<li>
-											<div class="rad_dashboard_table_acc_name rad_dashboard_table_column rad_dashboard_table_header">%1$s</div>
-											<div class="rad_dashboard_table_subscribers rad_dashboard_table_column rad_dashboard_table_header">%2$s</div>
-											<div class="rad_dashboard_table_growth_rate rad_dashboard_table_column rad_dashboard_table_header">%3$s</div>
-											<div class="rad_dashboard_table_actions rad_dashboard_table_column"></div>
+											<div class="flm_dashboard_table_acc_name flm_dashboard_table_column flm_dashboard_table_header">%1$s</div>
+											<div class="flm_dashboard_table_subscribers flm_dashboard_table_column flm_dashboard_table_header">%2$s</div>
+											<div class="flm_dashboard_table_growth_rate flm_dashboard_table_column flm_dashboard_table_header">%3$s</div>
+											<div class="flm_dashboard_table_actions flm_dashboard_table_column"></div>
 											<div style="clear: both;"></div>
 										</li>',
-								esc_html__( 'Account name', 'rapidology' ),
-								esc_html__( 'Subscribers', 'rapidology' ),
-								esc_html__( 'Growth rate', 'rapidology' )
+								esc_html__( 'Account name', 'flm' ),
+								esc_html__( 'Subscribers', 'flm' ),
+								esc_html__( 'Growth rate', 'flm' )
 							);
 						}
 
 						$output .= sprintf(
-							'<li class="rad_dashboard_optins_item" data-account_name="%1$s" data-service="%2$s">
-								<div class="rad_dashboard_table_acc_name rad_dashboard_table_column">%3$s</div>
-								<div class="rad_dashboard_table_subscribers rad_dashboard_table_column"></div>
-								<div class="rad_dashboard_table_growth_rate rad_dashboard_table_column"></div>',
+							'<li class="flm_dashboard_optins_item" data-account_name="%1$s" data-service="%2$s">
+								<div class="flm_dashboard_table_acc_name flm_dashboard_table_column">%3$s</div>
+								<div class="flm_dashboard_table_subscribers flm_dashboard_table_column"></div>
+								<div class="flm_dashboard_table_growth_rate flm_dashboard_table_column"></div>',
 							esc_attr( $account_name ),
 							esc_attr( $service ),
 							esc_html( $account_name )
 						);
 
 						$output .= sprintf( '
-								<div class="rad_dashboard_table_actions rad_dashboard_table_column">
-									<span class="rad_dashboard_icon_edit_account rad_optin_buttonoptin_button rad_dashboard_icon" title="%8$s" data-account_name="%1$s" data-service="%2$s"></span>
-									<span class="rad_dashboard_icon_delete rad_optin_button rad_dashboard_icon" title="%4$s"><span class="rad_dashboard_confirmation">%5$s</span></span>
+								<div class="flm_dashboard_table_actions flm_dashboard_table_column">
+									<span class="flm_dashboard_icon_edit_account rad_optin_buttonoptin_button flm_dashboard_icon" title="%8$s" data-account_name="%1$s" data-service="%2$s"></span>
+									<span class="flm_dashboard_icon_delete rad_optin_button flm_dashboard_icon" title="%4$s"><span class="flm_dashboard_confirmation">%5$s</span></span>
 									%3$s
-									<span class="rad_dashboard_icon_indicator_%7$s rad_optin_button rad_dashboard_icon" title="%6$s"></span>
+									<span class="flm_dashboard_icon_indicator_%7$s rad_optin_button flm_dashboard_icon" title="%6$s"></span>
 								</div>
 								<div style="clear: both;"></div>
 							</li>',
@@ -1792,55 +1771,55 @@ class RAD_Rapidology extends RAD_Dashboard {
 							esc_attr( $service ),
 							( isset( $value['is_authorized'] ) && 'true' == $value['is_authorized'] )
 								? sprintf( '
-									<span class="rad_dashboard_icon_update_lists rad_optin_button rad_dashboard_icon" title="%1$s" data-account_name="%2$s" data-service="%3$s">
+									<span class="flm_dashboard_icon_update_lists rad_optin_button flm_dashboard_icon" title="%1$s" data-account_name="%2$s" data-service="%3$s">
 										<span class="spinner"></span>
 									</span>',
-								esc_attr__( 'Update Lists', 'rapidology' ),
+								esc_attr__( 'Update Lists', 'flm' ),
 								esc_attr( $account_name ),
 								esc_attr( $service )
 							)
 								: '',
-							__( 'Remove account', 'rapidology' ),
+							__( 'Remove account', 'flm' ),
 							sprintf(
-								'%1$s<span class="rad_dashboard_confirm_delete" data-optin_id="%4$s" data-remove_account="true">%2$s</span><span class="rad_dashboard_cancel_delete">%3$s</span>',
-								esc_html__( 'Remove this account from list?', 'rapidology' ),
-								esc_html__( 'Yes', 'rapidology' ),
-								esc_html__( 'No', 'rapidology' ),
+								'%1$s<span class="flm_dashboard_confirm_delete" data-optin_id="%4$s" data-remove_account="true">%2$s</span><span class="flm_dashboard_cancel_delete">%3$s</span>',
+								esc_html__( 'Remove this account from list?', 'flm' ),
+								esc_html__( 'Yes', 'flm' ),
+								esc_html__( 'No', 'flm' ),
 								esc_attr( $account_name )
 							), //#5
 							( isset( $value['is_authorized'] ) && 'true' == $value['is_authorized'] )
-								? esc_html__( 'Authorized', 'rapidology' )
-								: esc_html__( 'Not Authorized', 'rapidology' ),
+								? esc_html__( 'Authorized', 'flm' )
+								: esc_html__( 'Not Authorized', 'flm' ),
 							( isset( $value['is_authorized'] ) && 'true' == $value['is_authorized'] )
 								? 'check'
 								: 'dot',
-							esc_html__( 'Edit account', 'rapidology' )
+							esc_html__( 'Edit account', 'flm' )
 						);
 
 						if ( isset( $value['lists'] ) && ! empty( $value['lists'] ) ) {
 							foreach ( $value['lists'] as $id => $list ) {
 								$output .= sprintf( '
-									<li class="rad_dashboard_lists_row">
-										<div class="rad_dashboard_table_acc_name rad_dashboard_table_column">%1$s</div>
-										<div class="rad_dashboard_table_subscribers rad_dashboard_table_column">%2$s</div>
-										<div class="rad_dashboard_table_growth_rate rad_dashboard_table_column">%3$s / %4$s</div>
-										<div class="rad_dashboard_table_actions rad_dashboard_table_column"></div>
+									<li class="flm_dashboard_lists_row">
+										<div class="flm_dashboard_table_acc_name flm_dashboard_table_column">%1$s</div>
+										<div class="flm_dashboard_table_subscribers flm_dashboard_table_column">%2$s</div>
+										<div class="flm_dashboard_table_growth_rate flm_dashboard_table_column">%3$s / %4$s</div>
+										<div class="flm_dashboard_table_actions flm_dashboard_table_column"></div>
 									</li>',
 									esc_html( $list['name'] ),
-									'ontraport' == $service ? esc_html__( 'n/a', 'rapidology' ) : esc_html( $list['subscribers_count'] ),
+									'ontraport' == $service ? esc_html__( 'n/a', 'flm' ) : esc_html( $list['subscribers_count'] ),
 									esc_html( $list['growth_week'] ),
-									esc_html__( 'week', 'rapidology' )
+									esc_html__( 'week', 'flm' )
 								);
 							}
 						} else {
 							$output .= sprintf(
-								'<li class="rad_dashboard_lists_row">
-									<div class="rad_dashboard_table_acc_name rad_dashboard_table_column">%1$s</div>
-									<div class="rad_dashboard_table_subscribers rad_dashboard_table_column"></div>
-									<div class="rad_dashboard_table_growth_rate rad_dashboard_table_column"></div>
-									<div class="rad_dashboard_table_actions rad_dashboard_table_column"></div>
+								'<li class="flm_dashboard_lists_row">
+									<div class="flm_dashboard_table_acc_name flm_dashboard_table_column">%1$s</div>
+									<div class="flm_dashboard_table_subscribers flm_dashboard_table_column"></div>
+									<div class="flm_dashboard_table_growth_rate flm_dashboard_table_column"></div>
+									<div class="flm_dashboard_table_actions flm_dashboard_table_column"></div>
 								</li>',
-								esc_html__( 'No lists available', 'rapidology' )
+								esc_html__( 'No lists available', 'flm' )
 							);
 						}
 
@@ -1862,9 +1841,9 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function display_home_tab_tables() {
 
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 
-		echo '<div class="rad_dashboard_home_tab_content">';
+		echo '<div class="flm_dashboard_home_tab_content">';
 
 		$this->generate_optins_list( $options_array, 'active' );
 
@@ -1907,20 +1886,20 @@ class RAD_Rapidology extends RAD_Dashboard {
 				if ( 0 === $optins_count ) {
 
 					$output .= sprintf(
-						'<div class="rad_dashboard_optins_list">
+						'<div class="flm_dashboard_optins_list">
 							<ul>
 								<li>
-									<div class="rad_dashboard_table_name rad_dashboard_table_column">%1$s</div>
-									<div class="rad_dashboard_table_impressions rad_dashboard_table_column">%2$s</div>
-									<div class="rad_dashboard_table_conversions rad_dashboard_table_column">%3$s</div>
-									<div class="rad_dashboard_table_rate rad_dashboard_table_column">%4$s</div>
-									<div class="rad_dashboard_table_actions rad_dashboard_table_column"></div>
+									<div class="flm_dashboard_table_name flm_dashboard_table_column">%1$s</div>
+									<div class="flm_dashboard_table_impressions flm_dashboard_table_column">%2$s</div>
+									<div class="flm_dashboard_table_conversions flm_dashboard_table_column">%3$s</div>
+									<div class="flm_dashboard_table_rate flm_dashboard_table_column">%4$s</div>
+									<div class="flm_dashboard_table_actions flm_dashboard_table_column"></div>
 									<div style="clear: both;"></div>
 								</li>',
-						esc_html__( 'Optin Name', 'rapidology' ),
-						esc_html__( 'Impressions', 'rapidology' ),
-						esc_html__( 'Conversions', 'rapidology' ),
-						esc_html__( 'Conversion Rate', 'rapidology' )
+						esc_html__( 'Optin Name', 'flm' ),
+						esc_html__( 'Impressions', 'flm' ),
+						esc_html__( 'Conversions', 'flm' ),
+						esc_html__( 'Conversion Rate', 'flm' )
 					);
 				}
 
@@ -1942,18 +1921,18 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 					$child_optins_data = $this->sort_array( $optins_data, 'rate', SORT_DESC );
 
-					$child_row = '<ul class="rad_dashboard_child_row">';
+					$child_row = '<ul class="flm_dashboard_child_row">';
 
 					foreach ( $child_optins_data as $child_details ) {
 						$child_row .= sprintf(
-							'<li class="rad_dashboard_optins_item rad_dashboard_child_item" data-optin_id="%1$s">
-								<div class="rad_dashboard_table_name rad_dashboard_table_column">%2$s</div>
-								<div class="rad_dashboard_table_impressions rad_dashboard_table_column">%3$s</div>
-								<div class="rad_dashboard_table_conversions rad_dashboard_table_column">%4$s</div>
-								<div class="rad_dashboard_table_rate rad_dashboard_table_column">%5$s</div>
-								<div class="rad_dashboard_table_actions rad_dashboard_table_column">
-									<span class="rad_dashboard_icon_edit rad_optin_button rad_dashboard_icon" title="%8$s" data-parent_id="%9$s"><span class="spinner"></span></span>
-									<span class="rad_dashboard_icon_delete rad_optin_button rad_dashboard_icon" title="%6$s"><span class="rad_dashboard_confirmation">%7$s</span></span>
+							'<li class="flm_dashboard_optins_item flm_dashboard_child_item" data-optin_id="%1$s">
+								<div class="flm_dashboard_table_name flm_dashboard_table_column">%2$s</div>
+								<div class="flm_dashboard_table_impressions flm_dashboard_table_column">%3$s</div>
+								<div class="flm_dashboard_table_conversions flm_dashboard_table_column">%4$s</div>
+								<div class="flm_dashboard_table_rate flm_dashboard_table_column">%5$s</div>
+								<div class="flm_dashboard_table_actions flm_dashboard_table_column">
+									<span class="flm_dashboard_icon_edit rad_optin_button flm_dashboard_icon" title="%8$s" data-parent_id="%9$s"><span class="spinner"></span></span>
+									<span class="flm_dashboard_icon_delete rad_optin_button flm_dashboard_icon" title="%6$s"><span class="flm_dashboard_confirmation">%7$s</span></span>
 								</div>
 								<div style="clear: both;"></div>
 							</li>',
@@ -1962,34 +1941,34 @@ class RAD_Rapidology extends RAD_Dashboard {
 							esc_html( $child_details['impressions'] ),
 							esc_html( $child_details['conversions'] ),
 							esc_html( $child_details['rate'] . '%' ), // #5
-							esc_attr__( 'Delete Optin', 'rapidology' ),
+							esc_attr__( 'Delete Optin', 'flm' ),
 							sprintf(
-								'%1$s<span class="rad_dashboard_confirm_delete" data-optin_id="%4$s" data-parent_id="%5$s">%2$s</span>
-								<span class="rad_dashboard_cancel_delete">%3$s</span>',
-								esc_html__( 'Delete this optin?', 'rapidology' ),
-								esc_html__( 'Yes', 'rapidology' ),
-								esc_html__( 'No', 'rapidology' ),
+								'%1$s<span class="flm_dashboard_confirm_delete" data-optin_id="%4$s" data-parent_id="%5$s">%2$s</span>
+								<span class="flm_dashboard_cancel_delete">%3$s</span>',
+								esc_html__( 'Delete this optin?', 'flm' ),
+								esc_html__( 'Yes', 'flm' ),
+								esc_html__( 'No', 'flm' ),
 								esc_attr( $child_details['id'] ),
 								esc_attr( $optin_id )
 							),
-							esc_attr__( 'Edit Optin', 'rapidology' ),
+							esc_attr__( 'Edit Optin', 'flm' ),
 							esc_attr( $optin_id ) // #9
 						);
 					}
 
 					$child_row .= sprintf(
-						'<li class="rad_dashboard_add_variant rad_dashboard_optins_item">
-							<a href="#" class="rad_dashboard_add_var_button">%1$s</a>
+						'<li class="flm_dashboard_add_variant flm_dashboard_optins_item">
+							<a href="#" class="flm_dashboard_add_var_button">%1$s</a>
 							<div class="child_buttons_right">
-								<a href="#" class="rad_dashboard_start_test%5$s" data-parent_id="%4$s">%2$s</a>
-								<a href="#" class="rad_dashboard_end_test" data-parent_id="%4$s">%3$s</a>
+								<a href="#" class="flm_dashboard_start_test%5$s" data-parent_id="%4$s">%2$s</a>
+								<a href="#" class="flm_dashboard_end_test" data-parent_id="%4$s">%3$s</a>
 							</div>
 						</li>',
-						esc_html__( 'Add variant', 'rapidology' ),
-						( isset( $value['test_status'] ) && 'active' == $value['test_status'] ) ? esc_html__( 'Pause test', 'rapidology' ) : esc_html__( 'Start test', 'rapidology' ),
-						esc_html__( 'End & pick winner', 'rapidology' ),
+						esc_html__( 'Add variant', 'flm' ),
+						( isset( $value['test_status'] ) && 'active' == $value['test_status'] ) ? esc_html__( 'Pause test', 'flm' ) : esc_html__( 'Start test', 'flm' ),
+						esc_html__( 'End & pick winner', 'flm' ),
 						esc_attr( $optin_id ),
-						( isset( $value['test_status'] ) && 'active' == $value['test_status'] ) ? ' rad_dashboard_pause_test' : ''
+						( isset( $value['test_status'] ) && 'active' == $value['test_status'] ) ? ' flm_dashboard_pause_test' : ''
 					);
 
 					$child_row .= '</ul>';
@@ -1999,16 +1978,16 @@ class RAD_Rapidology extends RAD_Dashboard {
 				$total_conversions += $conversions = $this->stats_count( $optin_id, 'con' );
 
 				$output .= sprintf(
-					'<li class="rad_dashboard_optins_item rad_dashboard_parent_item" data-optin_id="%1$s">
-						<div class="rad_dashboard_table_name rad_dashboard_table_column rad_dashboard_icon rad_dashboard_type_%13$s">%2$s</div>
-						<div class="rad_dashboard_table_impressions rad_dashboard_table_column">%3$s</div>
-						<div class="rad_dashboard_table_conversions rad_dashboard_table_column">%4$s</div>
-						<div class="rad_dashboard_table_rate rad_dashboard_table_column">%5$s</div>
-						<div class="rad_dashboard_table_actions rad_dashboard_table_column">
-							<span class="rad_dashboard_icon_edit rad_optin_button rad_dashboard_icon" title="%10$s"><span class="spinner"></span></span>
-							<span class="rad_dashboard_icon_delete rad_optin_button rad_dashboard_icon" title="%9$s"><span class="rad_dashboard_confirmation">%12$s</span></span>
-							<span class="rad_dashboard_icon_duplicate duplicate_id_%1$s rad_optin_button rad_dashboard_icon" title="%8$s"><span class="spinner"></span></span>
-							<span class="rad_dashboard_icon_%11$s rad_dashboard_toggle_status rad_optin_button rad_dashboard_icon%16$s" data-toggle_to="%11$s" data-optin_id="%1$s" title="%7$s"><span class="spinner"></span></span>
+					'<li class="flm_dashboard_optins_item flm_dashboard_parent_item" data-optin_id="%1$s">
+						<div class="flm_dashboard_table_name flm_dashboard_table_column flm_dashboard_icon flm_dashboard_type_%13$s">%2$s</div>
+						<div class="flm_dashboard_table_impressions flm_dashboard_table_column">%3$s</div>
+						<div class="flm_dashboard_table_conversions flm_dashboard_table_column">%4$s</div>
+						<div class="flm_dashboard_table_rate flm_dashboard_table_column">%5$s</div>
+						<div class="flm_dashboard_table_actions flm_dashboard_table_column">
+							<span class="flm_dashboard_icon_edit rad_optin_button flm_dashboard_icon" title="%10$s"><span class="spinner"></span></span>
+							<span class="flm_dashboard_icon_delete rad_optin_button flm_dashboard_icon" title="%9$s"><span class="flm_dashboard_confirmation">%12$s</span></span>
+							<span class="flm_dashboard_icon_duplicate duplicate_id_%1$s rad_optin_button flm_dashboard_icon" title="%8$s"><span class="spinner"></span></span>
+							<span class="flm_dashboard_icon_%11$s flm_dashboard_toggle_status rad_optin_button flm_dashboard_icon%16$s" data-toggle_to="%11$s" data-optin_id="%1$s" title="%7$s"><span class="spinner"></span></span>
 							%14$s
 							%6$s
 						</div>
@@ -2022,35 +2001,35 @@ class RAD_Rapidology extends RAD_Dashboard {
 					esc_html( $this->conversion_rate( $optin_id, $conversions, $impressions ) . '%' ), // #5
 					( 'locked' === $value['optin_type'] || 'inline' === $value['optin_type'] )
 						? sprintf(
-						'<span class="rad_dashboard_icon_shortcode rad_optin_button rad_dashboard_icon" title="%1$s" data-type="%2$s"></span>',
-						esc_attr__( 'Generate shortcode', 'rapidology' ),
+						'<span class="flm_dashboard_icon_shortcode rad_optin_button flm_dashboard_icon" title="%1$s" data-type="%2$s"></span>',
+						esc_attr__( 'Generate shortcode', 'flm' ),
 						esc_attr( $value['optin_type'] )
 					)
 						: '',
-					'active' === $status ? esc_html__( 'Make Inactive', 'rapidology' ) : esc_html__( 'Make Active', 'rapidology' ),
-					esc_attr__( 'Duplicate', 'rapidology' ),
-					esc_attr__( 'Delete Optin', 'rapidology' ),
-					esc_attr__( 'Edit Optin', 'rapidology' ), //#10
+					'active' === $status ? esc_html__( 'Make Inactive', 'flm' ) : esc_html__( 'Make Active', 'flm' ),
+					esc_attr__( 'Duplicate', 'flm' ),
+					esc_attr__( 'Delete Optin', 'flm' ),
+					esc_attr__( 'Edit Optin', 'flm' ), //#10
 					'active' === $status ? 'inactive' : 'active',
 					sprintf(
-						'%1$s<span class="rad_dashboard_confirm_delete" data-optin_id="%4$s">%2$s</span>
-						<span class="rad_dashboard_cancel_delete">%3$s</span>',
-						esc_html__( 'Delete this optin?', 'rapidology' ),
-						esc_html__( 'Yes', 'rapidology' ),
-						esc_html__( 'No', 'rapidology' ),
+						'%1$s<span class="flm_dashboard_confirm_delete" data-optin_id="%4$s">%2$s</span>
+						<span class="flm_dashboard_cancel_delete">%3$s</span>',
+						esc_html__( 'Delete this optin?', 'flm' ),
+						esc_html__( 'Yes', 'flm' ),
+						esc_html__( 'No', 'flm' ),
 						esc_attr( $optin_id )
 					),
 					esc_attr( $value['optin_type'] ),
 					( 'active' === $status )
 						? sprintf(
-						'<span class="rad_dashboard_icon_abtest rad_optin_button rad_dashboard_icon%2$s" title="%1$s"></span>',
-						esc_attr__( 'A/B Testing', 'rapidology' ),
+						'<span class="flm_dashboard_icon_abtest rad_optin_button flm_dashboard_icon%2$s" title="%1$s"></span>',
+						esc_attr__( 'A/B Testing', 'flm' ),
 						( '' != $child_row ) ? ' active_child_optins' : ''
 					)
 						: '',
 					$child_row, //#15
 					( 'empty' == $value['email_provider'] || ( 'custom_html' !== $value['email_provider'] && 'empty' == $value['email_list'] ) )
-						? ' rad_rapidology_no_account'
+						? ' flm_no_account'
 						: '' //#16
 				);
 				$optins_count ++;
@@ -2059,12 +2038,12 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 		if ( 'active' === $status && 0 < $optins_count ) {
 			$output .= sprintf(
-				'<li class="rad_dashboard_optins_item_bottom_row">
-					<div class="rad_dashboard_table_name rad_dashboard_table_column"></div>
-					<div class="rad_dashboard_table_impressions rad_dashboard_table_column">%1$s</div>
-					<div class="rad_dashboard_table_conversions rad_dashboard_table_column">%2$s</div>
-					<div class="rad_dashboard_table_rate rad_dashboard_table_column">%3$s</div>
-					<div class="rad_dashboard_table_actions rad_dashboard_table_column"></div>
+				'<li class="flm_dashboard_optins_item_bottom_row">
+					<div class="flm_dashboard_table_name flm_dashboard_table_column"></div>
+					<div class="flm_dashboard_table_impressions flm_dashboard_table_column">%1$s</div>
+					<div class="flm_dashboard_table_conversions flm_dashboard_table_column">%2$s</div>
+					<div class="flm_dashboard_table_rate flm_dashboard_table_column">%3$s</div>
+					<div class="flm_dashboard_table_actions flm_dashboard_table_column"></div>
 				</li>',
 				esc_html( $this->get_compact_number( $total_impressions ) ),
 				esc_html( $this->get_compact_number( $total_conversions ) ),
@@ -2077,10 +2056,10 @@ class RAD_Rapidology extends RAD_Dashboard {
 		if ( 0 < $optins_count ) {
 			if ( 'inactive' === $status ) {
 				printf( '
-					<div class="rad_dashboard_row">
+					<div class="flm_dashboard_row">
 						<h1>%1$s</h1>
 					</div>',
-					esc_html__( 'Inactive Optins', 'rapidology' )
+					esc_html__( 'Inactive Optins', 'flm' )
 				);
 			}
 
@@ -2089,52 +2068,52 @@ class RAD_Rapidology extends RAD_Dashboard {
 	}
 
 	function add_admin_body_class( $classes ) {
-		return "$classes rad_rapidology";
+		return "$classes flm";
 	}
 
 	function register_scripts( $hook ) {
 
-		wp_enqueue_style( 'rad-rapidology-menu-icon', RAD_RAPIDOLOGY_PLUGIN_URI . '/css/rapidology-menu.css', array(), $this->plugin_version );
+		wp_enqueue_style( 'rad-flm-menu-icon', FLM_PLUGIN_URI . '/css/flm-menu.css', array(), $this->plugin_version );
 
 		if ( "toplevel_page_{$this->_options_pagename}" !== $hook ) {
 			return;
 		}
 
 		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
-		wp_enqueue_script( 'rad_rapidology-uniform-js', RAD_RAPIDOLOGY_PLUGIN_URI . '/js/jquery.uniform.min.js', array( 'jquery' ), $this->plugin_version, true );
+		wp_enqueue_script( 'flm-uniform-js', FLM_PLUGIN_URI . '/js/jquery.uniform.min.js', array( 'jquery' ), $this->plugin_version, true );
 		wp_enqueue_style( 'rad-open-sans-700', "{$this->protocol}://fonts.googleapis.com/css?family=Open+Sans:700", array(), $this->plugin_version );
 		wp_enqueue_style( 'rad-montserrat-700', "{$this->protocol}://fonts.googleapis.com/css?family=Montserrat:400,700", array(), $this->plugin_version );
-		wp_enqueue_style( 'rad-rapidology-css', RAD_RAPIDOLOGY_PLUGIN_URI . '/css/admin.css', array(), $this->plugin_version );
-		wp_enqueue_style( 'rad_rapidology-preview-css', RAD_RAPIDOLOGY_PLUGIN_URI . '/css/style.css', array(), $this->plugin_version );
-		wp_enqueue_script( 'rad-rapidology-js', RAD_RAPIDOLOGY_PLUGIN_URI . '/js/admin.js', array( 'jquery' ), $this->plugin_version, true );
-		wp_localize_script( 'rad-rapidology-js', 'rapidology_settings', array(
-			'rapidology_nonce'         => wp_create_nonce( 'rapidology_nonce' ),
+		wp_enqueue_style( 'rad-flm-css', FLM_PLUGIN_URI . '/css/admin.css', array(), $this->plugin_version );
+		wp_enqueue_style( 'flm-preview-css', FLM_PLUGIN_URI . '/css/style.css', array(), $this->plugin_version );
+		wp_enqueue_script( 'rad-flm-js', FLM_PLUGIN_URI . '/js/admin.js', array( 'jquery' ), $this->plugin_version, true );
+		wp_localize_script( 'rad-flm-js', 'flm_settings', array(
+			'flm_nonce'         => wp_create_nonce( 'flm_nonce' ),
 			'ajaxurl'                  => admin_url( 'admin-ajax.php', $this->protocol ),
 			'reset_options'            => wp_create_nonce( 'reset_options' ),
 			'remove_option'            => wp_create_nonce( 'remove_option' ),
 			'duplicate_option'         => wp_create_nonce( 'duplicate_option' ),
 			'home_tab'                 => wp_create_nonce( 'home_tab' ),
 			'toggle_status'            => wp_create_nonce( 'toggle_status' ),
-			'optin_type_title'         => __( 'select optin type to begin', 'rapidology' ),
-			'shortcode_text'           => __( 'Shortcode for this optin:', 'rapidology' ),
+			'optin_type_title'         => __( 'select optin type to begin', 'flm' ),
+			'shortcode_text'           => __( 'Shortcode for this optin:', 'flm' ),
 			'get_lists'                => wp_create_nonce( 'get_lists' ),
 			'add_account'              => wp_create_nonce( 'add_account' ),
 			'accounts_tab'             => wp_create_nonce( 'accounts_tab' ),
 			'retrieve_lists'           => wp_create_nonce( 'retrieve_lists' ),
 			'ab_test'                  => wp_create_nonce( 'ab_test' ),
-			'rapidology_stats'         => wp_create_nonce( 'rapidology_stats_nonce' ),
+			'flm_stats'         => wp_create_nonce( 'flm_stats_nonce' ),
 			'redirect_url'             => rawurlencode( admin_url( 'admin.php?page=' . $this->_options_pagename, $this->protocol ) ),
-			'authorize_text'           => __( 'Authorize', 'rapidology' ),
-			'reauthorize_text'         => __( 'Re-Authorize', 'rapidology' ),
-			'no_account_name_text'     => __( 'Account name is not defined', 'rapidology' ),
-			'ab_test_pause_text'       => __( 'Pause test', 'rapidology' ),
-			'ab_test_start_text'       => __( 'Start test', 'rapidology' ),
-			'rapidology_premade_nonce' => wp_create_nonce( 'rapidology_premade' ),
-			'preview_nonce'            => wp_create_nonce( 'rapidology_preview' ),
-			'no_account_text'          => __( 'You Have Not Added An Email List. Before your opt-in can be activated, you must first add an account and select an email list. You can save and exit, but the opt-in will remain inactive until an account is added.', 'rapidology' ),
-			'add_account_button'       => __( 'Add An Account', 'rapidology' ),
-			'save_inactive_button'     => __( 'Save As Inactive', 'rapidology' ),
-			'cannot_activate_text'     => __( 'You Have Not Added An Email List. Before your opt-in can be activated, you must first add an account and select an email list.', 'rapidology' ),
+			'authorize_text'           => __( 'Authorize', 'flm' ),
+			'reauthorize_text'         => __( 'Re-Authorize', 'flm' ),
+			'no_account_name_text'     => __( 'Account name is not defined', 'flm' ),
+			'ab_test_pause_text'       => __( 'Pause test', 'flm' ),
+			'ab_test_start_text'       => __( 'Start test', 'flm' ),
+			'flm_premade_nonce' => wp_create_nonce( 'flm_premade' ),
+			'preview_nonce'            => wp_create_nonce( 'flm_preview' ),
+			'no_account_text'          => __( 'You Have Not Added An Email List. Before your opt-in can be activated, you must first add an account and select an email list. You can save and exit, but the opt-in will remain inactive until an account is added.', 'flm' ),
+			'add_account_button'       => __( 'Add An Account', 'flm' ),
+			'save_inactive_button'     => __( 'Save As Inactive', 'flm' ),
+			'cannot_activate_text'     => __( 'You Have Not Added An Email List. Before your opt-in can be activated, you must first add an account and select an email list.', 'flm' ),
 			'save_settings'            => wp_create_nonce( 'save_settings' ),
 		) );
 	}
@@ -2145,7 +2124,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function generate_optin_id( $full_id = true ) {
 
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 		$form_id       = (int) 0;
 
 		if ( ! empty( $options_array ) ) {
@@ -2166,7 +2145,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * Generates options page for specific optin ID
 	 * @return string
 	 */
-	function rapidology_reset_options_page() {
+	function flm_reset_options_page() {
 		wp_verify_nonce( $_POST['reset_options_nonce'], 'reset_options' );
 
 		$optin_id           = ! empty( $_POST['reset_optin_id'] )
@@ -2174,7 +2153,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 			: $this->generate_optin_id();
 		$additional_options = '';
 
-		RAD_Rapidology::generate_options_page( $optin_id );
+		Free_List_Machine::generate_options_page( $optin_id );
 
 		die();
 	}
@@ -2214,7 +2193,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		wp_verify_nonce( $_POST['ab_test_nonce'], 'ab_test' );
 		$parent_id                        = ! empty( $_POST['parent_id'] ) ? sanitize_text_field( $_POST['parent_id'] ) : '';
 		$action                           = ! empty( $_POST['test_action'] ) ? sanitize_text_field( $_POST['test_action'] ) : '';
-		$options_array                    = RAD_Rapidology::get_rapidology_options();
+		$options_array                    = Free_List_Machine::get_flm_options();
 		$update_test_status[ $parent_id ] = $options_array[ $parent_id ];
 
 		switch ( $action ) {
@@ -2232,7 +2211,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 				break;
 		}
 
-		RAD_Rapidology::update_option( $update_test_status );
+		Free_List_Machine::update_option( $update_test_status );
 
 		die( $result );
 	}
@@ -2242,7 +2221,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function generate_end_test_modal( $parent_id ) {
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 		$test_optins   = $options_array[ $parent_id ]['child_optins'];
 		$test_optins[] = $parent_id;
 		$output        = '';
@@ -2262,20 +2241,20 @@ class RAD_Rapidology extends RAD_Dashboard {
 				'<div class="end_test_table">
 					<ul data-optins_set="%3$s" data-parent_id="%4$s">
 						<li class="rad_test_table_header">
-							<div class="rad_dashboard_table_column">%1$s</div>
-							<div class="rad_dashboard_table_column rad_test_conversion">%2$s</div>
+							<div class="flm_dashboard_table_column">%1$s</div>
+							<div class="flm_dashboard_table_column rad_test_conversion">%2$s</div>
 						</li>',
-				esc_html__( 'Optin name', 'rapidology' ),
-				esc_html__( 'Conversion rate', 'rapidology' ),
+				esc_html__( 'Optin name', 'flm' ),
+				esc_html__( 'Conversion rate', 'flm' ),
 				esc_attr( implode( '#', $test_optins ) ),
 				esc_attr( $parent_id )
 			);
 
 			foreach ( $optins_data as $single ) {
 				$table .= sprintf(
-					'<li class="rad_dashboard_content_row" data-optin_id="%1$s">
-						<div class="rad_dashboard_table_column">%2$s</div>
-						<div class="rad_dashboard_table_column et_test_conversion">%3$s</div>
+					'<li class="flm_dashboard_content_row" data-optin_id="%1$s">
+						<div class="flm_dashboard_table_column">%2$s</div>
+						<div class="flm_dashboard_table_column et_test_conversion">%3$s</div>
 					</li>',
 					esc_attr( $single['id'] ),
 					esc_html( $single['name'] ),
@@ -2286,22 +2265,22 @@ class RAD_Rapidology extends RAD_Dashboard {
 			$table .= '</ul></div>';
 
 			$output = sprintf(
-				'<div class="rad_dashboard_networks_modal rad_dashboard_end_test">
-					<div class="rad_dashboard_inner_container">
-						<div class="rad_dashboard_modal_header">
+				'<div class="flm_dashboard_networks_modal flm_dashboard_end_test">
+					<div class="flm_dashboard_inner_container">
+						<div class="flm_dashboard_modal_header">
 							<span class="modal_title">%1$s</span>
-							<span class="rad_dashboard_close"></span>
+							<span class="flm_dashboard_close"></span>
 						</div>
 						<div class="dashboard_icons_container">
 							%3$s
 						</div>
-						<div class="rad_dashboard_modal_footer">
-							<a href="#" class="rad_dashboard_ok rad_dashboard_warning_button">%2$s</a>
+						<div class="flm_dashboard_modal_footer">
+							<a href="#" class="flm_dashboard_ok flm_dashboard_warning_button">%2$s</a>
 						</div>
 					</div>
 				</div>',
-				esc_html__( 'Choose an optin', 'rapidology' ),
-				esc_html__( 'cancel', 'rapidology' ),
+				esc_html__( 'Choose an optin', 'flm' ),
+				esc_html__( 'cancel', 'flm' ),
 				$table
 			);
 		}
@@ -2321,7 +2300,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$optins_set = ! empty( $_POST['optins_set'] ) ? sanitize_text_field( $_POST['optins_set'] ) : '';
 		$parent_id  = ! empty( $_POST['parent_id'] ) ? sanitize_text_field( $_POST['parent_id'] ) : '';
 
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 		$temp_array    = $options_array[ $winner_id ];
 
 		$temp_array['test_status']     = 'inactive';
@@ -2353,7 +2332,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 			}
 		}
 
-		RAD_Rapidology::update_option( $updated_array );
+		Free_List_Machine::update_option( $updated_array );
 	}
 
 	/**
@@ -2363,7 +2342,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	function update_stats_for_winner( $optin_id, $winner_id ) {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . 'rad_rapidology_stats';
+		$table_name = $wpdb->prefix . 'flm_stats';
 
 		$this->remove_optin_from_db( $optin_id );
 
@@ -2386,7 +2365,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$suffix       = true == $is_child ? '_child' : '_copy';
 
 		if ( '' !== $duplicate_optin_id ) {
-			$options_array                               = RAD_Rapidology::get_rapidology_options();
+			$options_array                               = Free_List_Machine::get_flm_options();
 			$new_option[ $new_optin_id ]                 = $options_array[ $duplicate_optin_id ];
 			$new_option[ $new_optin_id ]['optin_name']   = $new_option[ $new_optin_id ]['optin_name'] . $suffix;
 			$new_option[ $new_optin_id ]['optin_status'] = 'active';
@@ -2396,7 +2375,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 				$updated_optin[ $duplicate_optin_id ]    = $options_array[ $duplicate_optin_id ];
 				unset( $new_option[ $new_optin_id ]['child_optins'] );
 				$updated_optin[ $duplicate_optin_id ]['child_optins'] = isset( $options_array[ $duplicate_optin_id ]['child_optins'] ) ? array_merge( $options_array[ $duplicate_optin_id ]['child_optins'], array( $new_optin_id ) ) : array( $new_optin_id );
-				RAD_Rapidology::update_option( $updated_optin );
+				Free_List_Machine::update_option( $updated_optin );
 			} else {
 				$new_option[ $new_optin_id ]['optin_type'] = $duplicate_optin_type;
 				unset( $new_option[ $new_optin_id ]['child_optins'] );
@@ -2410,7 +2389,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 				unset( $new_option[ $new_optin_id ]['display_on'] );
 			}
 
-			RAD_Rapidology::update_option( $new_option );
+			Free_List_Machine::update_option( $new_option );
 
 			return $new_optin_id;
 		}
@@ -2437,7 +2416,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return void
 	 */
 	function perform_optin_removal( $optin_id, $is_account = false, $service = '', $parent_id = '', $remove_child = true ) {
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 
 		if ( '' !== $optin_id ) {
 			if ( 'true' == $is_account ) {
@@ -2456,7 +2435,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 							}
 						}
 
-						RAD_Rapidology::update_option( $options_array );
+						Free_List_Machine::update_option( $options_array );
 					}
 				}
 			} else {
@@ -2477,17 +2456,17 @@ class RAD_Rapidology extends RAD_Dashboard {
 						$updated_array[ $parent_id ]['test_status'] = 'inactive';
 					}
 
-					RAD_Rapidology::update_option( $updated_array );
+					Free_List_Machine::update_option( $updated_array );
 				} else {
 					if ( ! empty( $options_array[ $optin_id ]['child_optins'] ) && true == $remove_child ) {
 						foreach ( $options_array[ $optin_id ]['child_optins'] as $single_optin ) {
-							RAD_Rapidology::remove_option( $single_optin );
+							Free_List_Machine::remove_option( $single_optin );
 							$this->remove_optin_from_db( $single_optin );
 						}
 					}
 				}
 
-				RAD_Rapidology::remove_option( $optin_id );
+				Free_List_Machine::remove_option( $optin_id );
 				$this->remove_optin_from_db( $optin_id );
 			}
 		}
@@ -2500,7 +2479,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		if ( '' !== $optin_id ) {
 			global $wpdb;
 
-			$table_name = $wpdb->prefix . 'rad_rapidology_stats';
+			$table_name = $wpdb->prefix . 'flm_stats';
 
 			// construct sql query to mark removed options as removed in stats DB
 			$sql = "DELETE FROM $table_name WHERE optin_id = %s";
@@ -2523,11 +2502,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$toggle_to = ! empty( $_POST['status_new'] ) ? sanitize_text_field( $_POST['status_new'] ) : '';
 
 		if ( '' !== $optin_id ) {
-			$options_array                              = RAD_Rapidology::get_rapidology_options();
+			$options_array                              = Free_List_Machine::get_flm_options();
 			$update_option[ $optin_id ]                 = $options_array[ $optin_id ];
 			$update_option[ $optin_id ]['optin_status'] = 'active' === $toggle_to ? 'active' : 'inactive';
 
-			RAD_Rapidology::update_option( $update_option );
+			Free_List_Machine::update_option( $update_option );
 		}
 
 		die();
@@ -2539,15 +2518,15 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function add_new_account() {
 		wp_verify_nonce( $_POST['add_account_nonce'], 'add_account' );
-		$service     = ! empty( $_POST['rapidology_service'] ) ? sanitize_text_field( $_POST['rapidology_service'] ) : '';
-		$name        = ! empty( $_POST['rapidology_account_name'] ) ? sanitize_text_field( $_POST['rapidology_account_name'] ) : '';
+		$service     = ! empty( $_POST['flm_service'] ) ? sanitize_text_field( $_POST['flm_service'] ) : '';
+		$name        = ! empty( $_POST['flm_account_name'] ) ? sanitize_text_field( $_POST['flm_account_name'] ) : '';
 		$new_account = array();
 
 		if ( '' !== $service && '' !== $name ) {
-			$options_array                                = RAD_Rapidology::get_rapidology_options();
+			$options_array                                = Free_List_Machine::get_flm_options();
 			$new_account['accounts']                      = isset( $options_array['accounts'] ) ? $options_array['accounts'] : array();
 			$new_account['accounts'][ $service ][ $name ] = array();
-			RAD_Rapidology::update_option( $new_account );
+			Free_List_Machine::update_option( $new_account );
 		}
 	}
 
@@ -2558,13 +2537,13 @@ class RAD_Rapidology extends RAD_Dashboard {
 	function update_account( $service, $name, $data_array = array() ) {
 		if ( '' !== $service && '' !== $name ) {
 			$name                                         = str_replace( array( '"', "'" ), '', stripslashes( $name ) );
-			$options_array                                = RAD_Rapidology::get_rapidology_options();
+			$options_array                                = Free_List_Machine::get_flm_options();
 			$new_account['accounts']                      = isset( $options_array['accounts'] ) ? $options_array['accounts'] : array();
 			$new_account['accounts'][ $service ][ $name ] = isset( $new_account['accounts'][ $service ][ $name ] )
 				? array_merge( $new_account['accounts'][ $service ][ $name ], $data_array )
 				: $data_array;
 
-			RAD_Rapidology::update_option( $new_account );
+			Free_List_Machine::update_option( $new_account );
 		}
 	}
 
@@ -2573,7 +2552,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * In case of errors adds record to WP log
 	 */
 	function perform_auto_refresh() {
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 		if ( isset( $options_array['accounts'] ) ) {
 			foreach ( $options_array['accounts'] as $service => $account ) {
 				foreach ( $account as $name => $details ) {
@@ -2631,7 +2610,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 					$result = 'success' == $error_message
 						? ''
-						: 'rapidology_error: ' . $service . ' ' . $name . ' ' . __( 'Authorization failed: ', 'rapidology' ) . $error_message;
+						: 'flm_error: ' . $service . ' ' . $name . ' ' . __( 'Authorization failed: ', 'flm' ) . $error_message;
 
 					// Log errors into WP log for troubleshooting
 					if ( '' !== $result ) {
@@ -2649,12 +2628,12 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function authorize_account() {
 		wp_verify_nonce( $_POST['get_lists_nonce'], 'get_lists' );
-		$service         = ! empty( $_POST['rapidology_upd_service'] ) ? sanitize_text_field( $_POST['rapidology_upd_service'] ) : '';
-		$name            = ! empty( $_POST['rapidology_upd_name'] ) ? sanitize_text_field( $_POST['rapidology_upd_name'] ) : '';
-		$update_existing = ! empty( $_POST['rapidology_account_exists'] ) ? sanitize_text_field( $_POST['rapidology_account_exists'] ) : '';
+		$service         = ! empty( $_POST['flm_upd_service'] ) ? sanitize_text_field( $_POST['flm_upd_service'] ) : '';
+		$name            = ! empty( $_POST['flm_upd_name'] ) ? sanitize_text_field( $_POST['flm_upd_name'] ) : '';
+		$update_existing = ! empty( $_POST['flm_account_exists'] ) ? sanitize_text_field( $_POST['flm_account_exists'] ) : '';
 
 		if ( 'true' == $update_existing ) {
-			$options_array = RAD_Rapidology::get_rapidology_options();
+			$options_array = Free_List_Machine::get_flm_options();
 			$accounts_data = $options_array['accounts'];
 
 			$api_key = ! empty( $accounts_data[$service][$name]['api_key'] ) ? $accounts_data[$service][$name]['api_key'] : '';
@@ -2675,22 +2654,22 @@ class RAD_Rapidology extends RAD_Dashboard {
 			$token = ! empty( $accounts_data[$service][$name]['token'] ) ? $accounts_data[$service][$name]['token'] : '';
 			//end salesforce
 		} else {
-			$api_key     = ! empty( $_POST['rapidology_api_key'] ) ? sanitize_text_field( $_POST['rapidology_api_key'] ) : '';
-			$token       = ! empty( $_POST['rapidology_constant_token'] ) ? sanitize_text_field( $_POST['rapidology_constant_token'] ) : '';
-			$app_id      = ! empty( $_POST['rapidology_client_id'] ) ? sanitize_text_field( $_POST['rapidology_client_id'] ) : '';
-			$username    = ! empty( $_POST['rapidology_username'] ) ? sanitize_text_field( $_POST['rapidology_username'] ) : '';
-			$password    = ! empty( $_POST['rapidology_password'] ) ? sanitize_text_field( $_POST['rapidology_password'] ) : '';
-			$account_id  = ! empty( $_POST['rapidology_username'] ) ? sanitize_text_field( $_POST['rapidology_username'] ) : '';
-			$public_key  = ! empty( $_POST['rapidology_api_key'] ) ? sanitize_text_field( $_POST['rapidology_api_key'] ) : '';
-			$private_key = ! empty( $_POST['rapidology_client_id'] ) ? sanitize_text_field( $_POST['rapidology_client_id'] ) : '';
+			$api_key     = ! empty( $_POST['flm_api_key'] ) ? sanitize_text_field( $_POST['flm_api_key'] ) : '';
+			$token       = ! empty( $_POST['flm_constant_token'] ) ? sanitize_text_field( $_POST['flm_constant_token'] ) : '';
+			$app_id      = ! empty( $_POST['flm_client_id'] ) ? sanitize_text_field( $_POST['flm_client_id'] ) : '';
+			$username    = ! empty( $_POST['flm_username'] ) ? sanitize_text_field( $_POST['flm_username'] ) : '';
+			$password    = ! empty( $_POST['flm_password'] ) ? sanitize_text_field( $_POST['flm_password'] ) : '';
+			$account_id  = ! empty( $_POST['flm_username'] ) ? sanitize_text_field( $_POST['flm_username'] ) : '';
+			$public_key  = ! empty( $_POST['flm_api_key'] ) ? sanitize_text_field( $_POST['flm_api_key'] ) : '';
+			$private_key = ! empty( $_POST['flm_client_id'] ) ? sanitize_text_field( $_POST['flm_client_id'] ) : '';
 			//start salesforce
-			$url = ! empty( $_POST['rapidology_url'] ) ? sanitize_text_field( $_POST['rapidology_url'] ) : '';
-			$version = ! empty( $_POST['rapidology_version'] ) ? sanitize_text_field( $_POST['rapidology_version'] ) : '';
-			$client_key = ! empty( $_POST['rapidology_client_key'] ) ? sanitize_text_field( $_POST['rapidology_client_key'] ) : '';
-			$client_secret = ! empty( $_POST['rapidology_client_secret'] ) ? sanitize_text_field( $_POST['rapidology_client_secret'] ) : '';
-			$username_sf = ! empty( $_POST['rapidology_username_sf'] ) ? sanitize_text_field( $_POST['rapidology_username_sf'] ) : '';
-			$password_sf = ! empty( $_POST['rapidology_password_sf'] ) ? sanitize_text_field( $_POST['rapidology_password_sf'] ) : '';
-			$token = ! empty( $_POST['rapidology_token'] ) ? sanitize_text_field( $_POST['rapidology_token'] ) : '';
+			$url = ! empty( $_POST['flm_url'] ) ? sanitize_text_field( $_POST['flm_url'] ) : '';
+			$version = ! empty( $_POST['flm_version'] ) ? sanitize_text_field( $_POST['flm_version'] ) : '';
+			$client_key = ! empty( $_POST['flm_client_key'] ) ? sanitize_text_field( $_POST['flm_client_key'] ) : '';
+			$client_secret = ! empty( $_POST['flm_client_secret'] ) ? sanitize_text_field( $_POST['flm_client_secret'] ) : '';
+			$username_sf = ! empty( $_POST['flm_username_sf'] ) ? sanitize_text_field( $_POST['flm_username_sf'] ) : '';
+			$password_sf = ! empty( $_POST['flm_password_sf'] ) ? sanitize_text_field( $_POST['flm_password_sf'] ) : '';
+			$token = ! empty( $_POST['flm_token'] ) ? sanitize_text_field( $_POST['flm_token'] ) : '';
 			//end salesforce
 
 		}
@@ -2766,7 +2745,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 		$result = 'success' == $error_message ?
 			$error_message
-			: __( 'Authorization failed: ', 'rapidology' ) . $error_message;
+			: __( 'Authorization failed: ', 'flm' ) . $error_message;
 
 		die( $result );
 	}
@@ -2794,7 +2773,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$result       = '';
 
 		if ( is_email( $email ) ) {
-			$options_array = RAD_Rapidology::get_rapidology_options();
+			$options_array = Free_List_Machine::get_flm_options();
 
 			switch ( $service ) {
 				case 'mailchimp' :
@@ -2899,11 +2878,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 					break;
 			}
 		} else {
-			$error_message = __( 'Invalid email', 'rapidology' );
+			$error_message = __( 'Invalid email', 'flm' );
 		}
 
 		if ( 'success' == $error_message ) {
-			RAD_Rapidology::add_stats_record( 'con', $optin_id, $page_id, $service . '_' . $list_id );
+			Free_List_Machine::add_stats_record( 'con', $optin_id, $page_id, $service . '_' . $list_id );
 			$result = json_encode( array( 'success' => $error_message ) );
 		} else {
 			$result = json_encode( array( 'error' => $error_message ) );
@@ -2919,11 +2898,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 	function get_infusionsoft_lists( $app_id, $api_key, $name ) {
 		if ( ! function_exists( 'curl_init' ) ) {
-			return __( 'curl_init is not defined ', 'rapidology' );
+			return __( 'curl_init is not defined ', 'flm' );
 		}
 
 		if ( ! class_exists( 'iSDK' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
+			require_once( FLM_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
 		}
 
 		$lists = array();
@@ -2985,11 +2964,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function subscribe_infusionsoft( $api_key, $app_id, $list_id, $email, $name = '', $last_name = '' ) {
 		if ( ! function_exists( 'curl_init' ) ) {
-			return __( 'curl_init is not defined ', 'rapidology' );
+			return __( 'curl_init is not defined ', 'flm' );
 		}
 
 		if ( ! class_exists( 'iSDK' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
+			require_once( FLM_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
 		}
 
 		try {
@@ -3011,7 +2990,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		if($response) {
 			$error_message = 'success';
 		}else{
-			$error_message = esc_html__( 'Already In List', 'rapidology' );
+			$error_message = esc_html__( 'Already In List', 'flm' );
 		}
 
 
@@ -3028,17 +3007,17 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$error_message = '';
 
 		if ( ! function_exists( 'curl_init' ) ) {
-			return __( 'curl_init is not defined ', 'rapidology' );
+			return __( 'curl_init is not defined ', 'flm' );
 		}
 
-		if ( ! class_exists( 'MailChimp_Rapidology' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/mailchimp/mailchimp.php' );
+		if ( ! class_exists( 'MailChimp_FLM' ) ) {
+			require_once( FLM_PLUGIN_DIR . 'subscription/mailchimp/mailchimp.php' );
 		}
 
 		if ( false === strpos( $api_key, '-' ) ) {
-			$error_message = __( 'invalid API key', 'rapidology' );
+			$error_message = __( 'invalid API key', 'flm' );
 		} else {
-			$mailchimp = new MailChimp_Rapidology( $api_key );
+			$mailchimp = new MailChimp_FLM( $api_key );
 
 			$retval = $mailchimp->call( 'lists/list' );
 
@@ -3074,7 +3053,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 				}
 
 				$error_message = sprintf( '%1$s. %2$s',
-					esc_html__( 'An error occured during API request. Make sure API Key is correct', 'rapidology' ),
+					esc_html__( 'An error occured during API request. Make sure API Key is correct', 'flm' ),
 					$error_message
 				);
 			}
@@ -3092,11 +3071,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 			return;
 		}
 
-		if ( ! class_exists( 'MailChimp_Rapidology' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/mailchimp/mailchimp.php' );
+		if ( ! class_exists( 'MailChimp_FLM' ) ) {
+			require_once( FLM_PLUGIN_DIR . 'subscription/mailchimp/mailchimp.php' );
 		}
 
-		$mailchimp = new MailChimp_Rapidology( $api_key );
+		$mailchimp = new MailChimp_FLM( $api_key );
 
 		$email = array( 'email' => $email );
 		$double_optin = '' === $disable_dbl ? 'true' : 'false';
@@ -3165,7 +3144,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 					'is_authorized' => 'true',
 				) );
 			} else {
-				$error_message .= __( 'empty response', 'rapidology' );
+				$error_message .= __( 'empty response', 'flm' );
 			}
 		} else {
 			$error_map     = array(
@@ -3217,7 +3196,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 					$error_message = $this->get_error_message( $theme_request, $response_code, $error_map );
 				}
 			} else {
-				$error_message = __( 'Already subscribed', 'rapidology' );
+				$error_message = __( 'Already subscribed', 'flm' );
 			}
 		} else {
 			$error_map     = array(
@@ -3232,11 +3211,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 
 	function get_emma_groups( $public_key, $private_key, $account_id, $name ) {
-		if ( ! class_exists( 'Emma_Rapidology' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/emma/Emma.php' );
+		if ( ! class_exists( 'Emma_FLM' ) ) {
+			require_once( FLM_PLUGIN_DIR . 'subscription/emma/Emma.php' );
 		}
 
-		$emma = new Emma_Rapidology( $account_id, $public_key, $private_key, false ); //true set for debug
+		$emma = new Emma_FLM( $account_id, $public_key, $private_key, false ); //true set for debug
 		try {
 			$error_message = 'success';
 			$response      = $emma->myGroups();
@@ -3267,11 +3246,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 	}
 
 	function emma_member_subscribe($public_key, $private_key, $account_id, $email, $list_id, $first_name='', $last_name=''){
-		if(!class_exists('Emma_Rapidology')){
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/emma/Emma.php' );
+		if(!class_exists('Emma_FLM')){
+			require_once( FLM_PLUGIN_DIR . 'subscription/emma/Emma.php' );
 		}
 		//TODO add some checking into see if they are already part of the group they are opting into skilled because it adds extra seemingly unneed processing
-		$emma = new Emma_Rapidology( $account_id, $public_key, $private_key, false ); //true set for debug
+		$emma = new Emma_FLM( $account_id, $public_key, $private_key, false ); //true set for debug
 		//arguments to pass to send to emma to sign up user
 		$args = array(
 			'email'     => $email,
@@ -3301,10 +3280,10 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function get_hubspot_lists( $api_key, $name ) {
 
-		if ( ! class_exists( 'HubSpot_Lists_Rapidology' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/hubspot/class.lists.php' );
+		if ( ! class_exists( 'HubSpot_Lists_FLM' ) ) {
+			require_once( FLM_PLUGIN_DIR . 'subscription/hubspot/class.lists.php' );
 		}
-		$lists = new HubSpot_Lists_Rapidology( $api_key );
+		$lists = new HubSpot_Lists_FLM( $api_key );
 		try {
 
 			$some_lists = $lists->get_static_lists(array('offset'=>0));
@@ -3337,14 +3316,14 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 
 	function hubspot_subscribe($api_key, $email, $list_id, $name = '', $last_name = ''){
-		if(!class_exists('HubSpot_Lists_Rapidology')) {
-			require_once(RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/hubspot/class.lists.php');
+		if(!class_exists('HubSpot_Lists_FLM')) {
+			require_once(FLM_PLUGIN_DIR . 'subscription/hubspot/class.lists.php');
 		}
-		if ( ! class_exists( 'HubSpot_Contacts_Rapidology' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/hubspot/class.contacts.php' );
+		if ( ! class_exists( 'HubSpot_Contacts_FLM' ) ) {
+			require_once( FLM_PLUGIN_DIR . 'subscription/hubspot/class.contacts.php' );
 		}
-		$contacts = new HubSpot_Contacts_Rapidology( $api_key );
-		$lists    = new HubSpot_Lists_Rapidology( $api_key );
+		$contacts = new HubSpot_Contacts_FLM( $api_key );
+		$lists    = new HubSpot_Lists_FLM( $api_key );
 
 
 		//see if contact exists
@@ -3363,7 +3342,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		if($contact_exists == false){
 
 			//try to make a smart guess if they put their first and last name in the name field or if its just a single name form
-			$names_array = rapidology_name_splitter($name, $last_name);
+			$names_array = flm_name_splitter($name, $last_name);
 			$name = $names_array['name'];
 			$last_name = $names_array['last_name'];
 			$args =  array('email' => $email, 'firstname' => $name, 'lastname' => $last_name );
@@ -3397,14 +3376,14 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 
 	function get_hubspot_forms($account_id, $api_key, $name){
-		if(!class_exists('HubSpot_Forms_Rapidology')){
+		if(!class_exists('HubSpot_Forms_FLM')){
 			include_once('subscription/hubspot/class.forms.php');
 		}
-		$forms      	= new HubSpot_Forms_Rapidology($api_key);
+		$forms      	= new HubSpot_Forms_FLM($api_key);
 		$all_forms		= $forms->get_forms();
 		//array to hold valid forms to return
 		$valid_forms	= array();
-		//only fields accepted for rapidology, check against and make sure other forms are not required
+		//only fields accepted for flm, check against and make sure other forms are not required
 		$accepted_flds	= array(
 			'firstname',
 			'lastname',
@@ -3450,10 +3429,10 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 
 	function submit_hubspot_form($api_key, $account_id, $email, $list_id, $name, $last_name, $post_name, $cookie){
-		if(!class_exists('HubSpot_Forms_Rapidology')){
+		if(!class_exists('HubSpot_Forms_FLM')){
 			include_once('subscription/hubspot/class.forms.php');
 		}
-		$names_array = rapidology_name_splitter($name, $last_name);
+		$names_array = flm_name_splitter($name, $last_name);
 		$name = $names_array['name'];
 		$last_name = $names_array['last_name'];
 		$submitted_form_fields = array(
@@ -3467,7 +3446,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 			'pageUrl'	=> $_SERVER['HTTP_HOST'],
 			'pageName'	=> $post_name
 		);
-		$forms      	= new HubSpot_Forms_Rapidology($api_key);
+		$forms      	= new HubSpot_Forms_FLM($api_key);
 		$submitted_form = $forms->submit_form($account_id, $list_id, $submitted_form_fields, $context);
 		if($submitted_form['error']){
 			$error_message = 'There was an error submitting your form';
@@ -3601,7 +3580,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		if($campaign_member->success == '1'){
 			$error_message  =  'success';
 		}else{
-			$error_message = __('Lead could not be added to campaign', 'rapidology');
+			$error_message = __('Lead could not be added to campaign', 'flm');
 		}
 
 		return $error_message;
@@ -3615,14 +3594,14 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 	function get_active_campagin_forms($url, $api_key, $name){
 		require_once('subscription/activecampaign/class.activecampagin.php');
-		$ac_requests = new rapidology_active_campagin($url, $api_key);
-		$forms = $ac_requests->rapidology_get_ac_forms();
+		$ac_requests = new flm_active_campagin($url, $api_key);
+		$forms = $ac_requests->flm_get_ac_forms();
 		if($forms['status'] == 'error'){
 			$error_message = $forms['message'];
 			return $error_message;
 		}
 
-		$verfied_forms = $ac_requests->rapidology_get_ac_html($forms);
+		$verfied_forms = $ac_requests->flm_get_ac_html($forms);
 
 		foreach($verfied_forms as $form){
 			$form_list[$form['id']]['name'] = $form['name'];
@@ -3648,9 +3627,9 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 	function subscribe_active_campaign($url, $api_key, $first_name , $last_name, $email, $lists, $form_id){
 		require_once('subscription/activecampaign/class.activecampagin.php');
-		$ac_requests = new rapidology_active_campagin($url, $api_key);
+		$ac_requests = new flm_active_campagin($url, $api_key);
 
-		$result = $ac_requests->rapidology_submit_ac_form($form_id, $first_name, $last_name, $email, $lists, $url );
+		$result = $ac_requests->flm_submit_ac_form($form_id, $first_name, $last_name, $email, $lists, $url );
 		$error_message = $result;
 		return $error_message['message'];
 
@@ -3661,8 +3640,8 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function get_campaign_monitor_lists( $api_key, $name ) {
-		require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/createsend-php-4.0.2/csrest_clients.php' );
-		require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/createsend-php-4.0.2/csrest_lists.php' );
+		require_once( FLM_PLUGIN_DIR . 'subscription/createsend-php-4.0.2/csrest_clients.php' );
+		require_once( FLM_PLUGIN_DIR . 'subscription/createsend-php-4.0.2/csrest_lists.php' );
 
 		$auth = array(
 			'api_key' => $api_key,
@@ -3673,7 +3652,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$all_lists      = array();
 
 		if ( ! function_exists( 'curl_init' ) ) {
-			return __( 'curl_init is not defined ', 'rapidology' );
+			return __( 'curl_init is not defined ', 'flm' );
 		}
 
 		// Get cURL resource
@@ -3723,7 +3702,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 			) );
 		} else {
 			if ( '401' == $httpCode ) {
-				$error_message = __( 'invalid API key', 'rapidology' );
+				$error_message = __( 'invalid API key', 'flm' );
 			} else {
 				$error_message = $httpCode;
 			}
@@ -3737,7 +3716,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function subscribe_campaign_monitor( $api_key, $email, $list_id, $name = '' ) {
-		require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/createsend-php-4.0.2/csrest_subscribers.php' );
+		require_once( FLM_PLUGIN_DIR . 'subscription/createsend-php-4.0.2/csrest_subscribers.php' );
 		$auth          = array(
 			'api_key' => $api_key,
 		);
@@ -3745,7 +3724,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$is_subscribed = $wrap->get( $email );
 
 		if ( $is_subscribed->was_successful() ) {
-			$error_message = __( 'Already subscribed', 'rapidology' );
+			$error_message = __( 'Already subscribed', 'flm' );
 		} else {
 			$result = $wrap->add( array(
 				'EmailAddress' => $email,
@@ -3794,7 +3773,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 				) );
 
 			} else {
-				$error_message = __( 'Please make sure you have at least 1 list in your account and try again', 'rapidology' );
+				$error_message = __( 'Please make sure you have at least 1 list in your account and try again', 'flm' );
 			}
 		} else {
 			$error_message = $this->get_error_message( $theme_request, $response_code, null );
@@ -3834,7 +3813,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 					} else {
 						switch ( $response_code ) {
 							case '401' :
-								$error_message = __( 'Invalid Username or API key', 'rapidology' );
+								$error_message = __( 'Invalid Username or API key', 'flm' );
 								break;
 							case '400' :
 								$error_message = wp_remote_retrieve_body( $theme_request );
@@ -3847,7 +3826,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 					}
 				}
 			} else {
-				$error_message = __( 'Already subscribed', 'rapidology' );
+				$error_message = __( 'Already subscribed', 'flm' );
 			}
 		} else {
 			// TODO: Figure out how to handle this better, since $theme_request and $response_code are undef here
@@ -3914,7 +3893,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 					$error_message = $folder_data;
 				}
 			} else {
-				$error_message = __( 'Account ID is not defined', 'rapidology' );
+				$error_message = __( 'Account ID is not defined', 'flm' );
 			}
 		} else {
 			$error_message = $account_data;
@@ -3957,7 +3936,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 					$error_message = $added_account;
 				}
 			} else {
-				$error_message = __( 'Already subscribed', 'rapidology' );
+				$error_message = __( 'Already subscribed', 'flm' );
 			}
 		} else {
 			$error_message = $is_subscribed;
@@ -4004,7 +3983,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 			if ( ! empty( $theme_response ) ) {
 				$error_message = json_decode( wp_remote_retrieve_body( $theme_request ), true );
 			} else {
-				$error_message = __( 'empty response', 'rapidology' );
+				$error_message = __( 'empty response', 'flm' );
 			}
 		} else {
 			$error_map     = array(
@@ -4024,11 +4003,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$lists = array();
 
 		if ( ! function_exists( 'curl_init' ) ) {
-			return __( 'curl_init is not defined ', 'rapidology' );
+			return __( 'curl_init is not defined ', 'flm' );
 		}
 
 		if ( ! class_exists( 'GetResponse' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/getresponse/getresponseapi.class.php' );
+			require_once( FLM_PLUGIN_DIR . 'subscription/getresponse/getresponseapi.class.php' );
 		}
 
 		$api = new GetResponse( $api_key );
@@ -4054,7 +4033,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 				'is_authorized' => esc_html( 'true' ),
 			) );
 		} else {
-			$error_message = __( 'Invalid API key or something went wrong during Authorization request', 'rapidology' );
+			$error_message = __( 'Invalid API key or something went wrong during Authorization request', 'flm' );
 		}
 
 		return $error_message;
@@ -4069,7 +4048,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 			return;
 		}
 
-		require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/getresponse/jsonrpcclient.php' );
+		require_once( FLM_PLUGIN_DIR . 'subscription/getresponse/jsonrpcclient.php' );
 		$api_url = 'http://api2.getresponse.com';
 
 		$name = '' == $name ? '-' : $name;
@@ -4105,11 +4084,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$lists = array();
 
 		if ( ! function_exists( 'curl_init' ) ) {
-			return __( 'curl_init is not defined ', 'rapidology' );
+			return __( 'curl_init is not defined ', 'flm' );
 		}
 
 		if ( ! class_exists( 'Mailin' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/sendinblue-v2.0/mailin.php' );
+			require_once( FLM_PLUGIN_DIR . 'subscription/sendinblue-v2.0/mailin.php' );
 		}
 
 		$mailin       = new Mailin( 'https://api.sendinblue.com/v2.0', $api_key );
@@ -4152,7 +4131,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 				$error_message = $all_lists['message'];
 			}
 		} else {
-			$error_message = __( 'Invalid API key or something went wrong during Authorization request', 'rapidology' );
+			$error_message = __( 'Invalid API key or something went wrong during Authorization request', 'flm' );
 		}
 
 		return $error_message;
@@ -4164,11 +4143,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function subscribe_sendinblue( $api_key, $email, $list_id, $name, $last_name = '' ) {
 		if ( ! function_exists( 'curl_init' ) ) {
-			return __( 'curl_init is not defined ', 'rapidology' );
+			return __( 'curl_init is not defined ', 'flm' );
 		}
 
 		if ( ! class_exists( 'Mailin' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/sendinblue-v2.0/mailin.php' );
+			require_once( FLM_PLUGIN_DIR . 'subscription/sendinblue-v2.0/mailin.php' );
 		}
 
 		$mailin = new Mailin( 'https://api.sendinblue.com/v2.0', $api_key );
@@ -4191,11 +4170,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 				if ( ! empty( $result['message'] ) ) {
 					$error_message = $result['message'];
 				} else {
-					$error_message = __( 'Unknown error', 'rapidology' );
+					$error_message = __( 'Unknown error', 'flm' );
 				}
 			}
 		} else {
-			$error_message = __( 'Already subscribed', 'rapidology' );
+			$error_message = __( 'Already subscribed', 'flm' );
 		}
 
 		return $error_message;
@@ -4213,7 +4192,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$table_users = $wpdb->prefix . 'wysija_user_list';
 
 		if ( ! class_exists( 'WYSIJA' ) ) {
-			$error_message = __( 'MailPoet plugin is not installed or not activated', 'rapidology' );
+			$error_message = __( 'MailPoet plugin is not installed or not activated', 'flm' );
 		} else {
 			$list_model      = WYSIJA::get( 'list', 'model' );
 			$all_lists_array = $list_model->get( array( 'name', 'list_id' ), array( 'is_enabled' => '1' ) );
@@ -4253,7 +4232,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 		$table_user_lists = $wpdb->prefix . 'wysija_user_list';
 
 		if ( ! class_exists( 'WYSIJA' ) ) {
-			$error_message = __( 'MailPoet plugin is not installed or not activated', 'rapidology' );
+			$error_message = __( 'MailPoet plugin is not installed or not activated', 'flm' );
 		} else {
 			$sql_count = "SELECT COUNT(*) FROM $table_user WHERE email = %s";
 			$sql_args  = array(
@@ -4277,7 +4256,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 				$error_message  = $mailpoet_class->addSubscriber( $new_user );
 				$error_message  = is_int( $error_message ) ? 'success' : $error_message;
 			} else {
-				$error_message = __( 'Already Subscribed', 'rapidology' );
+				$error_message = __( 'Already Subscribed', 'flm' );
 			}
 		}
 
@@ -4289,7 +4268,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 * @return string
 	 */
 	function get_aweber_lists( $api_key, $name ) {
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 		$lists         = array();
 
 		if ( ! isset( $options_array['accounts']['aweber'][ $name ]['consumer_key'] ) || ( $api_key != $options_array['accounts']['aweber'][ $name ]['api_key'] ) ) {
@@ -4300,7 +4279,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 
 		if ( 'success' === $error_message ) {
 			if ( ! class_exists( 'AWeberAPI' ) ) {
-				require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/aweber/aweber_api.php' );
+				require_once( FLM_PLUGIN_DIR . 'subscription/aweber/aweber_api.php' );
 			}
 
 			$account = $this->get_aweber_account( $name );
@@ -4331,13 +4310,13 @@ class RAD_Rapidology extends RAD_Dashboard {
 	 */
 	function subscribe_aweber( $list_id, $account_name, $email, $name = '' ) {
 		if ( ! class_exists( 'AWeberAPI' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/aweber/aweber_api.php' );
+			require_once( FLM_PLUGIN_DIR . 'subscription/aweber/aweber_api.php' );
 		}
 
 		$account = $this->get_aweber_account( $account_name );
 
 		if ( ! $account ) {
-			$error_message = __( 'Aweber: Wrong configuration data', 'rapidology' );
+			$error_message = __( 'Aweber: Wrong configuration data', 'flm' );
 		}
 
 		try {
@@ -4366,14 +4345,14 @@ class RAD_Rapidology extends RAD_Dashboard {
 	function aweber_authorization( $api_key, $name ) {
 
 		if ( ! class_exists( 'AWeberAPI' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/aweber/aweber_api.php' );
+			require_once( FLM_PLUGIN_DIR . 'subscription/aweber/aweber_api.php' );
 		}
 
 		try {
 			$auth = AWeberAPI::getDataFromAweberID( $api_key );
 
 			if ( ! ( is_array( $auth ) && 4 === count( $auth ) ) ) {
-				$error_message = __( 'Authorization code is invalid. Try regenerating it and paste in the new code.', 'rapidology' );
+				$error_message = __( 'Authorization code is invalid. Try regenerating it and paste in the new code.', 'flm' );
 			} else {
 				$error_message = 'success';
 				list( $consumer_key, $consumer_secret, $access_key, $access_secret ) = $auth;
@@ -4398,10 +4377,10 @@ class RAD_Rapidology extends RAD_Dashboard {
 				esc_html( $exc->type ),
 				esc_html( $exc->message ),
 				esc_html( $exc->documentation_url ),
-				esc_html__( 'AWeberAPIException.', 'rapidology' ),
-				esc_html__( 'Type', 'rapidology' ),
-				esc_html__( 'Message', 'rapidology' ),
-				esc_html__( 'Documentation', 'rapidology' )
+				esc_html__( 'AWeberAPIException.', 'flm' ),
+				esc_html__( 'Type', 'flm' ),
+				esc_html__( 'Message', 'flm' ),
+				esc_html__( 'Documentation', 'flm' )
 			);
 		}
 
@@ -4417,7 +4396,7 @@ class RAD_Rapidology extends RAD_Dashboard {
 			require_once( get_template_directory() . '/includes/subscription/aweber/aweber_api.php' );
 		}
 
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 		$account       = false;
 
 		if ( isset( $options_array['accounts']['aweber'][ $name ] ) ) {
@@ -4483,11 +4462,11 @@ class RAD_Rapidology extends RAD_Dashboard {
 						'is_authorized' => esc_html( 'true' ),
 					) );
 				} else {
-					$error_message = isset( $theme_response['rsp']['err']['@attributes']['msg'] ) ? $theme_response['rsp']['err']['@attributes']['msg'] : __( 'Unknown error', 'rapidology' );
+					$error_message = isset( $theme_response['rsp']['err']['@attributes']['msg'] ) ? $theme_response['rsp']['err']['@attributes']['msg'] : __( 'Unknown error', 'flm' );
 				}
 
 			} else {
-				$error_message = __( 'empty response', 'rapidology' );
+				$error_message = __( 'empty response', 'flm' );
 			}
 		} else {
 			if ( is_wp_error( $theme_request ) ) {
@@ -4521,10 +4500,10 @@ class RAD_Rapidology extends RAD_Dashboard {
 						$error_message = $theme_response['rsp']['success']['@attributes']['msg'];
 					}
 				} else {
-					$error_message = isset( $theme_response['rsp']['err']['@attributes']['msg'] ) ? $theme_response['rsp']['err']['@attributes']['msg'] : __( 'Unknown error', 'rapidology' );
+					$error_message = isset( $theme_response['rsp']['err']['@attributes']['msg'] ) ? $theme_response['rsp']['err']['@attributes']['msg'] : __( 'Unknown error', 'flm' );
 				}
 			} else {
-				$error_message = __( 'empty response', 'rapidology' );
+				$error_message = __( 'empty response', 'flm' );
 			}
 		} else {
 			if ( is_wp_error( $theme_request ) ) {
@@ -4654,10 +4633,10 @@ STRING;
 			if ( isset( $user_array['status'] ) && 'Success' == $user_array['status'] ) {
 				$error_message = 'success';
 			} else {
-				$error_message = __( 'Error occured during subscription', 'rapidology' );
+				$error_message = __( 'Error occured during subscription', 'flm' );
 			}
 		} else {
-			$error_message = __( 'Already Subscribed', 'rapidology' );
+			$error_message = __( 'Already Subscribed', 'flm' );
 		}
 
 		return $error_message;
@@ -4669,7 +4648,7 @@ STRING;
 	 */
 	function ontraport_request( $postargs ) {
 		if ( ! function_exists( 'curl_init' ) ) {
-			$response = __( 'curl_init is not defined ', 'rapidology' );
+			$response = __( 'curl_init is not defined ', 'flm' );
 		} else {
 			$response = '';
 			$httpCode = '';
@@ -4718,11 +4697,11 @@ STRING;
 	 */
 	function generate_accounts_list() {
 		wp_verify_nonce( $_POST['retrieve_lists_nonce'], 'retrieve_lists' );
-		$service     = ! empty( $_POST['rapidology_service'] ) ? sanitize_text_field( $_POST['rapidology_service'] ) : '';
-		$optin_id    = ! empty( $_POST['rapidology_optin_id'] ) ? sanitize_text_field( $_POST['rapidology_optin_id'] ) : '';
-		$new_account = ! empty( $_POST['rapidology_add_account'] ) ? sanitize_text_field( $_POST['rapidology_add_account'] ) : '';
+		$service     = ! empty( $_POST['flm_service'] ) ? sanitize_text_field( $_POST['flm_service'] ) : '';
+		$optin_id    = ! empty( $_POST['flm_optin_id'] ) ? sanitize_text_field( $_POST['flm_optin_id'] ) : '';
+		$new_account = ! empty( $_POST['flm_add_account'] ) ? sanitize_text_field( $_POST['flm_add_account'] ) : '';
 
-		$options_array   = RAD_Rapidology::get_rapidology_options();
+		$options_array   = Free_List_Machine::get_flm_options();
 		$current_account = isset( $options_array[ $optin_id ]['account_name'] ) ? $options_array[ $optin_id ]['account_name'] : 'empty';
 
 		$available_accounts = array();
@@ -4737,16 +4716,16 @@ STRING;
 
 		if ( ! empty( $available_accounts ) && '' === $new_account ) {
 			printf(
-				'<li class="select rad_dashboard_select_account">
+				'<li class="select flm_dashboard_select_account">
 					<p>%1$s</p>
-					<select name="rad_dashboard[account_name]" data-service="%4$s">
+					<select name="flm_dashboard[account_name]" data-service="%4$s">
 						<option value="empty" %3$s>%2$s</option>
 						<option value="add_new">%5$s</option>',
-				__( 'Select Account', 'rapidology' ),
-				__( 'Select One...', 'rapidology' ),
+				__( 'Select Account', 'flm' ),
+				__( 'Select One...', 'flm' ),
 				selected( 'empty', $current_account, false ),
 				esc_attr( $service ),
-				__( 'Add Account', 'rapidology' )
+				__( 'Add Account', 'flm' )
 			);
 
 			if ( ! empty( $available_accounts ) ) {
@@ -4766,12 +4745,12 @@ STRING;
 			$form_fields = $this->generate_new_account_form( $service );
 
 			printf(
-				'<li class="select rad_dashboard_select_account rad_dashboard_new_account">
+				'<li class="select flm_dashboard_select_account flm_dashboard_new_account">
 					%3$s
-					<button class="rad_dashboard_icon authorize_service" data-service="%2$s">%1$s</button>
+					<button class="flm_dashboard_icon authorize_service" data-service="%2$s">%1$s</button>
 					<span class="spinner"></span>
 				</li>',
-				__( 'Add Account', 'rapidology' ),
+				__( 'Add Account', 'flm' ),
 				esc_attr( $service ),
 				$form_fields
 			);
@@ -4788,7 +4767,7 @@ STRING;
 		$field_values = '';
 
 		if ( '' !== $account_name ) {
-			$options_array = RAD_Rapidology::get_rapidology_options();
+			$options_array = Free_List_Machine::get_flm_options();
 			$field_values  = $options_array['accounts'][ $service ][ $account_name ];
 		}
 
@@ -4799,14 +4778,14 @@ STRING;
 
 		if ( true === $display_name ) {
 			$form_fields .= sprintf( '
-				<div class="rad_dashboard_account_row">
+				<div class="flm_dashboard_account_row">
 					<label for="%1$s">%2$s</label>
 					<input type="text" value="%3$s" id="%1$s">%4$s
 				</div>',
 				esc_attr( 'name_' . $service ),
-				__( 'Account Name', 'rapidology' ),
+				__( 'Account Name', 'flm' ),
 				esc_attr( $account_name ),
-				RAD_Rapidology::generate_hint( __( 'Enter the name for your account', 'rapidology' ), true )
+				Free_List_Machine::generate_hint( __( 'Enter the name for your account', 'flm' ), true )
 			);
 		}
 
@@ -4814,23 +4793,23 @@ STRING;
 			case 'madmimi' :
 
 				$form_fields .= sprintf( '
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%1$s">%3$s</label>
 						<input type="password" value="%5$s" id="%1$s">%7$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%2$s">%4$s</label>
 						<input type="password" value="%6$s" id="%2$s">%7$s
 					</div>',
 					esc_attr( 'username_' . $service ),
 					esc_attr( 'api_key_' . $service ),
-					__( 'Username', 'rapidology' ),
-					__( 'API key', 'rapidology' ),
+					__( 'Username', 'flm' ),
+					__( 'API key', 'flm' ),
 					( '' !== $field_values && isset( $field_values['username'] ) ) ? esc_html( $field_values['username'] ) : '',
 					( '' !== $field_values && isset( $field_values['api_key'] ) ) ? esc_html( $field_values['api_key'] ) : '',
-					RAD_Rapidology::generate_hint( sprintf(
-						'<a href="http://www.rapidology.com/docs'.$service.'" target="_blank">%1$s</a>',
-						__( 'Click here for more information', 'rapidology' )
+					Free_List_Machine::generate_hint( sprintf(
+						'<a href="http://www.contestdomination.com/docs'.$service.'" target="_blank">%1$s</a>',
+						__( 'Click here for more information', 'flm' )
 					), false
 					)
 				);
@@ -4838,30 +4817,30 @@ STRING;
 				break;
 			case 'emma':
 				$form_fields .= sprintf( '
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%1$s">%4$s</label>
 						<input type="password" value="%7$s" id="%1$s">%10$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%2$s">%5$s</label>
 						<input type="password" value="%8$s" id="%2$s">%10$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%3$s">%6$s</label>
 						<input type="password" value="%9$s" id="%3$s">%10$s
 					</div>',
 					esc_attr( 'api_key_' . $service ),
 					esc_attr( 'client_id_' . $service ),
 					esc_attr( 'username_' . $service ),
-					__( 'Public API Key', 'rapidology' ),
-					__( 'Private API key', 'rapidology' ),
-					__( 'Account ID', 'rapidology' ),
+					__( 'Public API Key', 'flm' ),
+					__( 'Private API key', 'flm' ),
+					__( 'Account ID', 'flm' ),
 					( '' !== $field_values && isset( $field_values['api_key_'] ) ) ? esc_html( $field_values['api_key_'] ) : '',
 					( '' !== $field_values && isset( $field_values['client_id_'] ) ) ? esc_html( $field_values['client_id_'] ) : '',
 					( '' !== $field_values && isset( $field_values['username_'] ) ) ? esc_html( $field_values['username_'] ) : '',
-					RAD_Rapidology::generate_hint( sprintf(
-						'<a href="http://www.rapidology.com/docs#'.$service.'" target="_blank">%1$s</a>',
-						__( 'Click here for more information', 'rapidology' )
+					Free_List_Machine::generate_hint( sprintf(
+						'<a href="http://www.contestdomination.com/docs#'.$service.'" target="_blank">%1$s</a>',
+						__( 'Click here for more information', 'flm' )
 					), false
 					)
 				);
@@ -4869,31 +4848,31 @@ STRING;
 			case 'salesforce' :
 				//hide verision # and hardcoded it to 34.0
 				$form_fields .= sprintf('
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%1$s">%8$s</label>
 						<input type="text" value="%15$s" id="%1$s">%22$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%3$s">%10$s</label>
 						<input type="password" value="%17$s" id="%3$s">%22$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%4$s">%11$s</label>
 						<input type="password" value="%18$s" id="%4$s">%22$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%5$s">%12$s</label>
 						<input type="text" value="%19$s" id="%5$s">%22$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%6$s">%13$s</label>
 						<input type="password" value="%20$s" id="%6$s">%22$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%7$s">%14$s</label>
 						<input type="password" value="%21$s" id="%7$s">%22$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label style="display:none;" for="%2$s">%9$s</label>
 						<input type="hidden" value="34.0" id="%2$s">
 					</div>
@@ -4905,13 +4884,13 @@ STRING;
 					esc_attr('username_sf_'.$service),#5
 					esc_attr('password_sf_'.$service),#6
 					esc_attr('token_'.$service),#7
-					__('Instance Number', 'rapidology'),#8
-					__('Salesforce version #', 'rapidology'),#9
-					__('Consumer key', 'rapidology'),#10
-					__('Consumer secret', 'rapidology'),#11
-					__('Salesforce username', 'rapidology'),#12
-					__('Salesforce password', 'rapidology'),#13
-					__('Secuirty token', 'rapidology'),#14
+					__('Instance Number', 'flm'),#8
+					__('Salesforce version #', 'flm'),#9
+					__('Consumer key', 'flm'),#10
+					__('Consumer secret', 'flm'),#11
+					__('Salesforce username', 'flm'),#12
+					__('Salesforce password', 'flm'),#13
+					__('Secuirty token', 'flm'),#14
 					( '' !== $field_values && isset( $field_values['url'] ) ) ? esc_attr( $field_values['url'] ) : '',#15
 					( '' !== $field_values && isset( $field_values['version'] ) ) ? esc_attr( $field_values['version'] ) : '',#16
 					( '' !== $field_values && isset( $field_values['client_key'] ) ) ? esc_attr( $field_values['client_key'] ) : '',#17
@@ -4919,33 +4898,33 @@ STRING;
 					( '' !== $field_values && isset( $field_values['username_sf'] ) ) ? esc_attr( $field_values['username'] ) : '',#19
 					( '' !== $field_values && isset( $field_values['password_sf'] ) ) ? esc_attr( $field_values['password'] ) : '',#20
 					( '' !== $field_values && isset( $field_values['token'] ) ) ? esc_attr( $field_values['token'] ) : '',#21
-					RAD_Rapidology::generate_hint( sprintf(
-						'<a href="http://www.rapidology.com/docs#'.$service.'" target="_blank">%1$s</a>',
-						__( 'Click here for more information', 'rapidology' )
+					Free_List_Machine::generate_hint( sprintf(
+						'<a href="http://www.contestdomination.com/docs#'.$service.'" target="_blank">%1$s</a>',
+						__( 'Click here for more information', 'flm' )
 					), false
 					)#22
 				);
 			break;
 			case 'activecampaign':
 				$form_fields .= sprintf('
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%1$s">%3$s</label>
 						<input type="text" value="%5$s" id="%1$s">%7$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%2$s">%4$s</label>
 						<input type="text" value="%6$s" id="%2$s">%7$s
 					</div>
 					',
 					esc_attr('url_'.$service),#1
 					esc_attr('api_key_'.$service),#2
-					__('API URL', 'rapidology'),#3
-					__('API Key', 'rapidology'),#4
+					__('API URL', 'flm'),#3
+					__('API Key', 'flm'),#4
 					( '' !== $field_values && isset( $field_values['url'] ) ) ? esc_attr( $field_values['url'] ) : '',#5
 					( '' !== $field_values && isset( $field_values['api_key'] ) ) ? esc_attr( $field_values['api_key'] ) : '',#6
-					RAD_Rapidology::generate_hint( sprintf(
-						'<a href="http://www.rapidology.com/docs#'.$service.'" target="_blank">%1$s</a>',
-						__( 'Click here for more information', 'rapidology' )
+					Free_List_Machine::generate_hint( sprintf(
+						'<a href="http://www.contestdomination.com/docs#'.$service.'" target="_blank">%1$s</a>',
+						__( 'Click here for more information', 'flm' )
 					), false
 					)#7
 				);
@@ -4956,23 +4935,23 @@ STRING;
 			case 'hubspot'  :
 			case 'hubspot-standard' :
 			$form_fields .= sprintf( '
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%1$s">%3$s</label>
 						<input type="text" value="%5$s" id="%1$s">%7$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%2$s">%4$s</label>
 						<input type="password" value="%6$s" id="%2$s">%7$s
 					</div>',
 				esc_attr('username_' . $service),#1
 				esc_attr( 'api_key_' . $service ),#2
-				__( 'Account Id', 'rapidology'),#3
-				__( 'API key', 'rapidology' ),#4
+				__( 'Account Id', 'flm'),#3
+				__( 'API key', 'flm' ),#4
 				( '' !== $field_values && isset( $field_values['username'] ) ) ? esc_attr( $field_values['username'] ) : '',#5
 				( '' !== $field_values && isset( $field_values['api_key'] ) ) ? esc_attr( $field_values['api_key'] ) : '',#6
-				RAD_Rapidology::generate_hint( sprintf(
-					'<a href="http://www.rapidology.com/docs#'.$service.'" target="_blank">%1$s</a>',
-					__( 'Click here for more information', 'rapidology' )
+				Free_List_Machine::generate_hint( sprintf(
+					'<a href="http://www.contestdomination.com/docs#'.$service.'" target="_blank">%1$s</a>',
+					__( 'Click here for more information', 'flm' )
 				), false#7
 				)
 			);
@@ -4984,32 +4963,32 @@ STRING;
 			case 'feedblitz' :
 
 				$form_fields .= sprintf( '
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%1$s">%2$s</label>
 						<input type="password" value="%3$s" id="%1$s">%4$s
 					</div>',
 					esc_attr( 'api_key_' . $service ),
-					__( 'API key', 'rapidology' ),
+					__( 'API key', 'flm' ),
 					( '' !== $field_values && isset( $field_values['api_key'] ) ) ? esc_attr( $field_values['api_key'] ) : '',
-					RAD_Rapidology::generate_hint( sprintf(
-						'<a href="http://www.rapidology.com/docs#'.$service.'" target="_blank">%1$s</a>',
-						__( 'Click here for more information', 'rapidology' )
+					Free_List_Machine::generate_hint( sprintf(
+						'<a href="http://www.contestdomination.com/docs#'.$service.'" target="_blank">%1$s</a>',
+						__( 'Click here for more information', 'flm' )
 					), false
 					)
 				);
 
 				$form_fields .= ( 'constant_contact' == $service ) ?
 					sprintf(
-						'<div class="rad_dashboard_account_row">
+						'<div class="flm_dashboard_account_row">
 							<label for="%1$s">%2$s</label>
 							<input type="password" value="%3$s" id="%1$s">%4$s
 						</div>',
 						esc_attr( 'token_' . $service ),
-						__( 'Token', 'rapidology' ),
+						__( 'Token', 'flm' ),
 						( '' !== $field_values && isset( $field_values['token'] ) ) ? esc_attr( $field_values['token'] ) : '',
-						RAD_Rapidology::generate_hint( sprintf(
-							'<a href="http://www.rapidology.com/docs#'.$service.'" target="_blank">%1$s</a>',
-							__( 'Click here for more information', 'rapidology' )
+						Free_List_Machine::generate_hint( sprintf(
+							'<a href="http://www.contestdomination.com/docs#'.$service.'" target="_blank">%1$s</a>',
+							__( 'Click here for more information', 'flm' )
 						), false )
 					)
 					: '';
@@ -5021,16 +5000,16 @@ STRING;
 				$aweber_auth_endpoint = 'https://auth.aweber.com/1.0/oauth/authorize_app/' . $app_id;
 
 				$form_fields .= sprintf( '
-					<div class="rad_dashboard_account_row rad_dashboard_aweber_row">%1$s%2$s</div>',
+					<div class="flm_dashboard_account_row flm_dashboard_aweber_row">%1$s%2$s</div>',
 					sprintf(
-						__( 'Step 1: <a href="%1$s" target="_blank">Generate authorization code</a><br/>', 'rapidology' ),
+						__( 'Step 1: <a href="%1$s" target="_blank">Generate authorization code</a><br/>', 'flm' ),
 						esc_url( $aweber_auth_endpoint )
 					),
 					sprintf( '
 						%2$s
 						<input type="password" value="%3$s" id="%1$s">',
 						esc_attr( 'api_key_' . $service ),
-						__( 'Step 2: Paste in the authorization code and click "Authorize" button: ', 'rapidology' ),
+						__( 'Step 2: Paste in the authorization code and click "Authorize" button: ', 'flm' ),
 						( '' !== $field_values && isset( $field_values['api_key'] ) )
 							? esc_attr( $field_values['api_key'] )
 							: ''
@@ -5040,32 +5019,32 @@ STRING;
 
 			case 'icontact' :
 				$form_fields .= sprintf( '
-					<div class="rad_dashboard_account_row">%1$s</div>',
+					<div class="flm_dashboard_account_row">%1$s</div>',
 					sprintf( '
-						<div class="rad_dashboard_account_row">
+						<div class="flm_dashboard_account_row">
 							<label for="%1$s">%4$s</label>
 							<input type="password" value="%7$s" id="%1$s">%10$s
 						</div>
-						<div class="rad_dashboard_account_row">
+						<div class="flm_dashboard_account_row">
 							<label for="%2$s">%5$s</label>
 							<input type="password" value="%8$s" id="%2$s">%10$s
 						</div>
-						<div class="rad_dashboard_account_row">
+						<div class="flm_dashboard_account_row">
 							<label for="%3$s">%6$s</label>
 							<input type="password" value="%9$s" id="%3$s">%10$s
 						</div>',
 						esc_attr( 'client_id_' . $service ),
 						esc_attr( 'username_' . $service ),
 						esc_attr( 'password_' . $service ),
-						__( 'App ID', 'rapidology' ),
-						__( 'Username', 'rapidology' ),
-						__( 'Password', 'rapidology' ),
+						__( 'App ID', 'flm' ),
+						__( 'Username', 'flm' ),
+						__( 'Password', 'flm' ),
 						( '' !== $field_values && isset( $field_values['client_id'] ) ) ? esc_html( $field_values['client_id'] ) : '',
 						( '' !== $field_values && isset( $field_values['username'] ) ) ? esc_html( $field_values['username'] ) : '',
 						( '' !== $field_values && isset( $field_values['password'] ) ) ? esc_html( $field_values['password'] ) : '',
-						RAD_Rapidology::generate_hint( sprintf(
-							'<a href="http://www.rapidology.com/docs#'.$service.'" target="_blank">%1$s</a>',
-							__( 'Click here for more information', 'rapidology' )
+						Free_List_Machine::generate_hint( sprintf(
+							'<a href="http://www.contestdomination.com/docs#'.$service.'" target="_blank">%1$s</a>',
+							__( 'Click here for more information', 'flm' )
 						), false )
 					)
 				);
@@ -5073,46 +5052,46 @@ STRING;
 
 			case 'ontraport' :
 				$form_fields .= sprintf( '
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%1$s">%3$s</label>
 						<input type="password" value="%5$s" id="%1$s">%7$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%2$s">%4$s</label>
 						<input type="password" value="%6$s" id="%2$s">%7$s
 					</div>',
 					esc_attr( 'api_key_' . $service ),
 					esc_attr( 'client_id_' . $service ),
-					__( 'API key', 'rapidology' ),
-					__( 'APP ID', 'rapidology' ),
+					__( 'API key', 'flm' ),
+					__( 'APP ID', 'flm' ),
 					( '' !== $field_values && isset( $field_values['api_key'] ) ) ? esc_attr( $field_values['api_key'] ) : '',
 					( '' !== $field_values && isset( $field_values['client_id'] ) ) ? esc_attr( $field_values['client_id'] ) : '',
-					RAD_Rapidology::generate_hint( sprintf(
-						'<a href="http://www.rapidology.com/docs#'.$service.'" target="_blank">%1$s</a>',
-						__( 'Click here for more information', 'rapidology' )
+					Free_List_Machine::generate_hint( sprintf(
+						'<a href="http://www.contestdomination.com/docs#'.$service.'" target="_blank">%1$s</a>',
+						__( 'Click here for more information', 'flm' )
 					), false )
 				);
 				break;
 
 			case 'infusionsoft' :
 				$form_fields .= sprintf( '
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%1$s">%3$s</label>
 						<input type="password" value="%5$s" id="%1$s">%7$s
 					</div>
-					<div class="rad_dashboard_account_row">
+					<div class="flm_dashboard_account_row">
 						<label for="%2$s">%4$s</label>
 						<input type="password" value="%6$s" id="%2$s">%7$s
 					</div>',
 					esc_attr( 'api_key_' . $service ),
 					esc_attr( 'client_id_' . $service ),
-					__( 'API Key', 'rapidology' ),
-					__( 'Application name', 'rapidology' ),
+					__( 'API Key', 'flm' ),
+					__( 'Application name', 'flm' ),
 					( '' !== $field_values && isset( $field_values['api_key'] ) ) ? esc_attr( $field_values['api_key'] ) : '',
 					( '' !== $field_values && isset( $field_values['client_id'] ) ) ? esc_attr( $field_values['client_id'] ) : '',
-					RAD_Rapidology::generate_hint( sprintf(
-						'<a href="http://www.rapidology.com/docs#'.$service.'" target="_blank">%1$s</a>',
-						__( 'Click here for more information', 'rapidology' )
+					Free_List_Machine::generate_hint( sprintf(
+						'<a href="http://www.contestdomination.com/docs#'.$service.'" target="_blank">%1$s</a>',
+						__( 'Click here for more information', 'flm' )
 					), false )
 				);
 				break;
@@ -5128,7 +5107,7 @@ STRING;
 	 * @return string
 	 */
 	function retrieve_accounts_list( $service, $accounts_list = array() ) {
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 		if ( isset( $options_array['accounts'] ) ) {
 			if ( isset( $options_array['accounts'][ $service ] ) ) {
 				foreach ( $options_array['accounts'][ $service ] as $account_name => $details ) {
@@ -5159,11 +5138,11 @@ STRING;
 	 */
 	function generate_mailing_lists( $service = '', $account_name = '' ) {
 		wp_verify_nonce( $_POST['retrieve_lists_nonce'], 'retrieve_lists' );
-		$account_for = ! empty( $_POST['rapidology_account_name'] ) ? sanitize_text_field( $_POST['rapidology_account_name'] ) : '';
-		$service     = ! empty( $_POST['rapidology_service'] ) ? sanitize_text_field( $_POST['rapidology_service'] ) : '';
-		$optin_id    = ! empty( $_POST['rapidology_optin_id'] ) ? sanitize_text_field( $_POST['rapidology_optin_id'] ) : '';
+		$account_for = ! empty( $_POST['flm_account_name'] ) ? sanitize_text_field( $_POST['flm_account_name'] ) : '';
+		$service     = ! empty( $_POST['flm_service'] ) ? sanitize_text_field( $_POST['flm_service'] ) : '';
+		$optin_id    = ! empty( $_POST['flm_optin_id'] ) ? sanitize_text_field( $_POST['flm_optin_id'] ) : '';
 
-		$options_array      = RAD_Rapidology::get_rapidology_options();
+		$options_array      = Free_List_Machine::get_flm_options();
 		$current_email_list = isset( $options_array[ $optin_id ] ) ? $options_array[ $optin_id ]['email_list'] : 'empty';
 
 		$available_lists = array();
@@ -5181,12 +5160,12 @@ STRING;
 		}
 
 		printf( '
-			<li class="select rad_dashboard_select_list">
+			<li class="select flm_dashboard_select_list">
 				<p>%1$s</p>
-				<select name="rad_dashboard[email_list]">
+				<select name="flm_dashboard[email_list]">
 					<option value="empty" %3$s>%2$s</option>',
-			__( 'Select Email List', 'rapidology' ),
-			__( 'Select One...', 'rapidology' ),
+			__( 'Select Email List', 'flm' ),
+			__( 'Select One...', 'flm' ),
 			selected( 'empty', $current_email_list, false )
 		);
 
@@ -5213,12 +5192,12 @@ STRING;
 	/**-------------------------**/
 
 	function load_scripts_styles() {
-		wp_enqueue_script( 'rad_rapidology-uniform-js', RAD_RAPIDOLOGY_PLUGIN_URI . '/js/jquery.uniform.min.js', array( 'jquery' ), $this->plugin_version, true );
-		wp_enqueue_script( 'rad_rapidology-custom-js', RAD_RAPIDOLOGY_PLUGIN_URI . '/js/custom.js', array( 'jquery' ), $this->plugin_version, true );
-		wp_enqueue_script( 'rad_rapidology-idle-timer-js', RAD_RAPIDOLOGY_PLUGIN_URI . '/js/idle-timer.min.js', array( 'jquery' ), $this->plugin_version, true );
-		wp_enqueue_style( 'rad_rapidology-open-sans', esc_url_raw( "{$this->protocol}://fonts.googleapis.com/css?family=Open+Sans:400,700" ), array(), null );
-		wp_enqueue_style( 'rad_rapidology-css', RAD_RAPIDOLOGY_PLUGIN_URI . '/css/style.css', array(), $this->plugin_version );
-		wp_localize_script( 'rad_rapidology-custom-js', 'rapidologySettings', array(
+		wp_enqueue_script( 'flm-uniform-js', FLM_PLUGIN_URI . '/js/jquery.uniform.min.js', array( 'jquery' ), $this->plugin_version, true );
+		wp_enqueue_script( 'flm-custom-js', FLM_PLUGIN_URI . '/js/custom.js', array( 'jquery' ), $this->plugin_version, true );
+		wp_enqueue_script( 'flm-idle-timer-js', FLM_PLUGIN_URI . '/js/idle-timer.min.js', array( 'jquery' ), $this->plugin_version, true );
+		wp_enqueue_style( 'flm-open-sans', esc_url_raw( "{$this->protocol}://fonts.googleapis.com/css?family=Open+Sans:400,700" ), array(), null );
+		wp_enqueue_style( 'flm-css', FLM_PLUGIN_URI . '/css/style.css', array(), $this->plugin_version );
+		wp_localize_script( 'flm-custom-js', 'flmSettings', array(
 			'ajaxurl'         => admin_url( 'admin-ajax.php', $this->protocol ),
 			'pageurl'         => ( is_singular( get_post_types() ) ? get_permalink() : '' ),
 			'stats_nonce'     => wp_create_nonce( 'update_stats' ),
@@ -5227,8 +5206,8 @@ STRING;
 	}
 
 	/**
-	 * Generates the array of all taxonomies supported by Rapidology.
-	 * Rapidology fully supports only taxonomies from ET themes.
+	 * Generates the array of all taxonomies supported by Free List Machine.
+	 * Free List Machine fully supports only taxonomies from ET themes.
 	 * @return array
 	 */
 	function get_supported_taxonomies( $post_types ) {
@@ -5248,7 +5227,7 @@ STRING;
 	/**
 	 * Returns the slug for supported taxonomy based on post type.
 	 * Returns empty string if taxonomy is not supported
-	 * Rapidology fully supports only taxonomies from ET themes.
+	 * Free List Machine fully supports only taxonomies from ET themes.
 	 * @return string
 	 */
 	function get_tax_slug( $post_type ) {
@@ -5299,7 +5278,7 @@ STRING;
 	 * @return bool
 	 */
 	function check_applicability( $optin_id ) {
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 
 		$display_there = false;
 
@@ -5453,7 +5432,7 @@ STRING;
 			if ( true === $update_option ) {
 				$update_test_optin[ $optin_id ]               = $optins_set[ $optin_id ];
 				$update_test_optin[ $optin_id ]['next_optin'] = $next_optin;
-				RAD_Rapidology::update_rapidology_options( $update_test_optin );
+				Free_List_Machine::update_flm_options( $update_test_optin );
 			}
 		}
 
@@ -5469,7 +5448,7 @@ STRING;
 		$stats_data_json  = str_replace( '\\', '', $_POST['stats_data_array'] );
 		$stats_data_array = json_decode( $stats_data_json, true );
 
-		RAD_Rapidology::add_stats_record( $stats_data_array['type'], $stats_data_array['optin_id'], $stats_data_array['page_id'], $stats_data_array['list_id'] );
+		Free_List_Machine::add_stats_record( $stats_data_array['type'], $stats_data_array['optin_id'], $stats_data_array['page_id'], $stats_data_array['list_id'] );
 
 		die();
 
@@ -5484,7 +5463,7 @@ STRING;
 
 		$row_added = false;
 
-		$table_name = $wpdb->prefix . 'rad_rapidology_stats';
+		$table_name = $wpdb->prefix . 'flm_stats';
 
 		$record_date = current_time( 'mysql' );
 		$ip_address  = $_SERVER['REMOTE_ADDR'];
@@ -5518,7 +5497,7 @@ STRING;
 
 	// add marker at the bottom of the_content() for the "Trigger at bottom of post" option.
 	function trigger_bottom_mark( $content ) {
-		$content .= '<span class="rad_rapidology_bottom_trigger"></span>';
+		$content .= '<span class="flm_bottom_trigger"></span>';
 
 		return $content;
 	}
@@ -5529,7 +5508,7 @@ STRING;
 	 */
 	public static function generate_form_content( $optin_id, $page_id, $pagename = '',  $details = array() ) {
 		if ( empty( $details ) ) {
-			$all_optins = RAD_Rapidology::get_rapidology_options();
+			$all_optins = Free_List_Machine::get_flm_options();
 			$details    = $all_optins[ $optin_id ];
 		}
 		if(isset($_COOKIE['hubspotutk'])){
@@ -5538,23 +5517,23 @@ STRING;
 			$hubspot_cookie = '';
 		}
 
-		$hide_img_mobile_class = isset( $details['hide_mobile'] ) && '1' == $details['hide_mobile'] ? 'rad_rapidology_hide_mobile' : '';
+		$hide_img_mobile_class = isset( $details['hide_mobile'] ) && '1' == $details['hide_mobile'] ? 'flm_hide_mobile' : '';
 		$image_animation_class = isset( $details['image_animation'] )
-			? esc_attr( ' rad_rapidology_image_' . $details['image_animation'] )
-			: 'rad_rapidology_image_no_animation';
-		$image_class           = $hide_img_mobile_class . $image_animation_class . ' rad_rapidology_image';
+			? esc_attr( ' flm_image_' . $details['image_animation'] )
+			: 'flm_image_no_animation';
+		$image_class           = $hide_img_mobile_class . $image_animation_class . ' flm_image';
 
 		// Translate all strings if WPML is enabled
 		if ( function_exists( 'icl_translate' ) ) {
-			$optin_title      = icl_translate( 'rapidology', 'optin_title_' . $optin_id, $details['optin_title'] );
-			$optin_message    = icl_translate( 'rapidology', 'optin_message_' . $optin_id, $details['optin_message'] );
-			$email_text       = icl_translate( 'rapidology', 'email_text_' . $optin_id, $details['email_text'] );
-			$first_name_text  = icl_translate( 'rapidology', 'name_text_' . $optin_id, $details['name_text'] );
-			$single_name_text = icl_translate( 'rapidology', 'single_name_text_' . $optin_id, $details['single_name_text'] );
-			$last_name_text   = icl_translate( 'rapidology', 'last_name_' . $optin_id, $details['last_name'] );
-			$button_text      = icl_translate( 'rapidology', 'button_text_' . $optin_id, $details['button_text'] );
-			$success_text     = icl_translate( 'rapidology', 'success_message_' . $optin_id, $details['success_message'] );
-			$footer_text      = icl_translate( 'rapidology', 'footer_text_' . $optin_id, $details['footer_text'] );
+			$optin_title      = icl_translate( 'flm', 'optin_title_' . $optin_id, $details['optin_title'] );
+			$optin_message    = icl_translate( 'flm', 'optin_message_' . $optin_id, $details['optin_message'] );
+			$email_text       = icl_translate( 'flm', 'email_text_' . $optin_id, $details['email_text'] );
+			$first_name_text  = icl_translate( 'flm', 'name_text_' . $optin_id, $details['name_text'] );
+			$single_name_text = icl_translate( 'flm', 'single_name_text_' . $optin_id, $details['single_name_text'] );
+			$last_name_text   = icl_translate( 'flm', 'last_name_' . $optin_id, $details['last_name'] );
+			$button_text      = icl_translate( 'flm', 'button_text_' . $optin_id, $details['button_text'] );
+			$success_text     = icl_translate( 'flm', 'success_message_' . $optin_id, $details['success_message'] );
+			$footer_text      = icl_translate( 'flm', 'footer_text_' . $optin_id, $details['footer_text'] );
 		} else {
 			$optin_title      = $details['optin_title'];
 			$optin_message    = $details['optin_message'];
@@ -5573,7 +5552,7 @@ STRING;
 		$formatted_message = '' != $details['optin_message'] ? $optin_message : '';
 		$formatted_footer  = '' != $details['footer_text']
 			? sprintf(
-				'<div class="rad_rapidology_form_footer">
+				'<div class="flm_form_footer">
 					<p>%1$s</p>
 				</div>',
 				stripslashes( esc_html( $footer_text ) )
@@ -5583,24 +5562,24 @@ STRING;
 		$is_single_name = ( isset( $details['display_name'] ) && '1' == $details['display_name'] ) ? false : true;
 
 		$output = sprintf( '
-			<div class="rad_rapidology_form_container_wrapper clearfix">
-				<div class="rad_rapidology_header_outer">
-					<div class="rad_rapidology_form_header%1$s%13$s">
+			<div class="flm_form_container_wrapper clearfix">
+				<div class="flm_header_outer">
+					<div class="flm_form_header%1$s%13$s">
 						%2$s
 						%3$s
 						%4$s
 					</div>
 				</div>
-				<div class="rad_rapidology_form_content%5$s%6$s%7$s%12$s"%11$s>
+				<div class="flm_form_content%5$s%6$s%7$s%12$s"%11$s>
 					%8$s
-					<div class="rad_rapidology_success_container">
-						<span class="rad_rapidology_success_checkmark"></span>
+					<div class="flm_success_container">
+						<span class="flm_success_checkmark"></span>
 					</div>
-					<h2 class="rad_rapidology_success_message">%9$s</h2>
+					<h2 class="flm_success_message">%9$s</h2>
 					%10$s
 				</div>
 			</div>
-			<span class="rad_rapidology_close_button"></span>',
+			<span class="flm_close_button"></span>',
 			( 'right' == $details['image_orientation'] || 'left' == $details['image_orientation'] ) && 'widget' !== $details['optin_type']
 				? sprintf( ' split%1$s', 'right' == $details['image_orientation']
 				? ' image_right'
@@ -5618,12 +5597,12 @@ STRING;
 						? sprintf( 'class="%1$s"', esc_attr( $image_class ) )
 						: ''
 				)
-					: wp_get_attachment_image( $details['image_url']['id'], 'rapidology_image', false, array( 'class' => $image_class ) )
+					: wp_get_attachment_image( $details['image_url']['id'], 'flm_image', false, array( 'class' => $image_class ) )
 			)
 				: '',
 			( '' !== $formatted_title || '' !== $formatted_message )
 				? sprintf(
-				'<div class="rad_rapidology_form_text">
+				'<div class="flm_form_text">
 						%1$s%2$s
 					</div>',
 				stripslashes( html_entity_decode( $formatted_title, ENT_QUOTES, 'UTF-8' ) ),
@@ -5640,22 +5619,22 @@ STRING;
 					esc_attr( wp_strip_all_tags( html_entity_decode( $formatted_title ) ) ),
 					'' !== $image_class ? sprintf( 'class="%1$s"', esc_attr( $image_class ) ) : ''
 				)
-					: wp_get_attachment_image( $details['image_url']['id'], 'rapidology_image', false, array( 'class' => $image_class ) )
+					: wp_get_attachment_image( $details['image_url']['id'], 'flm_image', false, array( 'class' => $image_class ) )
 			)
 				: '', //#5
-			( 'no_name' == $details['name_fields'] && ! RAD_Rapidology::is_only_name_support( $details['email_provider'] ) ) || ( RAD_Rapidology::is_only_name_support( $details['email_provider'] ) && $is_single_name )
-				? ' rad_rapidology_1_field'
+			( 'no_name' == $details['name_fields'] && ! Free_List_Machine::is_only_name_support( $details['email_provider'] ) ) || ( Free_List_Machine::is_only_name_support( $details['email_provider'] ) && $is_single_name )
+				? ' flm_1_field'
 				: sprintf(
-				' rad_rapidology_%1$s_fields',
-				'first_last_name' == $details['name_fields'] && ! RAD_Rapidology::is_only_name_support( $details['email_provider'] )
+				' flm_%1$s_fields',
+				'first_last_name' == $details['name_fields'] && ! Free_List_Machine::is_only_name_support( $details['email_provider'] )
 					? '3'
 					: '2'
 			),
 			'inline' == $details['field_orientation'] && 'bottom' == $details['form_orientation'] && 'widget' !== $details['optin_type']
-				? ' rad_rapidology_bottom_inline'
+				? ' flm_bottom_inline'
 				: '',
 			( 'stacked' == $details['field_orientation'] && 'bottom' == $details['form_orientation'] ) || 'widget' == $details['optin_type']
-				? ' rad_rapidology_bottom_stacked'
+				? ' flm_bottom_stacked'
 				: '',
 			'custom_html' == $details['email_provider']
 				? stripslashes( html_entity_decode( $details['custom_html'] ) )
@@ -5663,22 +5642,22 @@ STRING;
 					%1$s
 					<form method="post" class="clearfix">
 						%3$s
-						<p class="rad_rapidology_popup_input rad_rapidology_subscribe_email">
+						<p class="flm_popup_input flm_subscribe_email">
 							<input placeholder="%2$s">
 						</p>
-						<button data-optin_id="%4$s" data-service="%5$s" data-list_id="%6$s" data-page_id="%7$s" data-post_name="%12$s" data-cookie="%13$s" data-account="%8$s" data-disable_dbl_optin="%11$s" class="rad_rapidology_submit_subscription">
-							<span class="rad_rapidology_subscribe_loader"></span>
-							<span class="rad_rapidology_button_text rad_rapidology_button_text_color_%10$s">%9$s</span>
+						<button data-optin_id="%4$s" data-service="%5$s" data-list_id="%6$s" data-page_id="%7$s" data-post_name="%12$s" data-cookie="%13$s" data-account="%8$s" data-disable_dbl_optin="%11$s" class="flm_submit_subscription">
+							<span class="flm_subscribe_loader"></span>
+							<span class="flm_button_text flm_button_text_color_%10$s">%9$s</span>
 						</button>
 					</form>',
 				'basic_edge' == $details['edge_style'] || '' == $details['edge_style']
 					? ''
-					: RAD_Rapidology::get_the_edge_code( $details['edge_style'], 'widget' == $details['optin_type'] ? 'bottom' : $details['form_orientation'] ),
-				'' != $email_text ? stripslashes( esc_attr( $email_text ) ) : esc_html__( 'Email', 'rapidology' ),
-				( 'no_name' == $details['name_fields'] && ! RAD_Rapidology::is_only_name_support( $details['email_provider'] ) ) || ( RAD_Rapidology::is_only_name_support( $details['email_provider'] ) && $is_single_name )
+					: Free_List_Machine::get_the_edge_code( $details['edge_style'], 'widget' == $details['optin_type'] ? 'bottom' : $details['form_orientation'] ),
+				'' != $email_text ? stripslashes( esc_attr( $email_text ) ) : esc_html__( 'Email', 'flm' ),
+				( 'no_name' == $details['name_fields'] && ! Free_List_Machine::is_only_name_support( $details['email_provider'] ) ) || ( Free_List_Machine::is_only_name_support( $details['email_provider'] ) && $is_single_name )
 					? ''
 					: sprintf(
-					'<p class="rad_rapidology_popup_input rad_rapidology_subscribe_name">
+					'<p class="flm_popup_input flm_subscribe_name">
 								<input placeholder="%1$s%2$s" maxlength="50">
 							</p>%3$s',
 					'first_last_name' == $details['name_fields']
@@ -5686,19 +5665,19 @@ STRING;
 						'%1$s',
 						'' != $first_name_text
 							? stripslashes( esc_attr( $first_name_text ) )
-							: esc_html__( 'First Name', 'rapidology' )
+							: esc_html__( 'First Name', 'flm' )
 					)
 						: '',
 					( 'first_last_name' != $details['name_fields'] )
 						? sprintf( '%1$s', '' != $single_name_text
 						? stripslashes( esc_attr( $single_name_text ) )
-						: esc_html__( 'Name', 'rapidology' ) ) : '',
-					'first_last_name' == $details['name_fields'] && ! RAD_Rapidology::is_only_name_support( $details['email_provider'] )
+						: esc_html__( 'Name', 'flm' ) ) : '',
+					'first_last_name' == $details['name_fields'] && ! Free_List_Machine::is_only_name_support( $details['email_provider'] )
 						? sprintf( '
-									<p class="rad_rapidology_popup_input rad_rapidology_subscribe_last">
+									<p class="flm_popup_input flm_subscribe_last">
 										<input placeholder="%1$s" maxlength="50">
 									</p>',
-						'' != $last_name_text ? stripslashes( esc_attr( $last_name_text ) ) : esc_html__( 'Last Name', 'rapidology' )
+						'' != $last_name_text ? stripslashes( esc_attr( $last_name_text ) ) : esc_html__( 'Last Name', 'flm' )
 					)
 						: ''
 				),
@@ -5707,7 +5686,7 @@ STRING;
 				esc_attr( $details['email_list'] ),
 				esc_attr( $page_id ),
 				esc_attr( $details['account_name'] ),
-				'' != $button_text ? stripslashes( esc_html( $button_text ) ) : esc_html__( 'SUBSCRIBE!', 'rapidology' ),
+				'' != $button_text ? stripslashes( esc_html( $button_text ) ) : esc_html__( 'SUBSCRIBE!', 'flm' ),
 				isset( $details['button_text_color'] ) ? esc_attr( $details['button_text_color'] ) : '', // #10
 				isset( $details['disable_dbl_optin'] ) && '1' === $details['disable_dbl_optin'] ? 'disable' : '',#11
 				esc_attr($pagename),#12
@@ -5716,7 +5695,7 @@ STRING;
 			),
 			'' != $success_text
 				? stripslashes( esc_html( $success_text ) )
-				: esc_html__( 'You have Successfully Subscribed!', 'rapidology' ), //#10
+				: esc_html__( 'You have Successfully Subscribed!', 'flm' ), //#10
 			$formatted_footer,
 			'custom_html' == $details['email_provider']
 				? sprintf(
@@ -5728,13 +5707,13 @@ STRING;
 				'custom_form'
 			)
 				: '',
-			'custom_html' == $details['email_provider'] ? ' rad_rapidology_custom_html_form' : '',
+			'custom_html' == $details['email_provider'] ? ' flm_custom_html_form' : '',
 			isset( $details['header_text_color'] )
 				? sprintf(
-				' rad_rapidology_header_text_%1$s',
+				' flm_header_text_%1$s',
 				esc_attr( $details['header_text_color'] )
 			)
-				: ' rad_rapidology_header_text_dark' //#14
+				: ' flm_header_text_dark' //#14
 		);
 
 		return $output;
@@ -5763,7 +5742,7 @@ STRING;
 		switch ( $style ) {
 			case 'wedge_edge' :
 				$output = sprintf(
-					'<svg class="triangle rad_rapidology_default_edge" xmlns="http://www.w3.org/2000/svg" version="1.1" width="%2$s" height="%3$s" viewBox="0 0 100 100" preserveAspectRatio="none">
+					'<svg class="triangle flm_default_edge" xmlns="http://www.w3.org/2000/svg" version="1.1" width="%2$s" height="%3$s" viewBox="0 0 100 100" preserveAspectRatio="none">
 						<path d="%1$s" fill=""></path>
 					</svg>',
 					'bottom' == $orientation ? 'M0 0 L50 100 L100 0 Z' : 'M0 0 L0 100 L100 50 Z',
@@ -5774,7 +5753,7 @@ STRING;
 				//if right or left orientation selected we still need to generate bottom edge to support responsive design
 				if ( 'bottom' !== $orientation ) {
 					$output .= sprintf(
-						'<svg class="triangle rad_rapidology_responsive_edge" xmlns="http://www.w3.org/2000/svg" version="1.1" width="%2$s" height="%3$s" viewBox="0 0 100 100" preserveAspectRatio="none">
+						'<svg class="triangle flm_responsive_edge" xmlns="http://www.w3.org/2000/svg" version="1.1" width="%2$s" height="%3$s" viewBox="0 0 100 100" preserveAspectRatio="none">
 							<path d="%1$s" fill=""></path>
 						</svg>',
 						'M0 0 L50 100 L100 0 Z',
@@ -5786,7 +5765,7 @@ STRING;
 				break;
 			case 'curve_edge' :
 				$output = sprintf(
-					'<svg class="curve rad_rapidology_default_edge" xmlns="http://www.w3.org/2000/svg" version="1.1" width="%2$s" height="%3$s" viewBox="0 0 100 100" preserveAspectRatio="none">
+					'<svg class="curve flm_default_edge" xmlns="http://www.w3.org/2000/svg" version="1.1" width="%2$s" height="%3$s" viewBox="0 0 100 100" preserveAspectRatio="none">
 						<path d="%1$s"></path>
 					</svg>',
 					'bottom' == $orientation ? 'M0 0 C40 100 60 100 100 0 Z' : 'M0 0 C0 0 100 50 0 100 z',
@@ -5797,7 +5776,7 @@ STRING;
 				//if right or left orientation selected we still need to generate bottom edge to support responsive design
 				if ( 'bottom' !== $orientation ) {
 					$output .= sprintf(
-						'<svg class="curve rad_rapidology_responsive_edge" xmlns="http://www.w3.org/2000/svg" version="1.1" width="%2$s" height="%3$s" viewBox="0 0 100 100" preserveAspectRatio="none">
+						'<svg class="curve flm_responsive_edge" xmlns="http://www.w3.org/2000/svg" version="1.1" width="%2$s" height="%3$s" viewBox="0 0 100 100" preserveAspectRatio="none">
 							<path d="%1$s"></path>
 						</svg>',
 						'M0 0 C40 100 60 100 100 0 Z',
@@ -5818,7 +5797,7 @@ STRING;
 	function get_power_button( $mode ) {
 		return '<div class="rad_power rad_power_mode_' . $mode . '">
 					<span class="rad_power_box_mode_' . $mode . '">
-						<a href="http://www.rapidology.com?utm_campaign=rp-rp&utm_medium=powered-by-badge" target="_blank">Powered by<span class="rad_power_logo">&nbsp</span><span class="rad_power_text">Rapidology</span></a>
+						<a href="http://www.contestdomination.com?utm_campaign=rp-rp&utm_medium=powered-by-badge" target="_blank">Powered by<span class="rad_power_logo">&nbsp</span><span class="rad_power_text">Free List Machine</span></a>
 					</span>
 				</div>';
 	}
@@ -5832,10 +5811,10 @@ STRING;
 		if ( ! empty( $optins_set ) ) {
 			foreach ( $optins_set as $optin_id => $details ) {
 				if ( $this->check_applicability( $optin_id ) ) {
-					$display_optin_id = RAD_Rapidology::choose_form_ab_test( $optin_id, $optins_set );
+					$display_optin_id = Free_List_Machine::choose_form_ab_test( $optin_id, $optins_set );
 
 					if ( $display_optin_id != $optin_id ) {
-						$all_optins = RAD_Rapidology::get_rapidology_options();
+						$all_optins = Free_List_Machine::get_flm_options();
 						$optin_id   = $display_optin_id;
 						$details    = $all_optins[ $optin_id ];
 					}
@@ -5850,15 +5829,15 @@ STRING;
 					}
 
 					printf(
-						'<div class="rad_rapidology_flyin rad_rapidology_optin rad_rapidology_resize rad_rapidology_flyin_%6$s rad_rapidology_%5$s%17$s%1$s%2$s%18$s%19$s%20$s%21$s%29$s"%22$s%3$s%4$s%16$s%28$s>
-							<div class="rad_rapidology_form_container%7$s%8$s%9$s%10$s%12$s%13$s%14$s%15$s%23$s%24$s%25$s">
+						'<div class="flm_flyin flm_optin flm_resize flm_flyin_%6$s flm_%5$s%17$s%1$s%2$s%18$s%19$s%20$s%21$s%29$s"%22$s%3$s%4$s%16$s%28$s>
+							<div class="flm_form_container%7$s%8$s%9$s%10$s%12$s%13$s%14$s%15$s%23$s%24$s%25$s">
 		
 								%11$s
 								%27$s
 							</div>
 						</div>',
-						true == $details['post_bottom'] ? ' rad_rapidology_trigger_bottom' : '',
-						isset( $details['trigger_idle'] ) && true == $details['trigger_idle'] ? ' rad_rapidology_trigger_idle' : '',
+						true == $details['post_bottom'] ? ' flm_trigger_bottom' : '',
+						isset( $details['trigger_idle'] ) && true == $details['trigger_idle'] ? ' flm_trigger_idle' : '',
 						isset( $details['trigger_auto'] ) && true == $details['trigger_auto']
 							? sprintf( ' data-delay="%1$s"', esc_attr( $details['load_delay'] ) )
 							: '',
@@ -5869,76 +5848,76 @@ STRING;
 						esc_attr( $details['flyin_orientation'] ),
 						'bottom' !== $details['form_orientation'] && 'custom_html' !== $details['email_provider']
 							? sprintf(
-							' rad_rapidology_form_%1$s',
+							' flm_form_%1$s',
 							esc_attr( $details['form_orientation'] )
 						)
-							: ' rad_rapidology_form_bottom',
+							: ' flm_form_bottom',
 						'basic_edge' == $details['edge_style'] || '' == $details['edge_style']
 							? ''
 							: sprintf( ' with_edge %1$s', esc_attr( $details['edge_style'] ) ),
 						( 'no_border' !== $details['border_orientation'] )
 							? sprintf(
-							' rad_rapidology_with_border rad_rapidology_border_%1$s%2$s',
+							' flm_with_border flm_border_%1$s%2$s',
 							esc_attr( $details['border_style'] ),
-							esc_attr( ' rad_rapidology_border_position_' . $details['border_orientation'] )
+							esc_attr( ' flm_border_position_' . $details['border_orientation'] )
 						)
 							: '',
-						( 'rounded' == $details['corner_style'] ) ? ' rad_rapidology_rounded_corners' : '', //#10
-						RAD_Rapidology::generate_form_content( $optin_id, $page_id, $post_name, $details ),
+						( 'rounded' == $details['corner_style'] ) ? ' flm_rounded_corners' : '', //#10
+						Free_List_Machine::generate_form_content( $optin_id, $page_id, $post_name, $details ),
 						'bottom' == $details['form_orientation'] && ( 'no_image' == $details['image_orientation'] || 'above' == $details['image_orientation'] || 'below' == $details['image_orientation'] ) && 'stacked' == $details['field_orientation']
-							? ' rad_rapidology_stacked_flyin'
+							? ' flm_stacked_flyin'
 							: '',
-						( 'rounded' == $details['field_corner'] ) ? ' rad_rapidology_rounded' : '',
-						'light' == $details['text_color'] ? ' rad_rapidology_form_text_light' : ' rad_rapidology_form_text_dark',
+						( 'rounded' == $details['field_corner'] ) ? ' flm_rounded' : '',
+						'light' == $details['text_color'] ? ' flm_form_text_light' : ' flm_form_text_dark',
 						isset( $details['load_animation'] )
 							? sprintf(
-							' rad_rapidology_animation_%1$s',
+							' flm_animation_%1$s',
 							esc_attr( $details['load_animation'] )
 						)
-							: ' rad_rapidology_animation_no_animation', //#15
+							: ' flm_animation_no_animation', //#15
 						isset( $details['trigger_idle'] ) && true == $details['trigger_idle']
 							? sprintf( ' data-idle_timeout="%1$s"', esc_attr( $details['idle_timeout'] ) )
 							: '',
 						isset( $details['trigger_auto'] ) && true == $details['trigger_auto']
-							? ' rad_rapidology_auto_popup'
+							? ' flm_auto_popup'
 							: '',
 						isset( $details['exit_trigger'] ) && true == $details['exit_trigger']
-							? ' rad_rapidology_before_exit'
+							? ' flm_before_exit'
 							: '',
 						isset( $details['comment_trigger'] ) && true == $details['comment_trigger']
-							? ' rad_rapidology_after_comment'
+							? ' flm_after_comment'
 							: '',
 						isset( $details['purchase_trigger'] ) && true == $details['purchase_trigger']
-							? ' rad_rapidology_after_purchase'
+							? ' flm_after_purchase'
 							: '', //#20
 						isset( $details['trigger_scroll'] ) && true == $details['trigger_scroll']
-							? ' rad_rapidology_scroll'
+							? ' flm_scroll'
 							: '',
 						isset( $details['trigger_scroll'] ) && true == $details['trigger_scroll']
 							? sprintf( ' data-scroll_pos="%1$s"', esc_attr( $details['scroll_pos'] ) )
 							: '',
 						isset( $details['hide_mobile_optin'] ) && true == $details['hide_mobile_optin']
-							? ' rad_rapidology_hide_mobile_optin'
+							? ' flm_hide_mobile_optin'
 							: '',
-						( 'no_name' == $details['name_fields'] && ! RAD_Rapidology::is_only_name_support( $details['email_provider'] ) ) || ( RAD_Rapidology::is_only_name_support( $details['email_provider'] ) && $is_single_name )
+						( 'no_name' == $details['name_fields'] && ! Free_List_Machine::is_only_name_support( $details['email_provider'] ) ) || ( Free_List_Machine::is_only_name_support( $details['email_provider'] ) && $is_single_name )
 							? ' rad_flyin_1_field'
 							: sprintf(
 							' rad_flyin_%1$s_fields',
-							'first_last_name' == $details['name_fields'] && ! RAD_Rapidology::is_only_name_support( $details['email_provider'] )
+							'first_last_name' == $details['name_fields'] && ! Free_List_Machine::is_only_name_support( $details['email_provider'] )
 								? '3'
 								: '2'
 						),
 						'inline' == $details['field_orientation'] && 'bottom' == $details['form_orientation']
-							? ' rad_rapidology_flyin_bottom_inline'
+							? ' flm_flyin_bottom_inline'
 							: '', //#25
 						'stacked' == $details['field_orientation'] && 'bottom' == $details['form_orientation'] && ( 'right' == $details['image_orientation'] || 'left' == $details['image_orientation'] )
-							? ' rad_rapidology_flyin_bottom_stacked'
+							? ' flm_flyin_bottom_stacked'
 							: '', //#27
 						$this->get_power_button( 'flyin' ),
 						true == $details['click_trigger']
 							? ' data-click_trigger="' . esc_attr( $details['click_trigger_selector'] ) . '"'
 							: '',#28
-						isset( $details['click_trigger'] ) && true == $details['click_trigger'] ? ' rad_rapidology_click_trigger' : ''#29
+						isset( $details['click_trigger'] ) && true == $details['click_trigger'] ? ' flm_click_trigger' : ''#29
 					);
 				}
 			}
@@ -5954,10 +5933,10 @@ STRING;
 		if ( ! empty( $optins_set ) ) {
 			foreach ( $optins_set as $optin_id => $details ) {
 				if ( $this->check_applicability( $optin_id ) ) {
-					$display_optin_id = RAD_Rapidology::choose_form_ab_test( $optin_id, $optins_set );
+					$display_optin_id = Free_List_Machine::choose_form_ab_test( $optin_id, $optins_set );
 
 					if ( $display_optin_id != $optin_id ) {
-						$all_optins = RAD_Rapidology::get_rapidology_options();
+						$all_optins = Free_List_Machine::get_flm_options();
 						$optin_id   = $display_optin_id;
 						$details    = $all_optins[ $optin_id ];
 					}
@@ -5972,15 +5951,15 @@ STRING;
 					}
 
 					printf(
-						'<div class="rad_rapidology_popup rad_rapidology_optin rad_rapidology_resize rad_rapidology_%5$s%15$s%21$s%1$s%2$s%16$s%17$s%18$s%20$s%23$s"%3$s%4$s%14$s%19$s%23$s>
-							<div class="rad_rapidology_form_container rad_rapidology_popup_container%6$s%7$s%8$s%9$s%11$s%12$s%13$s">
+						'<div class="flm_popup flm_optin flm_resize flm_%5$s%15$s%21$s%1$s%2$s%16$s%17$s%18$s%20$s%23$s"%3$s%4$s%14$s%19$s%23$s>
+							<div class="flm_form_container flm_popup_container%6$s%7$s%8$s%9$s%11$s%12$s%13$s">
 								%10$s
 								%22$s
 							</div>
 						</div>',
-						true == $details['post_bottom'] ? ' rad_rapidology_trigger_bottom' : '',
+						true == $details['post_bottom'] ? ' flm_trigger_bottom' : '',
 						isset( $details['trigger_idle'] ) && true == $details['trigger_idle']
-							? ' rad_rapidology_trigger_idle'
+							? ' flm_trigger_idle'
 							: '',
 						isset( $details['trigger_auto'] ) && true == $details['trigger_auto']
 							? sprintf( ' data-delay="%1$s"', esc_attr( $details['load_delay'] ) )
@@ -5990,44 +5969,44 @@ STRING;
 							: '',
 						esc_attr( $optin_id ), // #5
 						'bottom' !== $details['form_orientation'] && 'custom_html' !== $details['email_provider']
-							? sprintf( ' rad_rapidology_form_%1$s', esc_attr( $details['form_orientation'] ) )
-							: ' rad_rapidology_form_bottom',
+							? sprintf( ' flm_form_%1$s', esc_attr( $details['form_orientation'] ) )
+							: ' flm_form_bottom',
 						'basic_edge' == $details['edge_style'] || '' == $details['edge_style']
 							? ''
 							: sprintf( ' with_edge %1$s', esc_attr( $details['edge_style'] ) ),
 						( 'no_border' !== $details['border_orientation'] )
 							? sprintf(
-							' rad_rapidology_with_border rad_rapidology_border_%1$s%2$s',
+							' flm_with_border flm_border_%1$s%2$s',
 							esc_attr( $details['border_style'] ),
-							esc_attr( ' rad_rapidology_border_position_' . $details['border_orientation'] )
+							esc_attr( ' flm_border_position_' . $details['border_orientation'] )
 						)
 							: '',
-						( 'rounded' == $details['corner_style'] ) ? ' rad_rapidology_rounded_corners' : '',
-						RAD_Rapidology::generate_form_content( $optin_id, $page_id, $post_name, $details ), //#10
-						( 'rounded' == $details['field_corner'] ) ? ' rad_rapidology_rounded' : '',
-						'light' == $details['text_color'] ? ' rad_rapidology_form_text_light' : ' rad_rapidology_form_text_dark',
+						( 'rounded' == $details['corner_style'] ) ? ' flm_rounded_corners' : '',
+						Free_List_Machine::generate_form_content( $optin_id, $page_id, $post_name, $details ), //#10
+						( 'rounded' == $details['field_corner'] ) ? ' flm_rounded' : '',
+						'light' == $details['text_color'] ? ' flm_form_text_light' : ' flm_form_text_dark',
 						isset( $details['load_animation'] )
-							? sprintf( ' rad_rapidology_animation_%1$s', esc_attr( $details['load_animation'] ) )
-							: ' rad_rapidology_animation_no_animation',
+							? sprintf( ' flm_animation_%1$s', esc_attr( $details['load_animation'] ) )
+							: ' flm_animation_no_animation',
 						isset( $details['trigger_idle'] ) && true == $details['trigger_idle']
 							? sprintf( ' data-idle_timeout="%1$s"', esc_attr( $details['idle_timeout'] ) )
 							: '',
-						isset( $details['trigger_auto'] ) && true == $details['trigger_auto'] ? ' rad_rapidology_auto_popup' : '', //#15
-						isset( $details['comment_trigger'] ) && true == $details['comment_trigger'] ? ' rad_rapidology_after_comment' : '',
-						isset( $details['purchase_trigger'] ) && true == $details['purchase_trigger'] ? ' rad_rapidology_after_purchase' : '',
-						isset( $details['trigger_scroll'] ) && true == $details['trigger_scroll'] ? ' rad_rapidology_scroll' : '',
+						isset( $details['trigger_auto'] ) && true == $details['trigger_auto'] ? ' flm_auto_popup' : '', //#15
+						isset( $details['comment_trigger'] ) && true == $details['comment_trigger'] ? ' flm_after_comment' : '',
+						isset( $details['purchase_trigger'] ) && true == $details['purchase_trigger'] ? ' flm_after_purchase' : '',
+						isset( $details['trigger_scroll'] ) && true == $details['trigger_scroll'] ? ' flm_scroll' : '',
 						isset( $details['trigger_scroll'] ) && true == $details['trigger_scroll']
 							? sprintf( ' data-scroll_pos="%1$s"', esc_attr( $details['scroll_pos'] ) )
 							: '',
 						( isset( $details['hide_mobile_optin'] ) && true == $details['hide_mobile_optin'] )
-							? ' rad_rapidology_hide_mobile_optin'
+							? ' flm_hide_mobile_optin'
 							: '', //#20
 						isset( $details['exit_trigger'] ) && true == $details['exit_trigger']
-							? ' rad_rapidology_before_exit'
+							? ' flm_before_exit'
 							: '',#21
 
 						$this->get_power_button( 'popup' ),
-						isset( $details['click_trigger'] ) && true == $details['click_trigger'] ? ' rad_rapidology_click_trigger' : ''
+						isset( $details['click_trigger'] ) && true == $details['click_trigger'] ? ' flm_click_trigger' : ''
 					);
 				}
 			}
@@ -6035,12 +6014,12 @@ STRING;
 	}
 
 	function display_preview() {
-		wp_verify_nonce( $_POST['rapidology_preview_nonce'], 'rapidology_preview' );
+		wp_verify_nonce( $_POST['flm_preview_nonce'], 'flm_preview' );
 
 		$options          = $_POST['preview_options'];
 		$processed_string = str_replace( array( '%5B', '%5D' ), array( '[', ']' ), $options );
 		parse_str( $processed_string, $processed_array );
-		$details     = $processed_array['rad_dashboard'];
+		$details     = $processed_array['flm_dashboard'];
 		$fonts_array = array();
 
 		if ( ! isset( $fonts_array[ $details['header_font'] ] ) && isset( $details['header_font'] ) ) {
@@ -6051,7 +6030,7 @@ STRING;
 		}
 
 		$popup_array['popup_code'] = $this->generate_preview_popup( $details );
-		$popup_array['popup_css']  = '<style id="rad_rapidology_preview_css">' . RAD_Rapidology::generate_custom_css( '.rad_rapidology .rad_rapidology_preview_popup', $details ) . '</style>';
+		$popup_array['popup_css']  = '<style id="flm_preview_css">' . Free_List_Machine::generate_custom_css( '.flm .flm_preview_popup', $details ) . '</style>';
 		$popup_array['fonts']      = $fonts_array;
 
 		die( json_encode( $popup_array ) );
@@ -6063,29 +6042,29 @@ STRING;
 	function generate_preview_popup( $details ) {
 		$output = '';
 		$output = sprintf(
-			'<div class="rad_rapidology_popup rad_rapidology_animated rad_rapidology_preview_popup rad_rapidology_optin">
-				<div class="rad_rapidology_form_container rad_rapidology_animation_fadein rad_rapidology_popup_container%1$s%2$s%3$s%4$s%5$s%6$s">
+			'<div class="flm_popup flm_animated flm_preview_popup flm_optin">
+				<div class="flm_form_container flm_animation_fadein flm_popup_container%1$s%2$s%3$s%4$s%5$s%6$s">
 					%7$s
 					%8$s
 				</div>
 			</div>',
 			'bottom' !== $details['form_orientation'] && 'custom_html' !== $details['email_provider'] && 'widget' !== $details['optin_type']
-				? sprintf( ' rad_rapidology_form_%1$s', esc_attr( $details['form_orientation'] ) )
-				: ' rad_rapidology_form_bottom',
+				? sprintf( ' flm_form_%1$s', esc_attr( $details['form_orientation'] ) )
+				: ' flm_form_bottom',
 			'basic_edge' == $details['edge_style'] || '' == $details['edge_style']
 				? ''
 				: sprintf( ' with_edge %1$s', esc_attr( $details['edge_style'] ) ),
 			( 'no_border' !== $details['border_orientation'] )
 				? sprintf(
-				' rad_rapidology_with_border rad_rapidology_border_%1$s%2$s',
+				' flm_with_border flm_border_%1$s%2$s',
 				esc_attr( $details['border_style'] ),
-				esc_attr( ' rad_rapidology_border_position_' . $details['border_orientation'] )
+				esc_attr( ' flm_border_position_' . $details['border_orientation'] )
 			)
 				: '',
-			( 'rounded' == $details['corner_style'] ) ? ' rad_rapidology_rounded_corners' : '',
-			( 'rounded' == $details['field_corner'] ) ? ' rad_rapidology_rounded' : '',
-			'light' == $details['text_color'] ? ' rad_rapidology_form_text_light' : ' rad_rapidology_form_text_dark',
-			RAD_Rapidology::generate_form_content( 0, 0, $details ),
+			( 'rounded' == $details['corner_style'] ) ? ' flm_rounded_corners' : '',
+			( 'rounded' == $details['field_corner'] ) ? ' flm_rounded' : '',
+			'light' == $details['text_color'] ? ' flm_form_text_light' : ' flm_form_text_dark',
+			Free_List_Machine::generate_form_content( 0, 0, $details ),
 			$this->get_power_button( 'popup' )
 		);
 
@@ -6101,7 +6080,7 @@ STRING;
 		if ( ! empty( $optins_set ) && ! is_singular( 'product' ) ) {
 			foreach ( $optins_set as $optin_id => $details ) {
 				if ( $this->check_applicability( $optin_id ) ) {
-					$content .= '<div class="rad_rapidology_below_post">' . $this->generate_inline_form( $optin_id, $details ) . '</div>';
+					$content .= '<div class="flm_below_post">' . $this->generate_inline_form( $optin_id, $details ) . '</div>';
 				}
 			}
 		}
@@ -6136,61 +6115,61 @@ STRING;
 		$post = get_post();
 		$post_name = $post->post_name;
 
-		$all_optins       = RAD_Rapidology::get_rapidology_options();
-		$display_optin_id = RAD_Rapidology::choose_form_ab_test( $optin_id, $all_optins );
+		$all_optins       = Free_List_Machine::get_flm_options();
+		$display_optin_id = Free_List_Machine::choose_form_ab_test( $optin_id, $all_optins );
 
 		if ( $display_optin_id != $optin_id ) {
 			$optin_id = $display_optin_id;
 			$details  = $all_optins[ $optin_id ];
 		}
 		if ( true === $update_stats ) {
-			RAD_Rapidology::add_stats_record( 'imp', $optin_id, $page_id, $list_id );
+			Free_List_Machine::add_stats_record( 'imp', $optin_id, $page_id, $list_id );
 		}
 		if ( 'below_post' !== $details['optin_type'] ) {
-			$custom_css        = RAD_Rapidology::generate_custom_css( '.rad_rapidology .rad_rapidology_' . $display_optin_id, $details );
+			$custom_css        = Free_List_Machine::generate_custom_css( '.flm .flm_' . $display_optin_id, $details );
 			$custom_css_output = '' !== $custom_css ? sprintf( '<style type="text/css">%1$s</style>', $custom_css ) : '';
 		}
 
 		$output .= sprintf(
-			'<div class="rad_rapidology_inline_form rad_rapidology_optin rad_rapidology_%1$s%9$s">
+			'<div class="flm_inline_form flm_optin flm_%1$s%9$s">
 				%10$s
-				<div class="rad_rapidology_form_container rad_rapidology_popup_container%3$s%4$s%5$s%6$s%7$s%8$s%11$s">
+				<div class="flm_form_container flm_popup_container%3$s%4$s%5$s%6$s%7$s%8$s%11$s">
 					%2$s
 				</div>
 				%12$s
 			</div>',
 			esc_attr( $optin_id ),
-			RAD_Rapidology::generate_form_content( $optin_id, $page_id ),
+			Free_List_Machine::generate_form_content( $optin_id, $page_id ),
 			'basic_edge' == $details['edge_style'] || '' == $details['edge_style']
 				? ''
 				: sprintf( ' with_edge %1$s', esc_attr( $details['edge_style'] ) ),
 			( 'no_border' !== $details['border_orientation'] )
 				? sprintf(
-				' rad_rapidology_border_%1$s%2$s',
+				' flm_border_%1$s%2$s',
 				esc_attr( $details['border_style'] ),
 				'full' !== $details['border_orientation']
-					? ' rad_rapidology_border_position_' . $details['border_orientation']
+					? ' flm_border_position_' . $details['border_orientation']
 					: ''
 			)
 				: '',
-			( 'rounded' == $details['corner_style'] ) ? ' rad_rapidology_rounded_corners' : '', //#5
-			( 'rounded' == $details['field_corner'] ) ? ' rad_rapidology_rounded' : '',
-			'light' == $details['text_color'] ? ' rad_rapidology_form_text_light' : ' rad_rapidology_form_text_dark',
+			( 'rounded' == $details['corner_style'] ) ? ' flm_rounded_corners' : '', //#5
+			( 'rounded' == $details['field_corner'] ) ? ' flm_rounded' : '',
+			'light' == $details['text_color'] ? ' flm_form_text_light' : ' flm_form_text_dark',
 			'bottom' !== $details['form_orientation'] && 'custom_html' !== $details['email_provider']
 				? sprintf(
-				' rad_rapidology_form_%1$s',
+				' flm_form_%1$s',
 				esc_html( $details['form_orientation'] )
 			)
-				: ' rad_rapidology_form_bottom',
+				: ' flm_form_bottom',
 			( isset( $details['hide_mobile_optin'] ) && true == $details['hide_mobile_optin'] )
-				? ' rad_rapidology_hide_mobile_optin'
+				? ' flm_hide_mobile_optin'
 				: '',
 			$custom_css_output, //#10
-			( 'no_name' == $details['name_fields'] && ! RAD_Rapidology::is_only_name_support( $details['email_provider'] ) ) || ( RAD_Rapidology::is_only_name_support( $details['email_provider'] ) && $is_single_name )
-				? ' rad_rapidology_inline_1_field'
+			( 'no_name' == $details['name_fields'] && ! Free_List_Machine::is_only_name_support( $details['email_provider'] ) ) || ( Free_List_Machine::is_only_name_support( $details['email_provider'] ) && $is_single_name )
+				? ' flm_inline_1_field'
 				: sprintf(
-				' rad_rapidology_inline_%1$s_fields',
-				'first_last_name' == $details['name_fields'] && ! RAD_Rapidology::is_only_name_support( $details['email_provider'] )
+				' flm_inline_%1$s_fields',
+				'first_last_name' == $details['name_fields'] && ! Free_List_Machine::is_only_name_support( $details['email_provider'] )
 					? '3'
 					: '2'
 			),
@@ -6209,7 +6188,7 @@ STRING;
 		), $atts );
 		$optin_id = $atts['optin_id'];
 
-		$optins_set     = RAD_Rapidology::get_rapidology_options();
+		$optins_set     = Free_List_Machine::get_flm_options();
 		$selected_optin = isset( $optins_set[ $optin_id ] ) ? $optins_set[ $optin_id ] : '';
 		$output         = '';
 
@@ -6228,7 +6207,7 @@ STRING;
 			'optin_id' => '',
 		), $atts );
 		$optin_id       = $atts['optin_id'];
-		$optins_set     = RAD_Rapidology::get_rapidology_options();
+		$optins_set     = Free_List_Machine::get_flm_options();
 		$selected_optin = isset( $optins_set[ $optin_id ] ) ? $optins_set[ $optin_id ] : '';
 		if ( '' == $selected_optin ) {
 			$output = $content;
@@ -6242,11 +6221,11 @@ STRING;
 			}
 
 			$output = sprintf(
-				'<div class="rad_rapidology_locked_container rad_rapidology_%4$s" data-page_id="%3$s" data-optin_id="%4$s" data-list_id="%5$s">
-					<div class="rad_rapidology_locked_content" style="display: none;">
+				'<div class="flm_locked_container flm_%4$s" data-page_id="%3$s" data-optin_id="%4$s" data-list_id="%5$s">
+					<div class="flm_locked_content" style="display: none;">
 						%1$s
 					</div>
-					<div class="rad_rapidology_locked_form">
+					<div class="flm_locked_form">
 						%2$s
 					</div>
 				</div>',
@@ -6262,21 +6241,21 @@ STRING;
 	}
 
 	function register_widget() {
-		require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'includes/rapidology-widget.php' );
-		register_widget( 'RapidologyWidget' );
+		require_once( FLM_PLUGIN_DIR . 'includes/flm-widget.php' );
+		register_widget( 'FLM_Widget' );
 	}
 
 	/**
 	 * Displays the Widget content on front-end.
 	 */
 	public static function display_widget( $optin_id ) {
-		$optins_set     = RAD_Rapidology::get_rapidology_options();
+		$optins_set     = Free_List_Machine::get_flm_options();
 		$selected_optin = isset( $optins_set[ $optin_id ] ) ? $optins_set[ $optin_id ] : '';
 		$output         = '';
 
 		if ( '' !== $selected_optin && 'active' == $optins_set[ $optin_id ]['optin_status'] && empty( $optins_set[ $optin_id ]['child_of'] ) ) {
 
-			$display_optin_id = RAD_Rapidology::choose_form_ab_test( $optin_id, $optins_set );
+			$display_optin_id = Free_List_Machine::choose_form_ab_test( $optin_id, $optins_set );
 
 			if ( $display_optin_id != $optin_id ) {
 				$optin_id       = $display_optin_id;
@@ -6291,38 +6270,38 @@ STRING;
 
 			$list_id = $selected_optin['email_provider'] . '_' . $selected_optin['email_list'];
 
-			$custom_css        = RAD_Rapidology::generate_custom_css( '.rad_rapidology .rad_rapidology_' . $display_optin_id, $selected_optin );
+			$custom_css        = Free_List_Machine::generate_custom_css( '.flm .flm_' . $display_optin_id, $selected_optin );
 			$custom_css_output = '' !== $custom_css ? sprintf( '<style type="text/css">%1$s</style>', $custom_css ) : '';
 
-			RAD_Rapidology::add_stats_record( 'imp', $optin_id, $page_id, $list_id );
+			Free_List_Machine::add_stats_record( 'imp', $optin_id, $page_id, $list_id );
 
 			$output = sprintf(
-				'<div class="rad_rapidology_widget_content rad_rapidology_optin rad_rapidology_%7$s">
+				'<div class="flm_widget_content flm_optin flm_%7$s">
 					%8$s
-					<div class="rad_rapidology_form_container rad_rapidology_popup_container%2$s%3$s%4$s%5$s%6$s">
+					<div class="flm_form_container flm_popup_container%2$s%3$s%4$s%5$s%6$s">
 						%1$s
 					</div>
 					%9$s
 				</div>',
-				RAD_Rapidology::generate_form_content( $optin_id, $page_id ),
+				Free_List_Machine::generate_form_content( $optin_id, $page_id ),
 				'basic_edge' == $selected_optin['edge_style'] || '' == $selected_optin['edge_style']
 					? ''
 					: sprintf( ' with_edge %1$s', esc_attr( $selected_optin['edge_style'] ) ),
 				( 'no_border' !== $selected_optin['border_orientation'] )
 					? sprintf(
-					' rad_rapidology_border_%1$s%2$s',
+					' flm_border_%1$s%2$s',
 					$selected_optin['border_style'],
 					'full' !== $selected_optin['border_orientation']
-						? ' rad_rapidology_border_position_' . $selected_optin['border_orientation']
+						? ' flm_border_position_' . $selected_optin['border_orientation']
 						: ''
 				)
 					: '',
-				( 'rounded' == $selected_optin['corner_style'] ) ? ' rad_rapidology_rounded_corners' : '', //#5
-				( 'rounded' == $selected_optin['field_corner'] ) ? ' rad_rapidology_rounded' : '',
-				'light' == $selected_optin['text_color'] ? ' rad_rapidology_form_text_light' : ' rad_rapidology_form_text_dark',
+				( 'rounded' == $selected_optin['corner_style'] ) ? ' flm_rounded_corners' : '', //#5
+				( 'rounded' == $selected_optin['field_corner'] ) ? ' flm_rounded' : '',
+				'light' == $selected_optin['text_color'] ? ' flm_form_text_light' : ' flm_form_text_dark',
 				esc_attr( $optin_id ),
 				$custom_css_output, //#8
-				RAD_Rapidology::get_power_button( 'widget' )
+				Free_List_Machine::get_power_button( 'widget' )
 			);
 		}
 
@@ -6334,9 +6313,9 @@ STRING;
 	 * @return array
 	 */
 	public static function widget_optins_list() {
-		$optins_set = RAD_Rapidology::get_rapidology_options();
+		$optins_set = Free_List_Machine::get_flm_options();
 		$output     = array(
-			'empty' => __( 'Select optin', 'rapidology' ),
+			'empty' => __( 'Select optin', 'flm' ),
 		);
 
 		if ( ! empty( $optins_set ) ) {
@@ -6349,7 +6328,7 @@ STRING;
 			}
 		} else {
 			$output = array(
-				'empty' => __( 'No Widget optins created yet', 'rapidology' ),
+				'empty' => __( 'No Widget optins created yet', 'flm' ),
 			);
 		}
 
@@ -6357,21 +6336,21 @@ STRING;
 	}
 
 	function set_custom_css() {
-		$options_array  = RAD_Rapidology::get_rapidology_options();
+		$options_array  = Free_List_Machine::get_flm_options();
 		$custom_css     = '';
-		$font_functions = RAD_Rapidology::load_fonts_class();
+		$font_functions = Free_List_Machine::load_fonts_class();
 		$fonts_array    = array();
 
 		foreach ( $options_array as $id => $single_optin ) {
 			if ( 'accounts' != $id && 'db_version' != $id && isset( $single_optin['optin_type'] ) ) {
 				if ( 'inactive' !== $single_optin['optin_status'] ) {
-					$current_optin_id = RAD_Rapidology::choose_form_ab_test( $id, $options_array, false );
+					$current_optin_id = Free_List_Machine::choose_form_ab_test( $id, $options_array, false );
 					$single_optin     = $options_array[ $current_optin_id ];
 
 					if ( ( ( 'flyin' == $single_optin['optin_type'] || 'pop_up' == $single_optin['optin_type'] || 'below_post' == $single_optin['optin_type'] ) && $this->check_applicability( $id ) ) && ( isset( $single_optin['custom_css'] ) || isset( $single_optin['form_bg_color'] ) || isset( $single_optin['header_bg_color'] ) || isset( $single_optin['form_button_color'] ) || isset( $single_optin['border_color'] ) ) ) {
-						$form_class = '.rad_rapidology .rad_rapidology_' . $current_optin_id;
+						$form_class = '.flm .flm_' . $current_optin_id;
 
-						$custom_css .= RAD_Rapidology::generate_custom_css( $form_class, $single_optin );
+						$custom_css .= Free_List_Machine::generate_custom_css( $form_class, $single_optin );
 					}
 
 					if ( ! isset( $fonts_array[ $single_optin['header_font'] ] ) && isset( $single_optin['header_font'] ) ) {
@@ -6391,7 +6370,7 @@ STRING;
 
 		if ( '' != $custom_css ) {
 			printf(
-				'<style type="text/css" id="rad-rapidology-custom-css">
+				'<style type="text/css" id="rad-flm-custom-css">
 					%1$s
 				</style>',
 				stripslashes( $custom_css )
@@ -6404,24 +6383,24 @@ STRING;
 	 * @return string
 	 */
 	public static function generate_custom_css( $form_class, $single_optin = array() ) {
-		$font_functions = RAD_Rapidology::load_fonts_class();
+		$font_functions = Free_List_Machine::load_fonts_class();
 		$custom_css     = '';
 
 		if ( isset( $single_optin['form_bg_color'] ) && '' !== $single_optin['form_bg_color'] ) {
-			$custom_css .= $form_class . ' .rad_rapidology_form_content { background-color: ' . $single_optin['form_bg_color'] . ' !important; } ';
+			$custom_css .= $form_class . ' .flm_form_content { background-color: ' . $single_optin['form_bg_color'] . ' !important; } ';
 
 			if ( 'zigzag_edge' === $single_optin['edge_style'] ) {
 				$custom_css .=
-					$form_class . ' .zigzag_edge .rad_rapidology_form_content:before { background: linear-gradient(45deg, transparent 33.33%, ' . $single_optin['form_bg_color'] . ' 33.333%, ' . $single_optin['form_bg_color'] . ' 66.66%, transparent 66.66%), linear-gradient(-45deg, transparent 33.33%, ' . $single_optin['form_bg_color'] . ' 33.33%, ' . $single_optin['form_bg_color'] . ' 66.66%, transparent 66.66%) !important; background-size: 20px 40px !important; } ' .
-					$form_class . ' .zigzag_edge.rad_rapidology_form_right .rad_rapidology_form_content:before, ' . $form_class . ' .zigzag_edge.rad_rapidology_form_left .rad_rapidology_form_content:before { background-size: 40px 20px !important; }
+					$form_class . ' .zigzag_edge .flm_form_content:before { background: linear-gradient(45deg, transparent 33.33%, ' . $single_optin['form_bg_color'] . ' 33.333%, ' . $single_optin['form_bg_color'] . ' 66.66%, transparent 66.66%), linear-gradient(-45deg, transparent 33.33%, ' . $single_optin['form_bg_color'] . ' 33.33%, ' . $single_optin['form_bg_color'] . ' 66.66%, transparent 66.66%) !important; background-size: 20px 40px !important; } ' .
+					$form_class . ' .zigzag_edge.flm_form_right .flm_form_content:before, ' . $form_class . ' .zigzag_edge.flm_form_left .flm_form_content:before { background-size: 40px 20px !important; }
 					@media only screen and ( max-width: 767px ) {' .
-					$form_class . ' .zigzag_edge.rad_rapidology_form_right .rad_rapidology_form_content:before, ' . $form_class . ' .zigzag_edge.rad_rapidology_form_left .rad_rapidology_form_content:before { background: linear-gradient(45deg, transparent 33.33%, ' . $single_optin['form_bg_color'] . ' 33.333%, ' . $single_optin['form_bg_color'] . ' 66.66%, transparent 66.66%), linear-gradient(-45deg, transparent 33.33%, ' . $single_optin['form_bg_color'] . ' 33.33%, ' . $single_optin['form_bg_color'] . ' 66.66%, transparent 66.66%) !important; background-size: 20px 40px !important; } ' .
+					$form_class . ' .zigzag_edge.flm_form_right .flm_form_content:before, ' . $form_class . ' .zigzag_edge.flm_form_left .flm_form_content:before { background: linear-gradient(45deg, transparent 33.33%, ' . $single_optin['form_bg_color'] . ' 33.333%, ' . $single_optin['form_bg_color'] . ' 66.66%, transparent 66.66%), linear-gradient(-45deg, transparent 33.33%, ' . $single_optin['form_bg_color'] . ' 33.33%, ' . $single_optin['form_bg_color'] . ' 66.66%, transparent 66.66%) !important; background-size: 20px 40px !important; } ' .
 					'}';
 			}
 		}
 
 		if ( isset( $single_optin['header_bg_color'] ) && '' !== $single_optin['header_bg_color'] ) {
-			$custom_css .= $form_class . ' .rad_rapidology_form_container .rad_rapidology_form_header { background-color: ' . $single_optin['header_bg_color'] . ' !important; } ';
+			$custom_css .= $form_class . ' .flm_form_container .flm_form_header { background-color: ' . $single_optin['header_bg_color'] . ' !important; } ';
 
 			switch ( $single_optin['edge_style'] ) {
 				case 'curve_edge' :
@@ -6434,176 +6413,176 @@ STRING;
 
 				case 'carrot_edge' :
 					$custom_css .=
-						$form_class . ' .carrot_edge .rad_rapidology_form_content:before { border-top-color: ' . $single_optin['header_bg_color'] . ' !important; } ' .
-						$form_class . ' .carrot_edge.rad_rapidology_form_right .rad_rapidology_form_content:before, ' . $form_class . ' .carrot_edge.rad_rapidology_form_left .rad_rapidology_form_content:before { border-top-color: transparent !important; border-left-color: ' . $single_optin['header_bg_color'] . ' !important; }
+						$form_class . ' .carrot_edge .flm_form_content:before { border-top-color: ' . $single_optin['header_bg_color'] . ' !important; } ' .
+						$form_class . ' .carrot_edge.flm_form_right .flm_form_content:before, ' . $form_class . ' .carrot_edge.flm_form_left .flm_form_content:before { border-top-color: transparent !important; border-left-color: ' . $single_optin['header_bg_color'] . ' !important; }
 						@media only screen and ( max-width: 767px ) {' .
-						$form_class . ' .carrot_edge.rad_rapidology_form_right .rad_rapidology_form_content:before, ' . $form_class . ' .carrot_edge.rad_rapidology_form_left .rad_rapidology_form_content:before { border-top-color: ' . $single_optin['header_bg_color'] . ' !important; border-left-color: transparent !important; }
+						$form_class . ' .carrot_edge.flm_form_right .flm_form_content:before, ' . $form_class . ' .carrot_edge.flm_form_left .flm_form_content:before { border-top-color: ' . $single_optin['header_bg_color'] . ' !important; border-left-color: transparent !important; }
 						}';
 					break;
 			}
 
 			if ( 'dashed' === $single_optin['border_style'] ) {
 				if ( 'breakout_edge' !== $single_optin['edge_style'] ) {
-					$custom_css .= $form_class . ' .rad_rapidology_form_container { background-color: ' . $single_optin['header_bg_color'] . ' !important; } ';
+					$custom_css .= $form_class . ' .flm_form_container { background-color: ' . $single_optin['header_bg_color'] . ' !important; } ';
 				} else {
-					$custom_css .= $form_class . ' .rad_rapidology_header_outer { background-color: ' . $single_optin['header_bg_color'] . ' !important; } ';
+					$custom_css .= $form_class . ' .flm_header_outer { background-color: ' . $single_optin['header_bg_color'] . ' !important; } ';
 				}
 			}
 		}
 
 		if ( isset( $single_optin['form_button_color'] ) && '' !== $single_optin['form_button_color'] ) {
-			$custom_css .= $form_class . ' .rad_rapidology_form_content button { background-color: ' . $single_optin['form_button_color'] . ' !important; } ';
+			$custom_css .= $form_class . ' .flm_form_content button { background-color: ' . $single_optin['form_button_color'] . ' !important; } ';
 		}
 
 		if ( isset( $single_optin['border_color'] ) && '' !== $single_optin['border_color'] && 'no_border' !== $single_optin['border_orientation'] ) {
 			if ( 'breakout_edge' === $single_optin['edge_style'] ) {
 				switch ( $single_optin['border_style'] ) {
 					case 'letter' :
-						$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_letter .rad_rapidology_header_outer { background: repeating-linear-gradient( 135deg, ' . $single_optin['border_color'] . ', ' . $single_optin['border_color'] . ' 10px, #fff 10px, #fff 20px, #f84d3b 20px, #f84d3b 30px, #fff 30px, #fff 40px ) !important; } ';
+						$custom_css .= $form_class . ' .breakout_edge.flm_border_letter .flm_header_outer { background: repeating-linear-gradient( 135deg, ' . $single_optin['border_color'] . ', ' . $single_optin['border_color'] . ' 10px, #fff 10px, #fff 20px, #f84d3b 20px, #f84d3b 30px, #fff 30px, #fff 40px ) !important; } ';
 						break;
 
 					case 'double' :
-						$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_double .rad_rapidology_form_header { -moz-box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+						$custom_css .= $form_class . ' .breakout_edge.flm_border_double .flm_form_header { -moz-box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 
 						switch ( $single_optin['border_orientation'] ) {
 							case 'top' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_double.rad_rapidology_border_position_top .rad_rapidology_form_header { -moz-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_double.flm_border_position_top .flm_form_header { -moz-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 								break;
 
 							case 'right' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_double.rad_rapidology_border_position_right .rad_rapidology_form_header { -moz-box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_double.flm_border_position_right .flm_form_header { -moz-box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 								break;
 
 							case 'bottom' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_double.rad_rapidology_border_position_bottom .rad_rapidology_form_header { -moz-box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_double.flm_border_position_bottom .flm_form_header { -moz-box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 								break;
 
 							case 'left' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_double.rad_rapidology_border_position_left .rad_rapidology_form_header { -moz-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_double.flm_border_position_left .flm_form_header { -moz-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 								break;
 
 							case 'top_bottom' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_double.rad_rapidology_border_position_top_bottom .rad_rapidology_form_header { -moz-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_double.flm_border_position_top_bottom .flm_form_header { -moz-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 								break;
 
 							case 'left_right' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_double.rad_rapidology_border_position_left_right .rad_rapidology_form_header { -moz-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_double.flm_border_position_left_right .flm_form_header { -moz-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 						}
 						break;
 
 					case 'inset' :
-						$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_inset .rad_rapidology_form_header { -moz-box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+						$custom_css .= $form_class . ' .breakout_edge.flm_border_inset .flm_form_header { -moz-box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 
 						switch ( $single_optin['border_orientation'] ) {
 							case 'top' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_inset.rad_rapidology_border_position_top .rad_rapidology_form_header { -moz-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_inset.flm_border_position_top .flm_form_header { -moz-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 								break;
 
 							case 'right' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_inset.rad_rapidology_border_position_right .rad_rapidology_form_header { -moz-box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_inset.flm_border_position_right .flm_form_header { -moz-box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 								break;
 
 							case 'bottom' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_inset.rad_rapidology_border_position_bottom .rad_rapidology_form_header { -moz-box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_inset.flm_border_position_bottom .flm_form_header { -moz-box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 								break;
 
 							case 'left' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_inset.rad_rapidology_border_position_left .rad_rapidology_form_header { -moz-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_inset.flm_border_position_left .flm_form_header { -moz-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 								break;
 
 							case 'top_bottom' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_inset.rad_rapidology_border_position_top_bottom .rad_rapidology_form_header { -moz-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_inset.flm_border_position_top_bottom .flm_form_header { -moz-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 								break;
 
 							case 'left_right' :
-								$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_inset.rad_rapidology_border_position_left_right .rad_rapidology_form_header { -moz-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .breakout_edge.flm_border_inset.flm_border_position_left_right .flm_form_header { -moz-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 						}
 						break;
 
 					case 'solid' :
-						$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_solid .rad_rapidology_form_header { border-color: ' . $single_optin['border_color'] . ' !important } ';
+						$custom_css .= $form_class . ' .breakout_edge.flm_border_solid .flm_form_header { border-color: ' . $single_optin['border_color'] . ' !important } ';
 						break;
 
 					case 'dashed' :
-						$custom_css .= $form_class . ' .breakout_edge.rad_rapidology_border_dashed .rad_rapidology_form_header { border-color: ' . $single_optin['border_color'] . ' !important } ';
+						$custom_css .= $form_class . ' .breakout_edge.flm_border_dashed .flm_form_header { border-color: ' . $single_optin['border_color'] . ' !important } ';
 						break;
 				}
 			} else {
 				switch ( $single_optin['border_style'] ) {
 					case 'letter' :
-						$custom_css .= $form_class . ' .rad_rapidology_border_letter { background: repeating-linear-gradient( 135deg, ' . $single_optin['border_color'] . ', ' . $single_optin['border_color'] . ' 10px, #fff 10px, #fff 20px, #f84d3b 20px, #f84d3b 30px, #fff 30px, #fff 40px ) !important; } ';
+						$custom_css .= $form_class . ' .flm_border_letter { background: repeating-linear-gradient( 135deg, ' . $single_optin['border_color'] . ', ' . $single_optin['border_color'] . ' 10px, #fff 10px, #fff 20px, #f84d3b 20px, #f84d3b 30px, #fff 30px, #fff 40px ) !important; } ';
 						break;
 
 					case 'double' :
-						$custom_css .= $form_class . ' .rad_rapidology_border_double { -moz-box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+						$custom_css .= $form_class . ' .flm_border_double { -moz-box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; box-shadow: inset 0 0 0 6px ' . $single_optin['header_bg_color'] . ', inset 0 0 0 8px ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 
 						switch ( $single_optin['border_orientation'] ) {
 							case 'top' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_double.rad_rapidology_border_position_top { -moz-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_double.flm_border_position_top { -moz-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 								break;
 
 							case 'right' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_double.rad_rapidology_border_position_right { -moz-box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_double.flm_border_position_right { -moz-box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 								break;
 
 							case 'bottom' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_double.rad_rapidology_border_position_bottom { -moz-box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_double.flm_border_position_bottom { -moz-box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 								break;
 
 							case 'left' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_double.rad_rapidology_border_position_left { -moz-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_double.flm_border_position_left { -moz-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 								break;
 
 							case 'top_bottom' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_double.rad_rapidology_border_position_top_bottom { -moz-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_double.flm_border_position_top_bottom { -moz-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 8px 0 0 ' . $single_optin['border_color'] . ', inset 0 -6px 0 0 ' . $single_optin['header_bg_color'] . ', inset 0 -8px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 								break;
 
 							case 'left_right' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_double.rad_rapidology_border_position_left_right { -moz-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_double.flm_border_position_left_right { -moz-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset 8px 0 0 0 ' . $single_optin['border_color'] . ', inset -6px 0 0 0 ' . $single_optin['header_bg_color'] . ', inset -8px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['border_color'] . '; } ';
 						}
 						break;
 
 					case 'inset' :
-						$custom_css .= $form_class . ' .rad_rapidology_border_inset { -moz-box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+						$custom_css .= $form_class . ' .flm_border_inset { -moz-box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; box-shadow: inset 0 0 0 3px ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 
 						switch ( $single_optin['border_orientation'] ) {
 							case 'top' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_inset.rad_rapidology_border_position_top { -moz-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_inset.flm_border_position_top { -moz-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 								break;
 
 							case 'right' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_inset.rad_rapidology_border_position_right { -moz-box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_inset.flm_border_position_right { -moz-box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset -3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 								break;
 
 							case 'bottom' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_inset.rad_rapidology_border_position_bottom { -moz-box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_inset.flm_border_position_bottom { -moz-box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 								break;
 
 							case 'left' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_inset.rad_rapidology_border_position_left { -moz-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_inset.flm_border_position_left { -moz-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 								break;
 
 							case 'top_bottom' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_inset.rad_rapidology_border_position_top_bottom { -moz-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_inset.flm_border_position_top_bottom { -moz-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 0 3px 0 0 ' . $single_optin['border_color'] . ', inset 0 -3px 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 								break;
 
 							case 'left_right' :
-								$custom_css .= $form_class . ' .rad_rapidology_border_inset.rad_rapidology_border_position_left_right { -moz-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
+								$custom_css .= $form_class . ' .flm_border_inset.flm_border_position_left_right { -moz-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; -webkit-box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; box-shadow: inset 3px 0 0 0 ' . $single_optin['border_color'] . ', inset -3px 0 0 0 ' . $single_optin['border_color'] . '; border-color: ' . $single_optin['header_bg_color'] . '; } ';
 						}
 						break;
 
 					case 'solid' :
-						$custom_css .= $form_class . ' .rad_rapidology_border_solid { border-color: ' . $single_optin['border_color'] . ' !important } ';
+						$custom_css .= $form_class . ' .flm_border_solid { border-color: ' . $single_optin['border_color'] . ' !important } ';
 						break;
 
 					case 'dashed' :
-						$custom_css .= $form_class . ' .rad_rapidology_border_dashed .rad_rapidology_form_container_wrapper { border-color: ' . $single_optin['border_color'] . ' !important } ';
+						$custom_css .= $form_class . ' .flm_border_dashed .flm_form_container_wrapper { border-color: ' . $single_optin['border_color'] . ' !important } ';
 						break;
 				}
 			}
 		}
 
-		$custom_css .= isset( $single_optin['form_button_color'] ) && '' !== $single_optin['form_button_color'] ? $form_class . ' .rad_rapidology_form_content button { background-color: ' . $single_optin['form_button_color'] . ' !important; } ' : '';
+		$custom_css .= isset( $single_optin['form_button_color'] ) && '' !== $single_optin['form_button_color'] ? $form_class . ' .flm_form_content button { background-color: ' . $single_optin['form_button_color'] . ' !important; } ' : '';
 		$custom_css .= isset( $single_optin['header_font'] ) ? $font_functions->et_gf_attach_font( $single_optin['header_font'], $form_class . ' h2, ' . $form_class . ' h2 span, ' . $form_class . ' h2 strong' ) : '';
 		$custom_css .= isset( $single_optin['body_font'] ) ? $font_functions->et_gf_attach_font( $single_optin['body_font'], $form_class . ' p, ' . $form_class . ' p span, ' . $form_class . ' p strong, ' . $form_class . ' form input, ' . $form_class . ' form button span' ) : '';
 
@@ -6620,7 +6599,7 @@ STRING;
 		$newurl    = $location;
 		$newurl    = substr( $location, 0, strpos( $location, '#comment' ) );
 		$delimeter = false === strpos( $location, '?' ) ? '?' : '&';
-		$params    = 'rad_rapidology_popup=true';
+		$params    = 'flm_popup=true';
 
 		$newurl .= $delimeter . $params;
 
@@ -6632,7 +6611,7 @@ STRING;
 	 * @return string
 	 */
 	function add_purchase_trigger() {
-		echo '<div class="rad_rapidology_after_order"></div>';
+		echo '<div class="flm_after_order"></div>';
 	}
 
 	/**
@@ -6642,7 +6621,7 @@ STRING;
 	 * Creates arrays with optins for for Flyin, Popup, Below Content to improve the performance during forms displaying
 	 */
 	function frontend_register_locations() {
-		$options_array = RAD_Rapidology::get_rapidology_options();
+		$options_array = Free_List_Machine::get_flm_options();
 
 		if ( ! is_admin() && ! empty( $options_array ) ) {
 			add_action( 'wp_head', array( $this, 'set_custom_css' ) );
@@ -6720,12 +6699,12 @@ STRING;
 
 	function rad_add_footer_text( $text ) {
 
-		return sprintf( __( $text . ' Rapidology - by LeadPages<sup>&reg;</sup> <a target="_blank" style= "color:#939AAA;" href="%s">Privacy Policy</a> | <a target="_blank" style= "color:#939AAA;" href="%s">Terms of Use</a>' ), $this->privacy_url, $this->tou_url );
+		return sprintf( __( $text . ' Free List Machine - by LeadPages<sup>&reg;</sup> <a target="_blank" style= "color:#939AAA;" href="%s">Privacy Policy</a> | <a target="_blank" style= "color:#939AAA;" href="%s">Terms of Use</a>' ), $this->privacy_url, $this->tou_url );
 	}
 
 	function execute_footer_text() {
 		if ( isset( $_GET['page'] ) ) {
-			if ( $_GET['page'] == 'rad_rapidology_options' && isset( $_GET['page'] ) ) {
+			if ( $_GET['page'] == 'flm_options' && isset( $_GET['page'] ) ) {
 				add_filter( 'admin_footer_text', array( $this, 'rad_add_footer_text' ) );
 			}
 		}
@@ -6754,7 +6733,7 @@ STRING;
 		} else {
 			switch ( $response_code ) {
 				case '401' :
-					$error_message = __( $message_map['401'], 'rapidology' );
+					$error_message = __( $message_map['401'], 'flm' );
 
 					return $error_message;
 				default :
@@ -6768,4 +6747,4 @@ STRING;
 
 }
 
-new RAD_Rapidology();
+new Free_List_Machine();

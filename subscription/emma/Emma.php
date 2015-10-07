@@ -12,7 +12,7 @@
 	 * @license   http://www.opensource.org/licenses/mit-license.php MIT
 	 * @link      https://github.com/myemma/emma-wrapper-php
 	 */
-	class Emma_Rapidology {
+	class Emma_FLM {
 		/**
 		* Cache the API base url
 		*/

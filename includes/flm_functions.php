@@ -4,14 +4,14 @@
 *@return string
 * create shortcode for onclick popups
 */
-function rapidology_on_click_intent( $atts, $content = null ) {
+function flm_on_click_intent( $atts, $content = null ) {
 	extract(shortcode_atts(array(
 		"optin_id" => '0'
 	), $atts));
-	return '<div class="rad_rapidology_click_trigger_element"  data-optin_id="'.$optin_id.'">'.$content.'</div>';
+	return '<div class="flm_click_trigger_element"  data-optin_id="'.$optin_id.'">'.$content.'</div>';
 }
 
-add_shortcode("rapidology_on_click_intent", "rapidology_on_click_intent");
+add_shortcode("flm_on_click_intent", "flm_on_click_intent");
 
 
 /**
@@ -31,14 +31,14 @@ function rapid_version_check( $wp = '3.5', $php = '5.4' ) {
 	if(isset($php_check)){
 	?>
 	<div class="error">
-        	<p><?php _e( 'Rapidology Notice: Your version of php is unsupported. You may notice some features may not work. Please upgrade to php 5.4 or higher.', 'rapidology' ); ?></p>
+        	<p><?php _e( 'Free List Machine Notice: Your version of php is unsupported. You may notice some features may not work. Please upgrade to php 5.4 or higher.', 'flm' ); ?></p>
 		</div>
 	<?php
 	}
 	if(isset($wp_check)){
 		?>
 		<div class="error">
-			<p><?php _e( 'Rapidology Notice: Your version of Wordpress is unsupported. You may notice some features may not work. Please upgrade to WordPress 3.5 or higher.', 'rapidology' ); ?></p>
+			<p><?php _e( 'Free List Machine Notice: Your version of Wordpress is unsupported. You may notice some features may not work. Please upgrade to WordPress 3.5 or higher.', 'flm' ); ?></p>
 		</div>
 		<?php
 	}
@@ -52,7 +52,7 @@ function rapid_version_check( $wp = '3.5', $php = '5.4' ) {
  * @description takes the first and last name field, runs so low level logic to decide which fields to drop them into
  */
 
-function rapidology_name_splitter($name, $last_name){
+function flm_name_splitter($name, $last_name){
 
 	$return_array=array(); //array of names to be returned
 	if($last_name == ''){

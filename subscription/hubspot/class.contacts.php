@@ -18,7 +18,7 @@
 */
 require_once('class.baseclient.php');
 
-class HubSpot_Contacts_Rapidology extends HubSpot_BaseClient{
+class HubSpot_Contacts_FLM extends HubSpot_BaseClient{
 	//Client for HubSpot Contacts API
 
 	    //Define required client variables

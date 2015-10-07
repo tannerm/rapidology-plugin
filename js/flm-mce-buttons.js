@@ -1,5 +1,5 @@
 (function() {
-	tinymce.create('tinymce.plugins.rapidology', {
+	tinymce.create('tinymce.plugins.flm', {
 		/**
 		 * Initializes the plugin, this will be executed after the plugin has been created.
 		 * This call is done before the editor instance has finished it's initialization so use the onInit event
@@ -12,12 +12,12 @@
 
 		init : function(ed, url) {
 			var t = this,
-				optins_locked = jQuery.parseJSON( rapidology.locked_optins ),
-				optins_inline = jQuery.parseJSON( rapidology.inline_optins ),
-                onclick_optins = jQuery.parseJSON( rapidology.onclick_optins ),
-				$rapidology_tooltip = rapidology.rapidology_tooltip,
-				$inline_text = rapidology.inline_text,
-				$locked_text = rapidology.locked_text,
+				optins_locked = jQuery.parseJSON( flm.locked_optins ),
+				optins_inline = jQuery.parseJSON( flm.inline_optins ),
+                onclick_optins = jQuery.parseJSON( flm.onclick_optins ),
+				$flm_tooltip = flm.flm_tooltip,
+				$inline_text = flm.inline_text,
+				$locked_text = flm.locked_text,
 				count = 0,
 				$menu_items_locked = [],
 				$menu_items_inline = [],
@@ -28,7 +28,7 @@
 						'onclick' : function() {
 							if ( 'empty' !== optin_id ) {
 								var selected_text = ed.selection.getContent();
-									return_text = '[rad_rapidology_locked optin_id='+ optin_id + ']' + selected_text + '[/rad_rapidology_locked]';
+									return_text = '[flm_locked optin_id='+ optin_id + ']' + selected_text + '[/flm_locked]';
 
 								ed.insertContent(return_text);
 							}
@@ -43,7 +43,7 @@
 						'text' : optin_title,
 						'onclick' : function() {
 							if ( 'empty' !== optin_id ) {
-								return_text = '[rad_rapidology_inline optin_id='+ optin_id + ']';
+								return_text = '[flm_inline optin_id='+ optin_id + ']';
 								ed.insertContent(return_text);
 							}
 						}
@@ -57,7 +57,7 @@
                         'text' : optin_title,
                         'onclick' : function() {
                             if ( 'empty' !== optin_id ) {
-                                return_text = '[rapidology_on_click_intent optin_id='+ optin_id + '] [/rapidology_on_click_intent]';
+                                return_text = '[flm_on_click_intent optin_id='+ optin_id + '] [/flm_on_click_intent]';
                                 ed.insertContent(return_text);
                             }
                         }
@@ -65,11 +65,11 @@
                 });
             });
 
-			ed.addButton('rapidology_button', {
+			ed.addButton('flm_button', {
 				text: '',
-				icon: 'rad_rapidology_shortcode_icon',
+				icon: 'flm_shortcode_icon',
 				type: 'menubutton',
-				tooltip : $rapidology_tooltip,
+				tooltip : $flm_tooltip,
 				menu:
 					[
 						{
@@ -111,15 +111,15 @@
 		 */
 		getInfo : function() {
 			return {
-				longname : "Rapidology",
-				author : 'Rapidology',
-				authorurl : 'http://www.rapidology.com/',
-				infourl : 'http://www.rapidology.com/',
+				longname : "Free List Builder",
+				author : 'Contest Domination',
+				authorurl : 'http://www.contestdomination.com/',
+				infourl : 'http://www.contestdomination.com/',
 				version : "1.0"
 			};
 		}
 	});
 
 	// Register plugin
-	tinymce.PluginManager.add( 'rapidology', tinymce.plugins.rapidology );
+	tinymce.PluginManager.add( 'flm', tinymce.plugins.flm );
 })();

@@ -1,6 +1,6 @@
 <?php
 
-/*class rapid_infusionsoft extends RAD_Rapidology{
+/*class rapid_infusionsoft extends Free_List_Machine{
 
 	public $app_id = '';
 	public $api_key ='';
@@ -20,11 +20,11 @@
 
 	function get_infusionsoft_lists() {
 		if ( ! function_exists( 'curl_init' ) ) {
-			return __( 'curl_init is not defined ', 'rapidology' );
+			return __( 'curl_init is not defined ', 'flm' );
 		}
 
 		if ( ! class_exists( 'iSDK' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
+			require_once( FLM_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
 		}
 
 		$lists = array();
@@ -87,11 +87,11 @@
 /*
 	function subscribe_infusionsoft() {
 		if ( ! function_exists( 'curl_init' ) ) {
-			return __( 'curl_init is not defined ', 'rapidology' );
+			return __( 'curl_init is not defined ', 'flm' );
 		}
 
 		if ( ! class_exists( 'iSDK' ) ) {
-			require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
+			require_once( FLM_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
 		}
 
 		try {
@@ -113,7 +113,7 @@
 		if($response) {
 			$error_message = 'success';
 		}else{
-			$error_message = esc_html__( 'Already In List', 'rapidology' );
+			$error_message = esc_html__( 'Already In List', 'flm' );
 		}
 
 
@@ -124,11 +124,11 @@
 
 function get_infusionsoft_lists( $app_id, $api_key, $name ) {
 	if ( ! function_exists( 'curl_init' ) ) {
-		return __( 'curl_init is not defined ', 'rapidology' );
+		return __( 'curl_init is not defined ', 'flm' );
 	}
 
 	if ( ! class_exists( 'iSDK' ) ) {
-		require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
+		require_once( FLM_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
 	}
 
 	$lists = array();
@@ -190,11 +190,11 @@ function get_infusionsoft_lists( $app_id, $api_key, $name ) {
  */
 function subscribe_infusionsoft( $api_key, $app_id, $list_id, $email, $name = '', $last_name = '' ) {
 	if ( ! function_exists( 'curl_init' ) ) {
-		return __( 'curl_init is not defined ', 'rapidology' );
+		return __( 'curl_init is not defined ', 'flm' );
 	}
 
 	if ( ! class_exists( 'iSDK' ) ) {
-		require_once( RAD_RAPIDOLOGY_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
+		require_once( FLM_PLUGIN_DIR . 'subscription/infusionsoft/isdk.php' );
 	}
 
 	try {
@@ -216,11 +216,9 @@ function subscribe_infusionsoft( $api_key, $app_id, $list_id, $email, $name = ''
 	if($response) {
 		$error_message = 'success';
 	}else{
-		$error_message = esc_html__( 'Already In List', 'rapidology' );
+		$error_message = esc_html__( 'Already In List', 'flm' );
 	}
 
 
 	return $error_message;
-}
-
 }
