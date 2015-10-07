@@ -1,5 +1,5 @@
 @font-face {
-	font-family: 'flm-cirlogo';
+	font-family: 'rapidology-cirlogo';
 	src:url('fonts/flm-cirlogo.eot?ma7dc9');
 	src:url('fonts/flm-cirlogo.eot?#iefixma7dc9') format('embedded-opentype'),
 		url('fonts/flm-cirlogo.woff?ma7dc9') format('woff'),
@@ -9,4 +9,4 @@
 	font-style: normal;
 }
 
-#adminmenu #toplevel_page_flm_options div.wp-menu-image:before { font-family: flm-cirlogo !important; content:"\e601"; font-size: 20px !important; }
+#adminmenu #toplevel_page_flm_options div.wp-menu-image:before { font-family: rapidology-cirlogo !important; content:"\e601"; font-size: 20px !important; }

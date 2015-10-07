@@ -10,17 +10,17 @@
 /*------------------------------------------------*/
 
 @font-face {
-	font-family: 'flm-full-icon-set';
+	font-family: 'rapidology-full-icon-set';
 	src:url('fonts/flm-full-icon-set.eot?mo6ku9');
 	src:url('fonts/flm-full-icon-set.eot?#iefixmo6ku9') format('embedded-opentype'),
 		url('fonts/flm-full-icon-set.woff?mo6ku9') format('woff'),
 		url('fonts/flm-full-icon-set.ttf?mo6ku9') format('truetype'),
-		url('fonts/flm-full-icon-set.svg?mo6ku9#flm-full-icon-set') format('svg');
+		url('fonts/flm-full-icon-set.svg?mo6ku9#rapidology-full-icon-set') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
 
-.flm .flm_icon { font-family: 'flm-full-icon-set'; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+.flm .flm_icon { font-family: 'rapidology-full-icon-set'; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 .flm .flm_icon_close:after { content: "\e60d"; }
 
 /*---------------------------------*/
@@ -129,7 +129,7 @@
 .flm .flm_form_container .clearfix:after { visibility: hidden; display: block; font-size: 0; content: " "; clear: both; height: 0; }
 .flm .flm_form_container { position: relative; }
 .flm .flm_form_container .flm_close_button, .flm .flm_success_checkmark:before {
-	font-family: 'flm-full-icon-set';
+	font-family: 'rapidology-full-icon-set';
 	speak: none;
 	font-style: normal;
 	font-weight: normal;
@@ -739,7 +739,7 @@
 }
 
 @font-face {
-	font-family: 'flm-cirlogo';
+	font-family: 'rapidology-cirlogo';
 	src:url('fonts/flm-cirlogo.eot?ma7dc9');
 	src:url('fonts/flm-cirlogo.eot?#iefixma7dc9') format('embedded-opentype'),
 		url('fonts/flm-cirlogo.woff?ma7dc9') format('woff'),
@@ -772,7 +772,7 @@
 }
 
 .rad_power a .rad_power_logo:after {
-	font-family: 'flm-cirlogo' !important;
+	font-family: 'rapidology-cirlogo' !important;
 	content:"\e601" !important;
 	font-size: 20px !important;
 	margin-right: 5px;

@@ -20,7 +20,7 @@ button.save_account_tab, .flm_dashboard_save_changes button { background-color: 
 /*------------------------------------------------*/
 /*--------------------[ICONS]---------------------*/
 /*------------------------------------------------*/
-.flm_dashboard_optin_type_locked .optin_select_blue:before { font-family: 'flm-full-icon-set'; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; font-size: 16px; }
+.flm_dashboard_optin_type_locked .optin_select_blue:before { font-family: 'rapidology-full-icon-set'; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; font-size: 16px; }
 .flm_dashboard_icon_flm:before 			{ content: "\e650"; }
 .flm_dashboard_icon_delete:before 			{ content: "\e651"; }
 .flm_dashboard_icon_duplicate:before 		{ content: "\e652"; }

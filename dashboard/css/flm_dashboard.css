@@ -694,7 +694,7 @@ p.flm_dashboard_section_subtitle { margin-top: -12px; margin-bottom: 14px; font-
     padding-top: 50px;
 }
 .rad_act_scr_logo {
-    font-family: 'flm-full-icon-set';
+    font-family: 'rapidology-full-icon-set';
     font-size: 77px;
     line-height: 77px;
 	width: 160px;
@@ -765,7 +765,7 @@ p.flm_dashboard_section_subtitle { margin-top: -12px; margin-bottom: 14px; font-
 	background-color: rgba(0,0,0,0.3);
 }
 .rad_act_scr_get_code_button:hover::after {
-    font-family: 'flm-full-icon-set';
+    font-family: 'rapidology-full-icon-set';
     content: "\e602";
     font-size: 20px;
     padding-left: 10px;
