@@ -42,7 +42,7 @@ Features
 *	Insert custom CSS on any opt-in form.
 *	Import/export your custom plugin settings so you can transfer what you’ve created to any other Free List Machine account.
 
-\* *Free List Machine is a fork of the Bloom Plugin by Elegant Themes released under GNU Public License version 2.0.  The Free List Machine Source Code is freely available on [GitHub](https://github.com/LeadPages/flm-plugin/ "Free List Machine GitHub")*
+\* *Free List Machine is a fork of the Bloom Plugin by Elegant Themes released under GNU Public License version 2.0.  The Free List Machine Source Code is freely available on [GitHub](https://github.com/Contest Domination/flm-plugin/ "Free List Machine GitHub")*
 
 **Installation**
 

@@ -1,6 +1,6 @@
-=== Free List Machine - by LeadPages ===
-Plugin Name:  Free List Machine - by LeadPages
-Contributors: LeadPages
+=== Free List Machine - by Contest Domination ===
+Plugin Name:  Free List Machine - by Contest Domination
+Contributors: Contest Domination
 Tags: wp popup, wordpress popup plugin, wordpress subscription plugin, responsive opt-in subscription plugin, free optinmonster alternative, list builder, sumome alternative, leadpages, bloom plugin, how to increase email list, email form, scroll box, newsletter, inbound marketing, mailing list, mail chimp, aweber, infusionsoft, campaign monitor, constant contact, mad mimi, iContact, GetResponse, MailPoet, feedblitz, sendinblue, ontraport, landing page, light box, email list building, subscribers, subscription
 Requires at least: 3.5
 Tested up to: 4.3
@@ -52,7 +52,7 @@ Features
 *	Insert custom CSS on any opt-in form.
 *	Import/export your custom plugin settings so you can transfer what you’ve created to any other Free List Machine account.
 
-\* *Free List Machine is a fork of the Bloom Plugin by Elegant Themes released under GNU Public License version 2.0.  The Free List Machine Source Code is freely available on [GitHub](https://github.com/LeadPages/flm-plugin/ "Free List Machine GitHub")*
+\* *Free List Machine is a fork of the Bloom Plugin by Elegant Themes released under GNU Public License version 2.0.  The Free List Machine Source Code is freely available on [GitHub](https://github.com/Contest Domination/flm-plugin/ "Free List Machine GitHub")*
 
 == Installation ==
 

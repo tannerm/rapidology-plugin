@@ -6,6 +6,7 @@
  * and selecting a new provider. Please keep it alphabetical
  */
 $email_providers_array = array(
+	'contestdomination'	=>  'Contest Domination' ,
 	'activecampaign'	=>  'Active Campaign' ,
 	'aweber'			=>  'AWeber' ,
 	'campaign_monitor'	=>  'Campaign Monitor' ,
@@ -56,7 +57,7 @@ $show_name_fields =  array(
 	'activecampaign',
 	'hubspot',
 	'hubspot-standard',
-	'emma'
+	'emma',
 );
 
 ?>

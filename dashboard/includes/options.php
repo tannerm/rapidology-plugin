@@ -68,6 +68,60 @@ $flm_dashboard_options_all = array(
 		),
 	),
 
+	'optin_settings' => array(
+		'section_start' => array(
+			'type'     => 'section_start',
+			'title'    => __( 'Optin Settings', 'flm' ),
+			'subtitle' => __( 'Leave blank if using Contest Domination', 'flm' ),
+		),
+		'privacy_policy'    => array(
+			'type'            => 'input_field',
+			'subtype'         => 'text',
+			'name'            => 'privacy_policy',
+			'title'           => __( 'Link to Privacy Policy', 'flm' ),
+			'placeholder'     => __( 'Privacy Policy Link', 'flm' ),
+			'default'         => '',
+			'validation_type' => 'url',
+		),
+		'contest_optin' => array(
+			'type'            => 'checkbox',
+			'conditional'     => 'contest_rules#countdown_timer#winner_count#contest_duration',
+			'title'           => __( 'Is this a Contest?', 'flm' ),
+			'name'            => 'contest_optin',
+			'default'         => false,
+			'validation_type' => 'boolean',
+			'hint_text'       => __( 'Check if this optin is a contest.', 'flm' ),
+		),
+		'contest_rules'    => array(
+			'type'            => 'input_field',
+			'subtype'         => 'text',
+			'name'            => 'contest_rules',
+			'title'           => __( 'Link to Contest Rules', 'flm' ),
+			'placeholder'     => __( 'Contest Rules Link', 'flm' ),
+			'display_if'      => 'true',
+			'default'         => '',
+			'validation_type' => 'url',
+		),
+		'winner_count'    => array(
+			'type'            => 'input_field',
+			'subtype'         => 'text',
+			'name'            => 'winner_count',
+			'title'           => __( 'Number of Winners', 'flm' ),
+			'display_if'      => 'true',
+			'default'         => '',
+			'validation_type' => 'number',
+		),
+		'contest_duration' => array(
+			'type'            => 'datetime',
+			'subtype'         => 'text',
+			'name'            => 'contest_duration',
+			'title'           => __( 'Contest Duration', 'flm' ),
+			'display_if'      => 'true',
+			'validation_type' => 'date',
+			'default'         => date( 'd-m-Y H:i', time() + WEEK_IN_SECONDS )
+		)
+	),
+
 	'form_integration' => array(
 		'section_start' => array(
 			'type'  => 'section_start',
@@ -80,7 +134,7 @@ $flm_dashboard_options_all = array(
 			'name'            => 'email_provider',
 			'value'           => $email_providers_new_optin,
 			'default'         => 'empty',
-			'conditional'     => 'mailchimp_account#aweber_account#constant_contact_account#custom_html#activecampaign#display_name#name_fields#disable_dbl_optin',
+			'conditional'     => 'mailchimp_account#aweber_account#constant_contact_account#custom_html#activecampaign#display_name#name_fields#disable_dbl_optin#single_name_text',
 			'validation_type' => 'simple_text',
 			'class'           => 'flm_dashboard_select_provider',
 		),
@@ -114,6 +168,7 @@ $flm_dashboard_options_all = array(
 			'default'         => '',
 			'display_if'      => 'custom_html',
 			'validation_type' => 'html',
+			'class'           => 'flm_custom_html_form',
 		),
 		'disable_dbl_optin' => array(
 			'type'            => 'checkbox',
@@ -312,7 +367,7 @@ $flm_dashboard_options_all = array(
 			'title'           => __( 'Name Text', 'flm' ),
 			'placeholder'     => __( 'Name', 'flm' ),
 			'default'         => '',
-			'display_if'      => 'single_name#true',
+			'display_if'      => 'single_name#true#contestdomination',
 			'validation_type' => 'simple_text',
 			'is_wpml_string'  => true,
 		),
@@ -1088,6 +1143,13 @@ $rad_assigned_options = array(
 			$flm_dashboard_options_all[ 'form_integration' ][ 'email_list' ],
 			$flm_dashboard_options_all[ 'form_integration' ][ 'custom_html' ],
 			$flm_dashboard_options_all[ 'form_integration' ][ 'disable_dbl_optin' ],
+		$flm_dashboard_options_all[ 'end_of_section' ],
+		$flm_dashboard_options_all['optin_settings']['section_start'],
+			$flm_dashboard_options_all[ 'optin_settings' ][ 'privacy_policy' ],
+			$flm_dashboard_options_all[ 'optin_settings' ][ 'contest_optin' ],
+			$flm_dashboard_options_all[ 'optin_settings' ][ 'contest_rules' ],
+			$flm_dashboard_options_all[ 'optin_settings' ][ 'winner_count' ],
+			$flm_dashboard_options_all[ 'optin_settings' ][ 'contest_duration' ],
 		$flm_dashboard_options_all[ 'end_of_section' ],
 	),
 	'optin_premade_options' => array(

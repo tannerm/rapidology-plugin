@@ -12,7 +12,6 @@ body, div#wpcontent { background: #f1f1f1; }
 .flm #flm_dashboard_header ul li a.current:after,.flm #flm_dashboard_navigation li a.current:after { background-color: #FFF; }
 .flm .flm_dashboard_single_selectable.flm_dashboard_selected:after { background-color: #4fd1cd; }
 .current_tab_flm_dashboard_tab_content_header_importexport input[type="file"] { background: #fff; }
-.toplevel_page_flm_options{background-color: #BD404D !important;}
 button.save_account_tab, .flm_dashboard_save_changes button { background-color: #1ab6ff; }
 	button.save_account_tab:hover, .flm_dashboard_save_changes button:hover { background-color: #009ce5; }
 
@@ -109,6 +108,8 @@ div#flm_dashboard_navigation { display: none; }
 .flm_dashboard_tab_content_header_importexport .flm_dashboard_row h2,.flm_dashboard_tab_content_header_importexport p.flm_dashboard_section_subtitle { float: none; }
 .flm_dashboard_tab_content_header_importexport p.flm_dashboard_section_subtitle { margin-top: -12px; margin-left: 0; }
 .flm .flm_dashboard_form select,.flm .flm_dashboard_longinput input { width: 300px !important; }
+.flm .flm_dashboard_form .combodate select { width: auto !important; float: none; }
+
 .flm .flm_dashboard_shape_tile { width: 50px; height: 50px; }
 	.flm .flm_dashboard_shape_tile.flm_dashboard_shape_breakout_edge { width: 54px; }
 .flm .flm_dashboard_shape { margin-right: 40px; }

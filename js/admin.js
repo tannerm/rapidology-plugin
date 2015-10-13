@@ -971,6 +971,7 @@
 		}
 
 		function open_optin_settings( $this_el, $new_form, $is_child, $parent_id ) {
+
 			restore_events();
 			if ( true === $new_form ) {
 				$( '#flm_dashboard_optin_type' ).val( $this_el.data( 'type' ) );

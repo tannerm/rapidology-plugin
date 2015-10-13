@@ -1597,6 +1597,8 @@ class Free_List_Machine extends FLM_Dashboard {
 							<p>Select Email Provider</p>
 							<select>
 								<option value="empty" selected>%2$s</option>
+								<option value="ztest" >zTest</option>
+								<option value="contestdomination">%21$s</option>
 								<option value="activecampaign">%19$s</option>
 								<option value="aweber">%4$s</option>
 								<option value="campaign_monitor">%6$s</option>
@@ -1639,8 +1641,8 @@ class Free_List_Machine extends FLM_Dashboard {
 				esc_html__( 'HubSpot Lists', 'flm' ),#17
 				esc_html__( 'Salesforce', 'flm' ),#18
 				esc_html__( 'Active Campaign', 'flm' ),#19
-				esc_html__( 'HubSpot Standard', 'flm')#20
-
+				esc_html__( 'HubSpot Standard', 'flm'),#20
+				esc_html__( 'Contest Domination', 'flm')#21
 			);
 		}
 
@@ -2085,7 +2087,9 @@ class Free_List_Machine extends FLM_Dashboard {
 		wp_enqueue_style( 'rad-montserrat-700', "{$this->protocol}://fonts.googleapis.com/css?family=Montserrat:400,700", array(), $this->plugin_version );
 		wp_enqueue_style( 'rad-flm-css', FLM_PLUGIN_URI . '/css/admin.css', array(), $this->plugin_version );
 		wp_enqueue_style( 'flm-preview-css', FLM_PLUGIN_URI . '/css/style.css', array(), $this->plugin_version );
-		wp_enqueue_script( 'rad-flm-js', FLM_PLUGIN_URI . '/js/admin.js', array( 'jquery' ), $this->plugin_version, true );
+		wp_enqueue_script( 'rad-moment', FLM_PLUGIN_URI . '/js/moment.min.js', array( 'jquery' ), $this->plugin_version, true );
+		wp_enqueue_script( 'rad-combodate', FLM_PLUGIN_URI . '/js/combodate.min.js', array( 'jquery', 'rad-moment' ), $this->plugin_version, true );
+		wp_enqueue_script( 'rad-flm-js', FLM_PLUGIN_URI . '/js/admin.js', array( 'jquery', 'rad-combodate' ), $this->plugin_version, true );
 		wp_localize_script( 'rad-flm-js', 'flm_settings', array(
 			'flm_nonce'         => wp_create_nonce( 'flm_nonce' ),
 			'ajaxurl'                  => admin_url( 'admin-ajax.php', $this->protocol ),
@@ -2681,6 +2685,10 @@ class Free_List_Machine extends FLM_Dashboard {
 				$error_message = $this->get_mailchimp_lists( $api_key, $name );
 				break;
 
+			case 'contestdomination' :
+				$error_message = $this->get_contestdomination_lists( $api_key, $name );
+				break;
+
 			case 'constant_contact' :
 				$error_message = $this->get_constant_contact_lists( $api_key, $token, $name );
 				break;
@@ -2763,7 +2771,7 @@ class Free_List_Machine extends FLM_Dashboard {
 		$account_name = sanitize_text_field( $subscribe_data_array['account_name'] );
 		$name         = isset( $subscribe_data_array['name'] ) ? sanitize_text_field( $subscribe_data_array['name'] ) : '';
 		$last_name    = isset( $subscribe_data_array['last_name'] ) ? sanitize_text_field( $subscribe_data_array['last_name'] ) : '';
-		$dbl_optin = isset( $subscribe_data_array['dbl_optin'] ) ? sanitize_text_field( $subscribe_data_array['dbl_optin'] ) : '';
+		$dbl_optin    = isset( $subscribe_data_array['dbl_optin'] ) ? sanitize_text_field( $subscribe_data_array['dbl_optin'] ) : '';
 		$email        = sanitize_email( $subscribe_data_array['email'] );
 		$list_id      = sanitize_text_field( $subscribe_data_array['list_id'] );
 		$page_id      = sanitize_text_field( $subscribe_data_array['page_id'] );
@@ -2779,6 +2787,10 @@ class Free_List_Machine extends FLM_Dashboard {
 				case 'mailchimp' :
 					$api_key       = $options_array['accounts'][ $service ][ $account_name ]['api_key'];
 					$error_message = $this->subscribe_mailchimp( $api_key, $list_id, $email, $name, $last_name, $dbl_optin );
+					break;
+				case 'contestdomination' :
+					$api_key       = $options_array['accounts'][ $service ][ $account_name ]['api_key'];
+					$error_message = $this->subscribe_contestdomination( $api_key, $list_id, $email, $name, $last_name, $dbl_optin );
 					break;
 				case 'hubspot' :
 					$api_key = $options_array['accounts'][$service][$account_name]['api_key'];
@@ -3062,6 +3074,117 @@ class Free_List_Machine extends FLM_Dashboard {
 		return $error_message;
 	}
 
+	public function get_contestdomination_lists( $api_key = '', $name = '' ) {
+		$contests = array();
+
+		$retval = wp_safe_remote_get( 'https://app.contestdomination.com/api/list-contests.json?apit=' . $api_key, array( 'sslverify' => false ) );
+
+		if ( is_wp_error( $retval ) ) {
+			return __( 'invalid API key', 'flm' );
+		}
+
+		if ( ! $retval = wp_remote_retrieve_body( $retval ) ) {
+			return __( 'No contests found. Please log into Contest Domination and create one.', 'flm' );
+		}
+
+		$retval = json_decode( $retval );
+
+		$error_message = 'success';
+
+		if ( ! empty( $retval->data ) ) {
+			foreach ( $retval->data as $contest ) {
+
+				if ( 'contests' != $contest->type ) {
+					continue;
+				}
+
+				$atts = $contest->attributes;
+
+				if ( '1' != $atts->contest_is_active ) {
+					continue;
+				}
+
+				$contests[ $contest->id ] = array(
+					'name'    => sanitize_text_field( $atts->contest_title ),
+					'end_dts' => sanitize_text_field( $atts->contest_end_dts ),
+				);
+			}
+		}
+
+		$this->update_account( 'contestdomination', sanitize_text_field( $name ), array(
+			'lists'         => $contests,
+			'api_key'       => sanitize_text_field( $api_key ),
+			'is_authorized' => 'true',
+		) );
+
+		return $error_message;
+
+	}
+
+	/**
+	 * Get status of a contest. If active, return end date.
+	 *
+	 * @param $api_key
+	 * @param $contest_token
+	 *
+	 * @return bool|int|string|void
+	 */
+	public function get_contest_status( $api_key, $contest_token ) {
+
+		$transient_key = sanitize_title( $api_key . $contest_token );
+		if ( 1 || ! $data = get_transient( $transient_key ) ) {
+
+			$args = array(
+				'apit'          => urlencode( $api_key ),
+				'contest_token' => urlencode( $contest_token ),
+			);
+
+			$retval = wp_safe_remote_get( esc_url_raw( add_query_arg( $args, 'https://app.contestdomination.com/api/contest-status.json' ) ), array( 'sslverify' => false ) );
+
+			if ( is_wp_error( $retval ) ) {
+				return __( 'invalid API key', 'flm' );
+			}
+
+			if ( ! $retval = wp_remote_retrieve_body( $retval ) ) {
+				return __( 'No contests found. Please log into Contest Domination and create one.', 'flm' );
+			}
+
+			$retval = json_decode( $retval );
+
+			$data = array();
+
+			if ( isset( $retval->data->attributes ) ) {
+				$data = array(
+					'is_active' => $retval->data->attributes->contest_is_active,
+					'duration'  => $retval->data->attributes->contest_end_dts,
+				);
+
+				set_transient( $transient_key, $data, 15 * MINUTE_IN_SECONDS );
+
+			}
+
+
+		}
+
+		// make sure we have expected values
+		if ( empty( $data['is_active'] ) || empty( $data['duration'] ) ) {
+			return false;
+		}
+
+		// is the duration valid
+		if ( ! $duration = strtotime( $data['duration'] ) ) {
+			return false;
+		}
+
+		// has this contest already expired?
+		if ( $duration <= time() ) {
+			return false;
+		}
+
+		return date( 'd-m-Y H:i', $duration );
+	}
+
+
 	/**
 	 * Subscribes to Mailchimp list. Returns either "success" string or error message.
 	 * @return string
@@ -3097,6 +3220,53 @@ class Free_List_Machine extends FLM_Dashboard {
 				$error_message = str_replace( 'Click here to update your profile.', '', $retval['error'] );
 			} else {
 				$error_message = $retval['error'];
+			}
+		} else {
+			$error_message = 'success';
+		}
+
+		return $error_message;
+	}
+
+	/**
+	 * Subscribe user to Contest Domination
+	 *
+	 * @param        $api_key
+	 * @param        $list_id
+	 * @param        $email
+	 * @param string $name
+	 * @param string $last_name
+	 * @param        $disable_dbl
+	 *
+	 * @return string|void
+	 */
+	function subscribe_contestdomination( $api_key, $list_id, $email, $name = '', $last_name = '', $disable_dbl ) {
+
+		$args = array(
+			'apit'          => sanitize_text_field( $api_key ),
+			'contest_token' => sanitize_text_field( $list_id ),
+			'name'          => sanitize_text_field( $name ),
+			'email'         => sanitize_email( $email ),
+		);
+
+		$endpoint = esc_url_raw( add_query_arg( $args, 'https://app.contestdomination.com/api/enter-contest.json' ) );
+		$retval = wp_safe_remote_get( $endpoint, array( 'sslverify' => false ) );
+
+		if ( is_wp_error( $retval ) ) {
+			return __( 'invalid API key or list id', 'flm' );
+		}
+
+		if ( ! $retval = wp_remote_retrieve_body( $retval ) ) {
+			return __( 'Something went wrong, please try again.', 'flm' );
+		}
+
+		$retval = json_decode( $retval );
+
+		if ( isset( $retval->errors ) ) {
+			if ( 321 == $retval->errors->code ) {
+				$error_message = __( 'Please enter your name.', 'flm' );
+			} else {
+				$error_message = $retval->errors->detail;
 			}
 		} else {
 			$error_message = 'success';
@@ -4934,6 +5104,7 @@ STRING;
 			case 'mailchimp' :
 			case 'hubspot'  :
 			case 'hubspot-standard' :
+			case 'hubspot-standard' :
 			$form_fields .= sprintf( '
 					<div class="flm_dashboard_account_row">
 						<label for="%1$s">%3$s</label>
@@ -4955,6 +5126,25 @@ STRING;
 				), false#7
 				)
 			);
+				break;
+			case 'contestdomination' :
+				$form_fields .= sprintf( '
+					<div class="flm_dashboard_account_row">
+						<label for="%2$s">%4$s</label>
+						<input type="password" value="%6$s" id="%2$s">%7$s
+					</div>',
+					esc_attr('username_' . $service),#1
+					esc_attr( 'api_key_' . $service ),#2
+					__( 'Account Id', 'flm'),#3
+					__( 'API key', 'flm' ),#4
+					( '' !== $field_values && isset( $field_values['username'] ) ) ? esc_attr( $field_values['username'] ) : '',#5
+					( '' !== $field_values && isset( $field_values['api_key'] ) ) ? esc_attr( $field_values['api_key'] ) : '',#6
+					Free_List_Machine::generate_hint( sprintf(
+						'<a href="http://www.contestdomination.com/docs#'.$service.'" target="_blank">%1$s</a>',
+						__( 'Click here for more information', 'flm' )
+					), false#7
+					)
+				);
 				break;
 			case 'constant_contact' :
 			case 'getresponse' :
@@ -5517,6 +5707,15 @@ STRING;
 			$hubspot_cookie = '';
 		}
 
+		if ( 'contestdomination' == $details['email_provider'] ) {
+			$details['name_fields']      = 'single_name';
+			$details['privacy_policy']   = 'http://contestdomination.com/privacy/';
+			$details['contest_rules']    = esc_url_raw( 'http://contest.io/rules/' . $details['email_list'] );
+			$options_array               = Free_List_Machine::get_flm_options();
+			$contest_info                = $options_array['accounts']['contestdomination'][ $details['account_name'] ];
+			$details['contest_duration'] = self::$_this->get_contest_status( $contest_info['api_key'], $details['email_list'] );
+		}
+
 		$hide_img_mobile_class = isset( $details['hide_mobile'] ) && '1' == $details['hide_mobile'] ? 'flm_hide_mobile' : '';
 		$image_animation_class = isset( $details['image_animation'] )
 			? esc_attr( ' flm_image_' . $details['image_animation'] )
@@ -5550,6 +5749,9 @@ STRING;
 			? str_replace( '&nbsp;', '', $optin_title )
 			: '';
 		$formatted_message = '' != $details['optin_message'] ? $optin_message : '';
+
+		$formatted_message .= self::maybe_get_contest_content( $details );
+
 		$formatted_footer  = '' != $details['footer_text']
 			? sprintf(
 				'<div class="flm_form_footer">
@@ -5580,35 +5782,9 @@ STRING;
 				</div>
 			</div>
 			<span class="flm_close_button"></span>',
-			( 'right' == $details['image_orientation'] || 'left' == $details['image_orientation'] ) && 'widget' !== $details['optin_type']
-				? sprintf( ' split%1$s', 'right' == $details['image_orientation']
-				? ' image_right'
-				: '' )
-				: '',
-			( ( 'above' == $details['image_orientation'] || 'right' == $details['image_orientation'] || 'left' == $details['image_orientation'] ) && 'widget' !== $details['optin_type'] ) || ( 'above' == $details['image_orientation_widget'] && 'widget' == $details['optin_type'] )
-				? sprintf(
-				'%1$s',
-				empty( $details['image_url']['id'] )
-					? sprintf(
-					'<img src="%1$s" alt="%2$s" %3$s>',
-					esc_attr( $details['image_url']['url'] ),
-					esc_attr( wp_strip_all_tags( html_entity_decode( $formatted_title ) ) ),
-					'' !== $image_class
-						? sprintf( 'class="%1$s"', esc_attr( $image_class ) )
-						: ''
-				)
-					: wp_get_attachment_image( $details['image_url']['id'], 'flm_image', false, array( 'class' => $image_class ) )
-			)
-				: '',
-			( '' !== $formatted_title || '' !== $formatted_message )
-				? sprintf(
-				'<div class="flm_form_text">
-						%1$s%2$s
-					</div>',
-				stripslashes( html_entity_decode( $formatted_title, ENT_QUOTES, 'UTF-8' ) ),
-				stripslashes( html_entity_decode( $formatted_message, ENT_QUOTES, 'UTF-8' ) )
-			)
-				: '',
+			( 'right' == $details['image_orientation'] || 'left' == $details['image_orientation'] ) && 'widget' !== $details['optin_type'] ? sprintf( ' split%1$s', 'right' == $details['image_orientation'] ? ' image_right' : '' ) : '',
+			( ( 'above' == $details['image_orientation'] || 'right' == $details['image_orientation'] || 'left' == $details['image_orientation'] ) && 'widget' !== $details['optin_type'] ) || ( 'above' == $details['image_orientation_widget'] && 'widget' == $details['optin_type'] ) ? sprintf( '%1$s', empty( $details['image_url']['id'] ) ? sprintf( '<img src="%1$s" alt="%2$s" %3$s>', esc_attr( $details['image_url']['url'] ), esc_attr( wp_strip_all_tags( html_entity_decode( $formatted_title ) ) ), '' !== $image_class ? sprintf( 'class="%1$s"', esc_attr( $image_class ) ) : '' ) : wp_get_attachment_image( $details['image_url']['id'], 'flm_image', false, array( 'class' => $image_class ) ) ) : '',
+			( '' !== $formatted_title || '' !== $formatted_message ) ? sprintf( '<div class="flm_form_text">%1$s%2$s</div>', stripslashes( html_entity_decode( $formatted_title, ENT_QUOTES, 'UTF-8' ) ), stripslashes( html_entity_decode( $formatted_message, ENT_QUOTES, 'UTF-8' ) ) ) : '',
 			( 'below' == $details['image_orientation'] && 'widget' !== $details['optin_type'] ) || ( isset( $details['image_orientation_widget'] ) && 'below' == $details['image_orientation_widget'] && 'widget' == $details['optin_type'] )
 				? sprintf(
 				'%1$s',
@@ -5717,6 +5893,60 @@ STRING;
 		);
 
 		return $output;
+	}
+
+	protected static function maybe_get_contest_content( $details ) {
+
+		$content = '';
+
+		if ( empty( $details['privacy_policy'] ) ) {
+			return $content;
+		}
+
+		$privacy = sprintf( '<a href="%1$s" title="%2$s" target="_blank">%2$s</a>', esc_url( $details['privacy_policy'] ), __( 'Privacy Policy', 'flm' ) );
+
+		if ( empty( $details['contest_optin'] ) || empty( $details['contest_rules'] ) ) {
+			return sprintf( '<p>%s</p>', $privacy );
+		}
+
+		if ( empty( $details['contest_duration'] ) || ! $duration = strtotime( $details['contest_duration'] ) ) {
+			return sprintf( '<p>%s</p>', $privacy );
+		}
+
+		$time = current_time( 'timestamp' );
+
+		if ( $duration < $time ) {
+			return sprintf( '<p>Sorry this contest has concluded.</p>' );
+		}
+
+		$offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+
+		ob_start(); ?>
+
+		<div id="flm-countdown" data-duration="<?php echo absint( $duration ); ?>" data-offset="<?php echo absint( $offset ); ?>">
+			<div>
+				<span class="days"></span>
+				<p class="smalltext">Days</p>
+			</div>
+			<div>
+				<span class="hours"></span>
+				<p class="smalltext">Hours</p>
+			</div>
+			<div>
+				<span class="minutes"></span>
+				<p class="smalltext">Minutes</p>
+			</div>
+			<div>
+				<span class="seconds"></span>
+				<p class="smalltext">Seconds</p>
+			</div>
+		</div>
+
+		<p><?php echo $privacy; ?> | <?php printf( '<a href="%1$s" title="%2$s" target="_blank">%2$s</a>', esc_url( $details['contest_rules'] ), __( 'Contest Rules', 'flm' ) ); ?></p>
+
+		<?php
+
+		return ob_get_clean();
 	}
 
 	/**
@@ -6699,7 +6929,7 @@ STRING;
 
 	function rad_add_footer_text( $text ) {
 
-		return sprintf( __( $text . ' Free List Machine - by LeadPages<sup>&reg;</sup> <a target="_blank" style= "color:#939AAA;" href="%s">Privacy Policy</a> | <a target="_blank" style= "color:#939AAA;" href="%s">Terms of Use</a>' ), $this->privacy_url, $this->tou_url );
+		return sprintf( __( $text . ' Free List Machine - by Contest Domination<sup>&reg;</sup> <a target="_blank" style= "color:#939AAA;" href="%s">Privacy Policy</a> | <a target="_blank" style= "color:#939AAA;" href="%s">Terms of Use</a>' ), $this->privacy_url, $this->tou_url );
 	}
 
 	function execute_footer_text() {

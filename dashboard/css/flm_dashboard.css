@@ -135,7 +135,7 @@ button.flm_dashboard_icon_importexport:before	{ content: "\e646"; }
 /*---------------------[FORM]---------------------*/
 /*------------------------------------------------*/
 
-.flm_dashboard_form li { height: 30px; margin-bottom: 10px; }
+.flm_dashboard_form li { height: 30px; margin-bottom: 10px; overflow: hidden; }
 .flm_dashboard_form li p { float: left; width: 200px; line-height: 30px; padding-bottom: 0; }
 li.flm_dashboard_auto_height { height: auto; }
 
@@ -247,7 +247,7 @@ li.flm_dashboard_live_fields { position: relative; margin-bottom: 0; }
 .flm_dashboard_inner_container .flm_dashboard_modal_header .flm_dashboard_close:after { content: "\e60C"; position: absolute; padding: 20px; right: 0; color: #373942; cursor: pointer;}
 .flm_dashboard_networks_modal .dashboard_icons_container { overflow: auto; height: auto; padding: 20px; max-height: 74%; }
 .flm_dashboard_modal_footer { height: 60px; background: #ffffff; -webkit-border-top-left-radius: 5px; -webkit-border-bottom-right-radius: 5px; -moz-border-radius-bottomleft: 5px; -moz-border-radius-bottomright: 5px; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; }
-.flm_dashboard_modal_footer .flm_dashboard_apply,.flm_dashboard_modal_footer .flm_dashboard_warning_button { background-color: #008AFF !important; color: #ffffff !important; background-color: #BDC4D6; padding: 10px 11px; margin: 11px 15px; font-size: 14px; line-height: 1em; height: 15px; margin-right: 10px; cursor: pointer; overflow: hidden; position: relative; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; float: right;}
+.flm_dashboard_modal_footer .flm_dashboard_apply,.flm_dashboard_modal_footer .flm_dashboard_warning_button { background-color: #008AFF !important; color: #ffffff !important; background-color: #BDC4D6; padding: 10px 11px; margin: 11px 15px; font-size: 14px; line-height: 1em; /* height: 15px; */ margin-right: 10px; cursor: pointer; overflow: hidden; position: relative; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; float: right;}
 .flm_dashboard_warning .flm_dashboard_inner_container { width: 300px !important; height: auto; background: #fff; text-align: center; margin: auto; border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 .flm_dashboard_warning .flm_dashboard_modal_header { height: 30px; }
 .flm_dashboard_modal_footer .flm_dashboard_ok { margin-right: 130px !important; }

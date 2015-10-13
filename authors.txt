@@ -7,7 +7,7 @@
 /*************************************************************************/
 /*************************************************************************/
 
-LeadPages fixed widget constructor call to be WordPress 4.3 complaint.
+Contest Domination fixed widget constructor call to be WordPress 4.3 complaint.
 
 
 /*************************************************************************/

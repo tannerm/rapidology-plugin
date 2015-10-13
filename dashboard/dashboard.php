@@ -66,7 +66,7 @@ class FLM_Dashboard {
 	}
 
 	function get_options_array() {
-		return get_option( 'rad_' . $this->plugin_name . '_options' ) ? get_option( 'rad_' . $this->plugin_name . '_options' ) : array();
+		return get_option( $this->plugin_name . '_options' ) ? get_option( $this->plugin_name . '_options' ) : array();
 	}
 
 	public static function load_fonts_class() {
@@ -91,7 +91,7 @@ class FLM_Dashboard {
 		$dashboard_options = $this->get_options_array();
 
 		$updated_options = array_merge( $dashboard_options, $update_array );
-		update_option( 'rad_' . $this->plugin_name . '_options', $updated_options );
+		update_option( $this->plugin_name . '_options', $updated_options );
 	}
 
 	/**
@@ -104,7 +104,7 @@ class FLM_Dashboard {
 
 		if ( isset( $dashboard_options[ $option_key ] ) ) {
 			unset( $dashboard_options[ $option_key ] );
-			update_option( 'rad_' . $this->plugin_name . '_options', $dashboard_options );
+			update_option( $this->plugin_name . '_options', $dashboard_options );
 		}
 	}
 
@@ -323,7 +323,7 @@ class FLM_Dashboard {
 	 * @return bool
 	 */
 	function api_is_network_authorized( $network ) {
-		$is_authorized = apply_filters( 'rad_' . $this->plugin_name . '_authorization_verdict', false, $network );
+		$is_authorized = apply_filters( $this->plugin_name . '_authorization_verdict', false, $network );
 
 		return (bool) $is_authorized;
 	}
@@ -575,10 +575,14 @@ class FLM_Dashboard {
 												}
 											}
 											break;
+										case 'date' :
+											// validate date and put in expected format. Use default date otherwise
+											$dashboard_options_temp[ $current_option_name ] = ( $time = strtotime( $current_option_value ) ) ? date( 'd-m-Y H:i', $time ) : date( 'd-m-Y H:i', time() + WEEK_IN_SECONDS );
+											break;
 									} // end switch
 								}
 
-								do_action( 'rad_' . $this->plugin_name . '_after_save_options', $dashboard_options_temp, $current_option_name, $option, $output );
+								do_action( $this->plugin_name . '_after_save_options', $dashboard_options_temp, $current_option_name, $option, $output );
 							} // end foreach( $options_array as $option )
 						} //if ( isset( $options_array ) )
 					} // end foreach( $value[ 'contents' ] as $key => $value )
@@ -1111,6 +1115,36 @@ class FLM_Dashboard {
 									);
 									break;
 
+								case 'datetime' :
+									$option['format']   = ( ! empty( $option['format'] ) )   ?: 'DD-MM-YYYY HH:mm';
+									$option['template'] = ( ! empty( $option['template'] ) ) ?: 'D MMM YYYY    hh : mm a';
+									printf(
+										'<li class="input clearfix%4$s%7$s"%5$s%10$s>
+											<p>%1$s</p>
+											<input type="%9$s" name="flm_dashboard[%2$s]" value="%3$s" data-format="%11$s" data-template="%12$s"  placeholder="%6$s" class="combodate %8$s">',
+										isset( $option[ 'title_' . $current_location ] ) ? esc_html( $option[ 'title_' . $current_location ] ) : esc_html( $option['title'] ),
+										esc_attr( $current_option_name ),
+										esc_attr( $current_option_value ),
+										isset( $option['display_if'] ) ? ' flm_dashboard_hidden_option' : '',
+										isset( $option['display_if'] ) ? ' data-condition="' . esc_attr( $option['display_if'] ) . '"' : '', //#5
+										'number' == $option['subtype'] ? '0' : $option['placeholder'],
+										'text' == $option['subtype'] ? ' flm_dashboard_longinput' : '',
+										( isset( $option['class'] ) ? esc_attr( $option['class'] ) : '' ),
+										( isset( $option['hide_contents'] )
+											? 'password'
+											: 'text'
+										),
+										isset( $option['display_if'] ) ? ' data-triggers_count="0"' : '', //#10
+										$option['format'], // #11
+										$option['template'] // #12
+									);
+
+									echo $hint_output;
+
+									echo '
+										</li>';
+									break;
+
 								case 'main_title' :
 									printf(
 										'<div class="flm_dashboard_row flm_dashboard_selection%3$s">
@@ -1303,7 +1337,7 @@ class FLM_Dashboard {
 
 							} // end switch
 
-							do_action( 'rad_' . $this->plugin_name . '_after_main_options', $option, $current_option_value );
+							do_action( $this->plugin_name . '_after_main_options', $option, $current_option_value );
 						} // end foreach( $options_array as $option)
 
 						echo '</div>';
@@ -1322,15 +1356,15 @@ class FLM_Dashboard {
 			'' !== $sub_array
 				? sprintf( 'data-subtitle="%1$s"', esc_attr( $sub_array ) )
 				: '',
-			apply_filters( 'rad_' . $this->plugin_name . '_save_button_class', '' )
+			apply_filters( $this->plugin_name . '_save_button_class', '' )
 		);
 
-		do_action( 'rad_' . $this->plugin_name . '_after_save_button' );
+		do_action( $this->plugin_name . '_after_save_button' );
 
 		echo '</form>';
 
 		if ( isset( $dashboard_sections['header']['contents'] ) ) {
-			do_action( 'rad_' . $this->plugin_name . '_header_start' );
+			do_action( $this->plugin_name . '_header_start' );
 
 			foreach ( $dashboard_sections['header']['contents'] as $key => $value ) {
 				$options_array = $dashboard_options_assigned[ 'header_' . $key . '_options' ];
@@ -1393,14 +1427,14 @@ class FLM_Dashboard {
 
 						} // end switch
 
-						do_action( 'rad_' . $this->plugin_name . '_after_header_options', $option, $dashboard_options );
+						do_action( $this->plugin_name . '_after_header_options', $option, $dashboard_options );
 					} // end foreach( $options_array as $option )
 				} // end if ( isset( $options_array ) )
 
 				echo '</div><!-- .flm_dashboard_tab_content_header_ -->';
 			} // end foreach ( $dashboard_sections[ 'header' ][ 'contents' ] as $key => $value )
 
-			do_action( 'rad_' . $this->plugin_name . '_header_end' );
+			do_action( $this->plugin_name . '_header_end' );
 		} // end if ( isset( $dashboard_sections[ 'header' ][ 'contents' ] ) )
 		echo '</div>';
 		// activate screen end
@@ -1412,7 +1446,7 @@ class FLM_Dashboard {
 	 * @return array
 	 */
 	function remove_site_specific_fields( $settings ) {
-		$remove_options = apply_filters( 'rad_' . $this->plugin_name . '_export_exclude', array(
+		$remove_options = apply_filters( $this->plugin_name . '_export_exclude', array(
 			'access_tokens',
 			'db_version',
 		) );
@@ -1492,9 +1526,9 @@ class FLM_Dashboard {
 
 		// Retrieve the settings from the file and convert the json object to an array.
 		$dashboard_settings = (array) json_decode( file_get_contents( $import_file ), true );
-		$sub_array          = apply_filters( 'rad_' . $this->plugin_name . '_import_sub_array', false );
+		$sub_array          = apply_filters( $this->plugin_name . '_import_sub_array', false );
 
-		$error_message = $this->prepare_import_settings( apply_filters( 'rad_' . $this->plugin_name . '_import_array', $dashboard_settings ), $sub_array );
+		$error_message = $this->prepare_import_settings( apply_filters( $this->plugin_name . '_import_array', $dashboard_settings ), $sub_array );
 
 		if ( ! empty( $error_message ) ) {
 			echo $this->generate_modal_warning( $error_message );

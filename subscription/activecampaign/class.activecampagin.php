@@ -5,7 +5,6 @@
  * we can not support to build a list of usable forms to submit to. It then allows you to submit to those lists
  *
  *
- * @author Brandon Braner - LeadPages
  * @version 1.0
  */
 

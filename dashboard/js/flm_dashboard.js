@@ -219,6 +219,7 @@
 		var $radDashboardContent = $('#flm_dashboard_content');
 		$radDashboardContent.removeAttr( 'class' );
 		$radDashboardContent.addClass( 'current_tab_' + $tab_id );
+		$radDashboardContent.find('input.combodate').combodate();
 	};
 
 	//Generates image upload window

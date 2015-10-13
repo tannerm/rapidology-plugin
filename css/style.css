@@ -58,6 +58,24 @@
 .flm .flm_form_right .flm_header_outer, .flm .flm_form_left .flm_header_outer { float: left; width: 100%; }
 .flm .flm_form_right .flm_form_header, .flm .flm_form_left .flm_form_header { height: 100%; }
 
+.flm #flm-countdown > div{
+	padding: 10px;
+	border-radius: 3px;
+	background: rgba( 0, 0, 0, .25 );
+	display: inline-block;
+	margin: 10px 0;
+	text-align: center;
+}
+
+.flm #flm-countdown div > span{
+	padding: 10px;
+	min-width: 20px;
+	border-radius: 3px;
+	background: rgba( 0, 0, 0, .25 );
+	display: inline-block;
+	color: white;
+}
+
 /*---------------------------------*/
 /*------------ FLYIN --------------*/
 /*---------------------------------*/
