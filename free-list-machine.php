@@ -3132,7 +3132,7 @@ class Free_List_Machine extends FLM_Dashboard {
 	public function get_contest_status( $api_key, $contest_token ) {
 
 		$transient_key = sanitize_title( $api_key . $contest_token );
-		if ( 1 || ! $data = get_transient( $transient_key ) ) {
+		if ( ! $data = get_transient( $transient_key ) ) {
 
 			$args = array(
 				'apit'          => urlencode( $api_key ),
