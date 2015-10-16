@@ -5924,7 +5924,7 @@ STRING;
 
 		ob_start(); ?>
 
-		<div id="flm-countdown" data-duration="<?php echo absint( $duration ); ?>" data-offset="<?php echo absint( $offset ); ?>">
+		<div id="flm-countdown" data-duration="<?php echo absint( $duration ); ?>" data-offset="<?php echo intval( $offset ); ?>">
 			<div>
 				<span class="days"></span>
 				<p class="smalltext">Days</p>

@@ -51,6 +51,8 @@
 
 .flm .flm_header_text_light h2 { color: #fff !important; }
 .flm .flm_header_text_light p { color: rgba(255,255,255,0.7) !important; }
+.flm .flm_header_text_light a { color: rgba(255,255,255,0.7) !important; }
+.flm .flm_header_text_light a:hover { text-decoration: underline; }
 
 .flm .flm_form_header img { height: auto; width: auto; }
 
@@ -747,7 +749,7 @@
 .rad_power a {
 	font-family: "Open Sans", Helvetica, Arial, Lucida, sans-serif !important;
     /*color: #ffffff !important;*/
-    font-size: 8px !important;
+    font-size: 10px !important;
     font-weight: bold !important;
     text-shadow: 0 0 5px rgba(0,0,0,0.1) !important;
     line-height: 40px !important;
@@ -773,7 +775,7 @@
 	text-decoration: underline !important;
 	font-family: "Open Sans", Helvetica, Arial, Lucida, sans-serif !important;
 
-    font-size: 8px ;
+    font-size: 12px ;
     font-weight: 800 !important;
     /*color: #ffffff !important;*/
 	line-height: 40px !important;
@@ -785,7 +787,7 @@
 }
 .rad_power_box_mode_flyin a, .rad_power_text_flyin  {
     color:#fff;
-    font-size:10px !important;
+    font-size:12px !important;
     vertical-align: top !important;
 }
 
