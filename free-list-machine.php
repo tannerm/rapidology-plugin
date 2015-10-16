@@ -5708,6 +5708,7 @@ STRING;
 		}
 
 		if ( 'contestdomination' == $details['email_provider'] ) {
+			$details['contest_optin']    = true;
 			$details['name_fields']      = 'single_name';
 			$details['privacy_policy']   = 'http://contestdomination.com/privacy/';
 			$details['contest_rules']    = esc_url_raw( 'http://contest.io/rules/' . $details['email_list'] );
@@ -6027,7 +6028,7 @@ STRING;
 	function get_power_button( $mode ) {
 		return '<div class="rad_power rad_power_mode_' . $mode . '">
 					<span class="rad_power_box_mode_' . $mode . '">
-						<a href="http://www.contestdomination.com?utm_campaign=rp-rp&utm_medium=powered-by-badge" target="_blank">Powered by<span class="rad_power_logo">&nbsp</span><span class="rad_power_text">Free List Machine</span></a>
+						<a href="http://freelistmachine.com/?utm_source=optin&utm_medium=poweredby&utm_campaign=freelistmachine" target="_blank">Powered by<span class="rad_power_logo">&nbsp</span><span class="rad_power_text">Free List Machine</span></a>
 					</span>
 				</div>';
 	}

@@ -8,7 +8,7 @@ class FLM_Widget extends WP_Widget
 {
 	function __construct() {
 		parent::__construct(
-			'Free List Machine', // Base ID
+			'free_list_machine', // Base ID
 			__( 'Free List Machine', 'flm' ), // Name
 			array( 'description' => __( 'Free List Machine widget, please configure all the settings in Free List Machine control panel', 'flm' ) ) // Args
 		);
