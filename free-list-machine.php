@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Free List Machine By Contest Domination
  * Plugin URI: http://www.contestdomination.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
- * Version: 1.2.3
+ * Version: 0.1.0
  * Description: 100% Free List Building & Popup Plugin...With Over 100 Responsive Templates & 6 Different Display Types For Growing Your Email Newsletter
  * Author: Free List Machine
  * Author URI: http://www.contestdomination.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
@@ -23,7 +23,7 @@ if ( ! class_exists( 'FLM_Dashboard' ) ) {
 require_once('includes/flm_functions.php');
 
 class Free_List_Machine extends FLM_Dashboard {
-	var $plugin_version = '1.2.3';
+	var $plugin_version = '0.1.0';
 	var $db_version = '1.0';
 	var $_options_pagename = 'flm_options';
 	var $menu_page;
