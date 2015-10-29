@@ -238,13 +238,17 @@ class FLM_Dashboard {
 			wp_verify_nonce( $_POST['generate_warning_nonce'], 'generate_warning' );
 		}
 
-		$message             = isset( $_POST['message'] ) ? sanitize_text_field( stripslashes( $_POST['message'] ) ) : sanitize_text_field( $message );
+		$message             = isset( $_POST['message'] ) ? esc_html( stripslashes( $_POST['message'] ) ) : esc_html( $message );
 		$ok_link             = isset( $_POST['ok_link'] ) ? $_POST['ok_link'] : $ok_link;
 		$hide_close          = isset( $_POST['hide_close'] ) ? (bool) $_POST['hide_close'] : (bool) $hide_close;
 		$ok_text             = isset( $_POST['ok_text'] ) ? $_POST['ok_text'] : $ok_text;
 		$custom_button_text  = isset( $_POST['custom_button_text'] ) ? $_POST['custom_button_text'] : $custom_button_text;
 		$custom_button_link  = isset( $_POST['custom_button_link'] ) ? $_POST['custom_button_link'] : $custom_button_link;
 		$custom_button_class = isset( $_POST['custom_button_class'] ) ? $_POST['custom_button_class'] : $custom_button_class;
+
+		if ( false !== strpos( $message, 'contest:' ) ) {
+			$message = $this->contest_modal_content( str_replace( 'contest:', '', $message ) );
+		}
 
 		$result = sprintf(
 			'<div class="flm_dashboard_networks_modal flm_dashboard_warning">
@@ -256,7 +260,7 @@ class FLM_Dashboard {
 					<div class="flm_dashboard_modal_footer"><a href="%3$s" class="flm_dashboard_ok flm_dashboard_warning_button%6$s">%2$s</a>%5$s</div>
 				</div>
 			</div>',
-			esc_html( $message ),
+			$message,
 			'' == $ok_text ? esc_html__( 'Ok', 'flm_dashboard' ) : $ok_text,
 			esc_url( $ok_link ),
 			false === $hide_close ? '<span class="flm_dashboard_close"></span>' : '',
@@ -279,6 +283,59 @@ class FLM_Dashboard {
 		} else {
 			return $result;
 		}
+	}
+
+	function contest_modal_content( $optin_id ) {
+		$message = __( 'There are no contestants for this contest', 'flm' );
+
+		$options     = Free_List_Machine::get_flm_options( $optin_id );
+		$contestants = Free_List_Machine::get_contestants( $optin_id );
+		$winners     = Free_List_Machine::get_contest_winners( $optin_id );
+
+		if ( empty( $options ) || ! $duration = strtotime( $options[ 'contest_duration'] ) ) {
+			return $message;
+		}
+
+		if ( empty( $contestants ) ) {
+			$message = sprintf( '<p>%s</p>', $message );
+		} else {
+			ob_start(); ?>
+			<?php if ( empty( $winners ) ) : ?>
+				<p><?php _e( 'This contest has not yet finished, please check back later to pick a winner', 'flm' ) ?></p>
+			<?php else : ?>
+				<strong><?php _e( 'Winners', 'flm' ); ?></strong>
+				<table style="text-align: left;width: 100%;">
+					<tr>
+						<th><?php _e( 'Name', 'flm' ); ?></th>
+						<th><?php _e( 'Email', 'flm' ); ?></th>
+					</tr>
+					<?php foreach( $winners as $email => $data ) : ?>
+						<tr>
+							<td><?php echo esc_html( $data['name'] ); ?></td>
+							<td><?php echo esc_html( $email ); ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+			<?php endif; ?>
+			<hr />
+			<strong><?php _e( 'Contestants', 'flm' ); ?></strong>
+			<table style="text-align: left;width: 100%;">
+				<tr>
+					<th><?php _e( 'Name', 'flm' ); ?></th>
+					<th><?php _e( 'Email', 'flm' ); ?></th>
+				</tr>
+				<?php foreach( $contestants as $email => $data ) : ?>
+					<tr>
+						<td><?php echo esc_html( $data['name'] ); ?></td>
+						<td><?php echo esc_html( $email ); ?></td>
+					</tr>
+				<?php endforeach; ?>
+			</table>
+			<?php
+			$message = ob_get_clean();
+		}
+
+		return $message;
 	}
 
 	/**

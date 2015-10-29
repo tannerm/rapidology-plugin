@@ -73,6 +73,7 @@ $flm_dashboard_options_all = array(
 			'type'     => 'section_start',
 			'title'    => __( 'Optin Settings', 'flm' ),
 			'subtitle' => __( 'Leave blank if using Contest Domination', 'flm' ),
+			'class'    => 'optin_settings'
 		),
 		'privacy_policy'    => array(
 			'type'            => 'input_field',
@@ -134,7 +135,7 @@ $flm_dashboard_options_all = array(
 			'name'            => 'email_provider',
 			'value'           => $email_providers_new_optin,
 			'default'         => 'empty',
-			'conditional'     => 'mailchimp_account#aweber_account#constant_contact_account#custom_html#activecampaign#display_name#name_fields#disable_dbl_optin#single_name_text',
+			'conditional'     => 'mailchimp_account#aweber_account#constant_contact_account#custom_html#activecampaign#display_name#name_fields#disable_dbl_optin#single_name_text#redirect_behavior',
 			'validation_type' => 'simple_text',
 			'class'           => 'flm_dashboard_select_provider',
 		),
@@ -178,6 +179,17 @@ $flm_dashboard_options_all = array(
 			'display_if'      => 'mailchimp',
 			'validation_type' => 'boolean',
 			'hint_text'       => __( 'Abusing this feature may cause your Mailchimp account to be suspended.', 'flm' ),
+		),
+		'redirect_behavior' => array(
+			'type'            => 'select',
+			'title'           => __( 'Contest Funnel Redirect Behavior', 'flm' ),
+			'name'            => 'redirect_behavior',
+			'value'           => array(
+				'_blank'      => __( 'Open in a new tab', 'flm' ),
+				'_self'       => __( 'Redirect the current page', 'flm' ) ),
+			'default'         => 'new_tab',
+			'display_if'      => 'contestdomination',
+			'validation_type' => 'simple_text',
 		),
 	),
 
@@ -1143,6 +1155,7 @@ $rad_assigned_options = array(
 			$flm_dashboard_options_all[ 'form_integration' ][ 'email_list' ],
 			$flm_dashboard_options_all[ 'form_integration' ][ 'custom_html' ],
 			$flm_dashboard_options_all[ 'form_integration' ][ 'disable_dbl_optin' ],
+			$flm_dashboard_options_all[ 'form_integration' ][ 'redirect_behavior' ],
 		$flm_dashboard_options_all[ 'end_of_section' ],
 		$flm_dashboard_options_all['optin_settings']['section_start'],
 			$flm_dashboard_options_all[ 'optin_settings' ][ 'privacy_policy' ],

@@ -442,6 +442,17 @@
 			return false;
 		});
 
+		$body.on( 'click', '.flm_dashboard_icon_winner', function() {
+			var this_el = $( this ),
+				optin_id = this_el.parent().parent().data( 'optin_id' );
+
+			var message_text = 'contest:' + optin_id;
+
+			window.flm_dashboard_generate_warning( message_text, '#', '', '', '', '' );
+
+			return false;
+		});
+
 		//disable links on side nav to avoid confusion during page refresh
 		$body.on( 'click', '.flm_dashboard_optin_nav', function(){
 			return false;
@@ -470,6 +481,12 @@
 			} else {
 				display_actual_accounts( selected_provider, false, '' );
 				selected_account = $( '.flm_dashboard_select_account select' ).val();
+			}
+
+			if ( 'contestdomination' == selected_provider ) {
+				$( '.optin_settings').hide();
+			} else {
+				$( '.optin_settings').show();
 			}
 
 		});
@@ -679,6 +696,63 @@
 						$( 'body' ).addClass( 'flm_popup_active' );
 
 						$( '.flm_custom_html_form input[type="radio"], .flm_custom_html_form input[type="checkbox"]' ).uniform();
+
+						var flmCountDown = function(clock) {
+							var SELF = this;
+
+							SELF.getTimeRemaining = function(endtime, offset){
+								var t = endtime - Date.parse(new Date()) + offset;
+								var seconds = Math.floor( (t/1000) % 60 );
+								var minutes = Math.floor( (t/1000/60) % 60 );
+								var hours = Math.floor( (t/(1000*60*60)) % 24 );
+								var days = Math.floor( t/(1000*60*60*24) );
+								return {
+									'total': t,
+									'days': days,
+									'hours': hours,
+									'minutes': minutes,
+									'seconds': seconds
+								};
+							};
+
+							SELF.initializeClock = function(clock){
+
+								if ( null == clock ) {
+									return;
+								}
+
+								var daysSpan = clock.querySelector('.days');
+								var hoursSpan = clock.querySelector('.hours');
+								var minutesSpan = clock.querySelector('.minutes');
+								var secondsSpan = clock.querySelector('.seconds');
+
+								var endtime = parseInt( clock.getAttribute('data-duration') + '000' );
+								var offset  = parseInt( clock.getAttribute('data-offset') + '000' );
+
+								function updateClock(){
+									var t = SELF.getTimeRemaining(endtime, offset);
+
+									daysSpan.innerHTML = t.days;
+									hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+									minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+									secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+
+									if(t.total<=0){
+										clearInterval(timeinterval);
+									}
+								}
+
+								updateClock();
+								var timeinterval = setInterval(updateClock,1000);
+							};
+
+							SELF.initializeClock(clock);
+						};
+
+						$('.flm-countdown').each(function(){
+							new flmCountDown(this);
+						});
+
 					}
 				});
 			}
@@ -840,6 +914,12 @@
 			} else {
 				display_actual_accounts( selected_provider, false, '' );
 				selected_account = $( '.flm_dashboard_select_account select' ).val();
+			}
+
+			if ( 'contestdomination' == selected_provider ) {
+				$( '.optin_settings').hide();
+			} else {
+				$( '.optin_settings').show();
 			}
 
 			$( '.flm_dashboard_select_list' ).css( { 'display' : 'none' } );

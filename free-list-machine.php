@@ -291,8 +291,18 @@ class Free_List_Machine extends FLM_Dashboard {
 	 * Retrieves the Free List Machine options from DB and makes it available outside the class
 	 * @return array
 	 */
-	public static function get_flm_options() {
-		return get_option( 'flm_options' ) ? get_option( 'flm_options' ) : array();
+	public static function get_flm_options( $optin_id = null ) {
+		$options = get_option( 'flm_options' ) ? get_option( 'flm_options' ) : array();
+
+		if ( ! $optin_id ) {
+			return $options;
+		}
+
+		if ( empty( $options[ $optin_id ] ) ) {
+			return array();
+		}
+
+		return $options[ $optin_id ];
 	}
 
 	/**
@@ -1991,6 +2001,7 @@ class Free_List_Machine extends FLM_Dashboard {
 							<span class="flm_dashboard_icon_duplicate duplicate_id_%1$s rad_optin_button flm_dashboard_icon" title="%8$s"><span class="spinner"></span></span>
 							<span class="flm_dashboard_icon_%11$s flm_dashboard_toggle_status rad_optin_button flm_dashboard_icon%16$s" data-toggle_to="%11$s" data-optin_id="%1$s" title="%7$s"><span class="spinner"></span></span>
 							%14$s
+							%17$s
 							%6$s
 						</div>
 						<div style="clear: both;"></div>
@@ -2032,7 +2043,8 @@ class Free_List_Machine extends FLM_Dashboard {
 					$child_row, //#15
 					( 'empty' == $value['email_provider'] || ( 'custom_html' !== $value['email_provider'] && 'empty' == $value['email_list'] ) )
 						? ' flm_no_account'
-						: '' //#16
+						: '', //#16
+					( 'contestdomination' == $value['email_provider'] || empty( $value['contest_optin'] ) ) ? '' : '<span title="Pick a winner" class="flm_dashboard_icon_winner flm_dashboard_icon rad_optin_button"></span>' // #17
 				);
 				$optins_count ++;
 			}
@@ -2074,8 +2086,6 @@ class Free_List_Machine extends FLM_Dashboard {
 	}
 
 	function register_scripts( $hook ) {
-
-		wp_enqueue_style( 'rad-flm-menu-icon', FLM_PLUGIN_URI . '/css/flm-menu.css', array(), $this->plugin_version );
 
 		if ( "toplevel_page_{$this->_options_pagename}" !== $hook ) {
 			return;
@@ -2767,18 +2777,19 @@ class Free_List_Machine extends FLM_Dashboard {
 		$subscribe_data_json  = str_replace( '\\', '', $_POST['subscribe_data_array'] );
 		$subscribe_data_array = json_decode( $subscribe_data_json, true );
 
-		$service      = sanitize_text_field( $subscribe_data_array['service'] );
-		$account_name = sanitize_text_field( $subscribe_data_array['account_name'] );
-		$name         = isset( $subscribe_data_array['name'] ) ? sanitize_text_field( $subscribe_data_array['name'] ) : '';
-		$last_name    = isset( $subscribe_data_array['last_name'] ) ? sanitize_text_field( $subscribe_data_array['last_name'] ) : '';
-		$dbl_optin    = isset( $subscribe_data_array['dbl_optin'] ) ? sanitize_text_field( $subscribe_data_array['dbl_optin'] ) : '';
-		$email        = sanitize_email( $subscribe_data_array['email'] );
-		$list_id      = sanitize_text_field( $subscribe_data_array['list_id'] );
-		$page_id      = sanitize_text_field( $subscribe_data_array['page_id'] );
-		$post_name	  = sanitize_text_field( $subscribe_data_array['post_name'] );
-		$optin_id     = sanitize_text_field( $subscribe_data_array['optin_id'] );
-		$cookie		  = sanitize_text_field( $subscribe_data_array['cookie'] );
-		$result       = '';
+		$service       = sanitize_text_field( $subscribe_data_array['service'] );
+		$account_name  = sanitize_text_field( $subscribe_data_array['account_name'] );
+		$name          = isset( $subscribe_data_array['name'] ) ? sanitize_text_field( $subscribe_data_array['name'] ) : '';
+		$last_name     = isset( $subscribe_data_array['last_name'] ) ? sanitize_text_field( $subscribe_data_array['last_name'] ) : '';
+		$dbl_optin     = isset( $subscribe_data_array['dbl_optin'] ) ? sanitize_text_field( $subscribe_data_array['dbl_optin'] ) : '';
+		$email         = sanitize_email( $subscribe_data_array['email'] );
+		$list_id       = sanitize_text_field( $subscribe_data_array['list_id'] );
+		$page_id       = sanitize_text_field( $subscribe_data_array['page_id'] );
+		$post_name     = sanitize_text_field( $subscribe_data_array['post_name'] );
+		$optin_id      = sanitize_text_field( $subscribe_data_array['optin_id'] );
+		$cookie        = sanitize_text_field( $subscribe_data_array['cookie'] );
+		$result        = array();
+		$error_message = '';
 
 		if ( is_email( $email ) ) {
 			$options_array = Free_List_Machine::get_flm_options();
@@ -2790,7 +2801,7 @@ class Free_List_Machine extends FLM_Dashboard {
 					break;
 				case 'contestdomination' :
 					$api_key       = $options_array['accounts'][ $service ][ $account_name ]['api_key'];
-					$error_message = $this->subscribe_contestdomination( $api_key, $list_id, $email, $name, $last_name, $dbl_optin );
+					$error_message = $this->subscribe_contestdomination( $api_key, $list_id, $email, $name, $result );
 					break;
 				case 'hubspot' :
 					$api_key = $options_array['accounts'][$service][$account_name]['api_key'];
@@ -2895,7 +2906,9 @@ class Free_List_Machine extends FLM_Dashboard {
 
 		if ( 'success' == $error_message ) {
 			Free_List_Machine::add_stats_record( 'con', $optin_id, $page_id, $service . '_' . $list_id );
-			$result = json_encode( array( 'success' => $error_message ) );
+			self::maybe_add_contestant( $name . $last_name, $email, $optin_id );
+			$result['success'] = $error_message;
+			$result = json_encode( $result );
 		} else {
 			$result = json_encode( array( 'error' => $error_message ) );
 		}
@@ -2904,10 +2917,114 @@ class Free_List_Machine extends FLM_Dashboard {
 	}
 
 	/**
+	 * Add contestant to contest list
+	 *
+	 * @param $name
+	 * @param $email
+	 * @param $optin_id
+	 */
+	protected static function maybe_add_contestant( $name, $email, $optin_id ) {
+		$options_array = Free_List_Machine::get_flm_options();
+
+		if ( empty( $options_array[ $optin_id ] ) ) {
+			return;
+		}
+
+		$options = $options_array[ $optin_id ];
+
+		// make sure we this is a contest and we have a valid end time
+		if ( 'contestdomination' == $options['email_provider'] || empty( $options['contest_optin'] ) || ! $duration = strtotime( $options['contest_duration'] ) ) {
+			return;
+		}
+
+		// make sure this is an active contest
+		if ( $duration < current_time( 'timestamp' ) ) {
+			return;
+		}
+
+		$contestants = self::get_contestants();
+
+		if ( empty( $contestants[ $optin_id ] ) ) {
+			$contestants[ $optin_id ] = array();
+		}
+
+		$contestants[ $optin_id ][ $email ] = array( 'name' => $name );
+		update_option( 'flm_contestants', $contestants, 'no' );
+	}
+
+	/**
+	 * Get contestant array
+	 *
+	 * @param null $optin_id
+	 *
+	 * @return array|mixed|void
+	 */
+	public static function get_contestants( $optin_id = null ) {
+		$contestants = get_option( 'flm_contestants', array() );
+
+		if ( empty( $optin_id ) ) {
+			return $contestants;
+		}
+
+		if ( empty( $contestants[ $optin_id ] ) ) {
+			return array();
+		}
+
+		return $contestants[ $optin_id ];
+	}
+
+	public static function get_contest_winners( $optin_id ) {
+		$options     = self::get_flm_options( $optin_id );
+		$contestants = self::get_contestants();
+
+		if ( empty( $options ) || empty( $contestants[ $optin_id ] ) || empty( $options['winner_count'] ) || ! $duration = strtotime( $options[ 'contest_duration'] ) ) {
+			return array();
+		}
+
+		// make sure this contest has ended
+		if ( $duration > current_time( 'timestamp' ) ) {
+			return array();
+		}
+
+		$winners = $contestants[ $optin_id ];
+
+		foreach( $winners as $email => $data ) {
+			if ( empty( $data['winner'] ) ) {
+				unset( $winners[ $email ] );
+			}
+		}
+
+		if ( ! empty( $winners ) ) {
+			return $winners;
+		}
+
+		$winner_count = absint( $options['winner_count'] );
+
+		if ( $winner_count > count( $contestants[ $optin_id ] ) ) {
+			$winner_count = count( $contestants[ $optin_id ] );
+		}
+
+		$winning_emails = array_rand( $contestants[ $optin_id ], $winner_count );
+
+		foreach( $contestants[ $optin_id ] as $email => &$data ) {
+			if ( ! in_array( $email, (array) $winning_emails ) ) {
+				continue;
+			}
+
+			$data['winner'] = true;
+			$winners[ $email ] = $data;
+		}
+
+		update_option( 'flm_contestants', $contestants, 'no' );
+
+		return $winners;
+
+	}
+
+	/**
 	 * Retrieves the lists via Infusionsoft API and updates the data in DB.
 	 * @return string
 	 */
-
 	function get_infusionsoft_lists( $app_id, $api_key, $name ) {
 		if ( ! function_exists( 'curl_init' ) ) {
 			return __( 'curl_init is not defined ', 'flm' );
@@ -3240,7 +3357,7 @@ class Free_List_Machine extends FLM_Dashboard {
 	 *
 	 * @return string|void
 	 */
-	function subscribe_contestdomination( $api_key, $list_id, $email, $name = '', $last_name = '', $disable_dbl ) {
+	function subscribe_contestdomination( $api_key, $list_id, $email, $name = '', &$result ) {
 
 		$args = array(
 			'apit'          => sanitize_text_field( $api_key ),
@@ -3270,6 +3387,10 @@ class Free_List_Machine extends FLM_Dashboard {
 			}
 		} else {
 			$error_message = 'success';
+		}
+
+		if ( isset( $retval->data->next_step ) ) {
+			$result['redirect'] = esc_url( $retval->data->next_step );
 		}
 
 		return $error_message;
@@ -3332,8 +3453,7 @@ class Free_List_Machine extends FLM_Dashboard {
 	 * @return string
 	 */
 	function subscribe_constant_contact( $email, $api_key, $token, $list_id, $name = '', $last_name = '' ) {
-		$request_url   = esc_url_raw( 'https://api.constantcontact.com/v2/contacts?email=' . $email . '&api_key=' . $api_key );
-		$error_message = '';
+		$request_url = esc_url_raw( 'https://api.constantcontact.com/v2/contacts?email=' . $email . '&api_key=' . $api_key );
 
 		$theme_request = wp_remote_get( $request_url, array(
 			'timeout' => 30,
@@ -3360,7 +3480,7 @@ class Free_List_Machine extends FLM_Dashboard {
 				if ( ! is_wp_error( $theme_request ) && $response_code == 201 ) {
 					$error_message = 'success';
 				} else {
-					$error_map     = array(
+					$error_map = array(
 						"409" => 'Already subscribed'
 					);
 					$error_message = $this->get_error_message( $theme_request, $response_code, $error_map );
@@ -3369,7 +3489,7 @@ class Free_List_Machine extends FLM_Dashboard {
 				$error_message = __( 'Already subscribed', 'flm' );
 			}
 		} else {
-			$error_map     = array(
+			$error_map = array(
 				"401" => 'Invalid Token',
 				"403" => 'Invalid API key'
 			);
@@ -5697,6 +5817,7 @@ STRING;
 	 * @return string
 	 */
 	public static function generate_form_content( $optin_id, $page_id, $pagename = '',  $details = array() ) {
+
 		if ( empty( $details ) ) {
 			$all_optins = Free_List_Machine::get_flm_options();
 			$details    = $all_optins[ $optin_id ];
@@ -5717,6 +5838,7 @@ STRING;
 			$details['contest_duration'] = self::$_this->get_contest_status( $contest_info['api_key'], $details['email_list'] );
 		}
 
+		$redirect_behavior     = ( isset( $details['redirect_behavior'] ) && '_self' == $details['redirect_behavior'] ) ? '_self' : '_blank';
 		$hide_img_mobile_class = isset( $details['hide_mobile'] ) && '1' == $details['hide_mobile'] ? 'flm_hide_mobile' : '';
 		$image_animation_class = isset( $details['image_animation'] )
 			? esc_attr( ' flm_image_' . $details['image_animation'] )
@@ -5822,7 +5944,7 @@ STRING;
 						<p class="flm_popup_input flm_subscribe_email">
 							<input placeholder="%2$s">
 						</p>
-						<button data-optin_id="%4$s" data-service="%5$s" data-list_id="%6$s" data-page_id="%7$s" data-post_name="%12$s" data-cookie="%13$s" data-account="%8$s" data-disable_dbl_optin="%11$s" class="flm_submit_subscription">
+						<button data-optin_id="%4$s" data-service="%5$s" data-list_id="%6$s" data-page_id="%7$s" data-post_name="%12$s" data-cookie="%13$s" data-account="%8$s" data-disable_dbl_optin="%11$s" data-redirect_behavior="%14$s" class="flm_submit_subscription">
 							<span class="flm_subscribe_loader"></span>
 							<span class="flm_button_text flm_button_text_color_%10$s">%9$s</span>
 						</button>
@@ -5867,7 +5989,8 @@ STRING;
 				isset( $details['button_text_color'] ) ? esc_attr( $details['button_text_color'] ) : '', // #10
 				isset( $details['disable_dbl_optin'] ) && '1' === $details['disable_dbl_optin'] ? 'disable' : '',#11
 				esc_attr($pagename),#12
-				esc_attr($hubspot_cookie)#13
+				esc_attr($hubspot_cookie),#13
+				esc_attr( $redirect_behavior ) #14
 
 			),
 			'' != $success_text
@@ -5924,7 +6047,7 @@ STRING;
 
 		ob_start(); ?>
 
-		<div id="flm-countdown" data-duration="<?php echo absint( $duration ); ?>" data-offset="<?php echo intval( $offset ); ?>">
+		<div class="flm-countdown" data-duration="<?php echo absint( $duration ); ?>" data-offset="<?php echo intval( $offset ); ?>">
 			<div>
 				<span class="days"></span>
 				<p class="smalltext">Days</p>
@@ -6295,7 +6418,7 @@ STRING;
 			( 'rounded' == $details['corner_style'] ) ? ' flm_rounded_corners' : '',
 			( 'rounded' == $details['field_corner'] ) ? ' flm_rounded' : '',
 			'light' == $details['text_color'] ? ' flm_form_text_light' : ' flm_form_text_dark',
-			Free_List_Machine::generate_form_content( 0, 0, $details ),
+			Free_List_Machine::generate_form_content( 0, 0, '', $details ),
 			$this->get_power_button( 'popup' )
 		);
 

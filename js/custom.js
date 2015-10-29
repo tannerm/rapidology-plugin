@@ -4,54 +4,61 @@
 		$( '.flm_custom_html_form input[type="radio"], .flm_custom_html_form input[type="checkbox"]' ).uniform();
 
 
-		function getTimeRemaining(endtime, offset){
-			var t = endtime - Date.parse(new Date()) + offset;
-			var seconds = Math.floor( (t/1000) % 60 );
-			var minutes = Math.floor( (t/1000/60) % 60 );
-			var hours = Math.floor( (t/(1000*60*60)) % 24 );
-			var days = Math.floor( t/(1000*60*60*24) );
-			return {
-				'total': t,
-				'days': days,
-				'hours': hours,
-				'minutes': minutes,
-				'seconds': seconds
+		var flmCountDown = function(clock) {
+			var SELF = this;
+
+			SELF.getTimeRemaining = function(endtime, offset){
+				var t = endtime - Date.parse(new Date()) + offset;
+				var seconds = Math.floor( (t/1000) % 60 );
+				var minutes = Math.floor( (t/1000/60) % 60 );
+				var hours = Math.floor( (t/(1000*60*60)) % 24 );
+				var days = Math.floor( t/(1000*60*60*24) );
+				return {
+					'total': t,
+					'days': days,
+					'hours': hours,
+					'minutes': minutes,
+					'seconds': seconds
+				};
 			};
-		}
 
-		function initializeClock(id){
-			var clock = document.getElementById(id);
+			SELF.initializeClock = function(clock){
 
-			if ( null == clock ) {
-				return;
-			}
-
-			var daysSpan = clock.querySelector('.days');
-			var hoursSpan = clock.querySelector('.hours');
-			var minutesSpan = clock.querySelector('.minutes');
-			var secondsSpan = clock.querySelector('.seconds');
-
-			var endtime = parseInt( clock.getAttribute('data-duration') + '000' );
-			var offset  = parseInt( clock.getAttribute('data-offset') + '000' );
-
-			function updateClock(){
-				var t = getTimeRemaining(endtime, offset);
-
-				daysSpan.innerHTML = t.days;
-				hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
-				minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
-				secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
-
-				if(t.total<=0){
-					clearInterval(timeinterval);
+				if ( null == clock ) {
+					return;
 				}
-			}
 
-			updateClock();
-			var timeinterval = setInterval(updateClock,1000);
-		}
+				var daysSpan = clock.querySelector('.days');
+				var hoursSpan = clock.querySelector('.hours');
+				var minutesSpan = clock.querySelector('.minutes');
+				var secondsSpan = clock.querySelector('.seconds');
 
-		initializeClock( 'flm-countdown' );
+				var endtime = parseInt( clock.getAttribute('data-duration') + '000' );
+				var offset  = parseInt( clock.getAttribute('data-offset') + '000' );
+
+				function updateClock(){
+					var t = SELF.getTimeRemaining(endtime, offset);
+
+					daysSpan.innerHTML = t.days;
+					hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+					minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+					secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+
+					if(t.total<=0){
+						clearInterval(timeinterval);
+					}
+				}
+
+				updateClock();
+				var timeinterval = setInterval(updateClock,1000);
+			};
+
+			SELF.initializeClock(clock);
+		};
+
+		$('.flm-countdown').each(function(){
+			new flmCountDown(this);
+		});
 
 		var $body = $('body');
 		$body.on( 'click', 'span.flm_close_button', function(){
@@ -477,6 +484,7 @@
 				list_id = this_button.data( 'list_id' ),
 				account_name = this_button.data( 'account' ),
 				service = this_button.data( 'service' ),
+				redirect_behavior = this_button.data( 'redirect_behavior'),
 				name = this_form.find( '.flm_subscribe_name input' ).val(),
 				last_name = undefined != this_form.find( '.flm_subscribe_last input' ).val() ? this_form.find( '.flm_subscribe_last input' ).val() : '',
 				email = this_form.find( '.flm_subscribe_email input' ).val(),
@@ -523,6 +531,11 @@
 									this_form.remove();
 									set_cookie( 365, 'flm_subscribed_to_' + optin_id + list_id + '=true' );
 								}
+							}
+
+							if ( undefined != data.redirect ) {
+								redirect_behavior = ( '_self' == redirect_behavior ) ? '_self' : '_blank';
+								window.open(data.redirect, redirect_behavior);
 							}
 
 							define_popup_position( this_form.parent().parent().parent().parent(), false, 50 );
