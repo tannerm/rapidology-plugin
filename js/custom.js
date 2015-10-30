@@ -430,7 +430,7 @@
 
 			this_popup.css( { 'max-height' : popup_max_height } );
 
-			if ( this_popup.hasClass( 'flm_popup_container' ) ) {
+			if ( this_popup.hasClass( 'flm_popup_container' ) && ! this_popup.parent().hasClass( 'flm_inline_form' ) ) {
 				var top_position = $( window ).height() / 2 - this_popup.innerHeight() / 2;
 				this_popup.css( { 'top' : top_position + 'px' } );
 			}

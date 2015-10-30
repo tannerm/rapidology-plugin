@@ -31,6 +31,20 @@
 		 * 2) Highlihgt an appropriate link in the WP menu
 		 */
 		var $body = $( 'body' );
+
+		$body.on( 'submit', '.flm-training-optin', function() {
+				$.ajax({
+					type: 'POST',
+					url: dashboardSettings.ajaxurl,
+					dataType: 'json',
+					data: {
+						action : 'flm_training_optin'
+					}
+				});
+
+			return true;
+		} );
+
 		$body.on( 'click', '#toplevel_page_flm_options li a', function() {
 			var this_link = $( this ),
 				open_link = this_link.attr( 'href' ).split( '#tab_' )[1];
@@ -451,6 +465,16 @@
 			window.flm_dashboard_generate_warning( message_text, '#', '', '', '', '' );
 
 			return false;
+		});
+
+		// submit optin when shortcode has been viewed
+		$body.on( 'click', '.flm_dashboard_warning_button', function() {
+			if ( $('#flm_dashboard_content').hasClass('current_tab_flm_dashboard_tab_content_header_home') ) {
+				return true;
+			}
+
+			$('.current_optin_type_inline .flm_dashboard_save_changes button').click();
+			$('.current_optin_type_locked .flm_dashboard_save_changes button').click();
 		});
 
 		//disable links on side nav to avoid confusion during page refresh

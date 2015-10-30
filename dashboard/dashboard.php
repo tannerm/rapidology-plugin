@@ -109,6 +109,7 @@ class FLM_Dashboard {
 	}
 
 	function dashboard_scripts( $hook ) {
+
 		if ( "{$this->top_level_page}_{$this->_options_pagename}" !== $hook ) {
 			return;
 		}

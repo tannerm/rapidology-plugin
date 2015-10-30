@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Free List Machine By Contest Domination
  * Plugin URI: http://www.contestdomination.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
- * Version: 0.1.0
+ * Version: 0.1.1
  * Description: 100% Free List Building & Popup Plugin...With Over 100 Responsive Templates & 6 Different Display Types For Growing Your Email Newsletter
  * Author: Free List Machine
  * Author URI: http://www.contestdomination.com?utm_campaign=rp-rp&utm_medium=wp-plugin-screen
@@ -21,9 +21,10 @@ if ( ! class_exists( 'FLM_Dashboard' ) ) {
 }
 
 require_once('includes/flm_functions.php');
+require_once('includes/admin-notifications.php');
 
 class Free_List_Machine extends FLM_Dashboard {
-	var $plugin_version = '0.1.0';
+	var $plugin_version = '0.1.1';
 	var $db_version = '1.0';
 	var $_options_pagename = 'flm_options';
 	var $menu_page;
@@ -2087,6 +2088,8 @@ class Free_List_Machine extends FLM_Dashboard {
 
 	function register_scripts( $hook ) {
 
+		wp_enqueue_style( 'rad-flm-menu-icon', FLM_PLUGIN_URI . '/css/flm-menu.css', array(), $this->plugin_version );
+
 		if ( "toplevel_page_{$this->_options_pagename}" !== $hook ) {
 			return;
 		}
@@ -3277,7 +3280,6 @@ class Free_List_Machine extends FLM_Dashboard {
 				);
 
 				set_transient( $transient_key, $data, 15 * MINUTE_IN_SECONDS );
-
 			}
 
 
@@ -3294,7 +3296,7 @@ class Free_List_Machine extends FLM_Dashboard {
 		}
 
 		// has this contest already expired?
-		if ( $duration <= time() ) {
+		if ( $duration < current_time( 'timestamp' ) ) {
 			return false;
 		}
 
@@ -6043,7 +6045,8 @@ STRING;
 			return sprintf( '<p>Sorry this contest has concluded.</p>' );
 		}
 
-		$offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+		// contest domination is already in the correct timezone
+		$offset = ( 'contestdomination' == $details['email_provider'] ) ? 0 : get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
 
 		ob_start(); ?>
 
@@ -6064,9 +6067,10 @@ STRING;
 				<span class="seconds"></span>
 				<p class="smalltext">Seconds</p>
 			</div>
-		</div>
 
-		<p><?php echo $privacy; ?> | <?php printf( '<a href="%1$s" title="%2$s" target="_blank">%2$s</a>', esc_url( $details['contest_rules'] ), __( 'Contest Rules', 'flm' ) ); ?></p>
+			<p><?php echo $privacy; ?> | <?php printf( '<a href="%1$s" title="%2$s" target="_blank">%2$s</a>', esc_url( $details['contest_rules'] ), __( 'Contest Rules', 'flm' ) ); ?></p>
+
+		</div>
 
 		<?php
 
