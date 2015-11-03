@@ -329,7 +329,7 @@
 .flm .flm_form_content .flm_popup_input { float: left; width: 34%; padding-right: 20px; }
 .flm .flm_form_content button { width: 32%; background-color: #46C8C8; color: #FFF; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border: none; }
 .flm .flm_form_content input, .flm .flm_form_content button { padding: 10px; font-family: 'Open Sans', sans-serif; font-size: 14px; }
-.flm .flm_button_text { color: #FFF !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0 !important; }
+.flm .flm_button_text { color: #FFF !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0 !important; display: inline; }
 .flm .flm_form_container.flm_form_text_light .flm_form_content span.flm_button_text.flm_button_text_color_dark, .flm .flm_form_container.flm_form_text_dark .flm_form_content span.flm_button_text.flm_button_text_color_dark  { color: rgba( 0, 0, 0, 0.7 ) !important; }
 
 .flm .flm_widget_content .flm_form_container .flm_form_content { padding: 30px 20px; }

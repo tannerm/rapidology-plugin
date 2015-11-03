@@ -72,7 +72,6 @@ $flm_dashboard_options_all = array(
 		'section_start' => array(
 			'type'     => 'section_start',
 			'title'    => __( 'Optin Settings', 'flm' ),
-			'subtitle' => __( 'Leave blank if using Contest Domination', 'flm' ),
 			'class'    => 'optin_settings'
 		),
 		'privacy_policy'    => array(

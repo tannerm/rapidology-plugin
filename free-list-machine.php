@@ -2941,7 +2941,7 @@ class Free_List_Machine extends FLM_Dashboard {
 		}
 
 		// make sure this is an active contest
-		if ( $duration < current_time( 'timestamp' ) ) {
+		if ( $duration < time() ) {
 			return;
 		}
 
@@ -2985,7 +2985,7 @@ class Free_List_Machine extends FLM_Dashboard {
 		}
 
 		// make sure this contest has ended
-		if ( $duration > current_time( 'timestamp' ) ) {
+		if ( $duration > time() ) {
 			return array();
 		}
 
@@ -3276,7 +3276,7 @@ class Free_List_Machine extends FLM_Dashboard {
 			if ( isset( $retval->data->attributes ) ) {
 				$data = array(
 					'is_active' => $retval->data->attributes->contest_is_active,
-					'duration'  => $retval->data->attributes->contest_end_dts,
+					'duration'  => $retval->data->attributes->contest_end_dts . ' ' . $retval->data->attributes->contest_timezone,
 				);
 
 				set_transient( $transient_key, $data, 15 * MINUTE_IN_SECONDS );
@@ -3291,16 +3291,11 @@ class Free_List_Machine extends FLM_Dashboard {
 		}
 
 		// is the duration valid
-		if ( ! $duration = strtotime( $data['duration'] ) ) {
+		if ( ! $duration = new DateTime( $data['duration'] ) ) {
 			return false;
 		}
 
-		// has this contest already expired?
-		if ( $duration < current_time( 'timestamp' ) ) {
-			return false;
-		}
-
-		return date( 'd-m-Y H:i', $duration );
+		return $duration->format( 'd-m-Y H:i e' );
 	}
 
 
@@ -6035,22 +6030,25 @@ STRING;
 			return sprintf( '<p>%s</p>', $privacy );
 		}
 
-		if ( empty( $details['contest_duration'] ) || ! $duration = strtotime( $details['contest_duration'] ) ) {
+		if ( empty( $details['contest_duration'] ) && 'contestdomination' != $details['email_provider'] ) {
 			return sprintf( '<p>%s</p>', $privacy );
 		}
 
+		if ( 'contestdomination' != $details['email_provider'] ) {
+			$details['contest_duration'] .= ' ' . get_option( 'timezone_string' );
+		}
+
+		$duration = strtotime( $details['contest_duration'] );
+
 		$time = current_time( 'timestamp' );
 
-		if ( $duration < $time ) {
+		if ( empty( $duration ) || $duration < $time ) {
 			return sprintf( '<p>Sorry this contest has concluded.</p>' );
 		}
 
-		// contest domination is already in the correct timezone
-		$offset = ( 'contestdomination' == $details['email_provider'] ) ? 0 : get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
-
 		ob_start(); ?>
 
-		<div class="flm-countdown" data-duration="<?php echo absint( $duration ); ?>" data-offset="<?php echo intval( $offset ); ?>">
+		<div class="flm-countdown" data-duration="<?php echo absint( $duration ); ?>" data-offset="0">
 			<div>
 				<span class="days"></span>
 				<p class="smalltext">Days</p>
