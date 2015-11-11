@@ -30,7 +30,7 @@ class FLM_Admin_Notifications {
 	 */
 	protected function __construct() {
 		add_action( 'admin_notices', array( $this, 'notice' ) );
-		add_action( 'admin_notices', array( $this, 'optin'  ) );
+//		add_action( 'admin_notices', array( $this, 'optin'  ) );
 		add_action( 'admin_init',    array( $this, 'schedule_get_message' ) );
 		add_action( self::$_hook,    array( $this, 'retrieve_message' ) );
 		add_action( 'wp_ajax_flm_training_optin', array( $this, 'opted_in' ) );
@@ -40,6 +40,10 @@ class FLM_Admin_Notifications {
 	 * Print the notice if it exists
 	 */
 	public function notice() {
+
+		if ( empty( $_GET['page'] ) || 'flm_options' != $_GET['page'] ) {
+			return;
+		}
 
 		if ( ! $message = self::get_message() ) {
 			return;

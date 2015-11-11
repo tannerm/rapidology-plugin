@@ -6020,20 +6020,20 @@ STRING;
 
 		$content = '';
 
-		if ( empty( $details['privacy_policy'] ) ) {
-			return $content;
+		$privacy = ( empty( $details['privacy_policy'] ) ) ? '' : sprintf( '<a href="%1$s" title="%2$s" target="_blank">%2$s</a>', esc_url( $details['privacy_policy'] ), __( 'Privacy Policy', 'flm' ) );
+		$rules   = ( empty( $details['contest_rules'] ) ) ? '' : sprintf( '<a href="%1$s" title="%2$s" target="_blank">%2$s</a>', esc_url( $details['contest_rules'] ), __( 'Contest Rules', 'flm' ) );
+
+		// Check if this optin is a contest
+		if ( empty( $details['contest_optin'] ) ) {
+			return ( $privacy ) ? sprintf( '<p>%s</p>', $privacy ) : '';
 		}
 
-		$privacy = sprintf( '<a href="%1$s" title="%2$s" target="_blank">%2$s</a>', esc_url( $details['privacy_policy'] ), __( 'Privacy Policy', 'flm' ) );
-
-		if ( empty( $details['contest_optin'] ) || empty( $details['contest_rules'] ) ) {
-			return sprintf( '<p>%s</p>', $privacy );
+		// make sure we have a duration for this contest
+		if ( empty( $details['contest_duration'] ) ) {
+			return ( $privacy ) ? sprintf( '<p>%s</p>', $privacy ) : '';
 		}
 
-		if ( empty( $details['contest_duration'] ) && 'contestdomination' != $details['email_provider'] ) {
-			return sprintf( '<p>%s</p>', $privacy );
-		}
-
+		// set the timezone for the contest duration. ContestDomination has the timezone preset
 		if ( 'contestdomination' != $details['email_provider'] ) {
 			$details['contest_duration'] .= ' ' . get_option( 'timezone_string' );
 		}
@@ -6044,6 +6044,15 @@ STRING;
 
 		if ( empty( $duration ) || $duration < $time ) {
 			return sprintf( '<p>Sorry this contest has concluded.</p>' );
+		}
+
+		$legal = array();
+		if ( ! empty( $privacy ) ) {
+			$legal[] = $privacy;
+		}
+
+		if ( ! empty( $rules ) ) {
+			$legal[] = $rules;
 		}
 
 		ob_start(); ?>
@@ -6066,7 +6075,9 @@ STRING;
 				<p class="smalltext">Seconds</p>
 			</div>
 
-			<p><?php echo $privacy; ?> | <?php printf( '<a href="%1$s" title="%2$s" target="_blank">%2$s</a>', esc_url( $details['contest_rules'] ), __( 'Contest Rules', 'flm' ) ); ?></p>
+			<?php if ( ! empty( $legal ) ) : ?>
+				<p><?php echo implode( ' | ', $legal ); ?></p>
+			<?php endif; ?>
 
 		</div>
 
